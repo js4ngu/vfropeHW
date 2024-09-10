@@ -2,13 +2,13 @@ package vfrope
 import chisel3._
 import chisel3.util._
 
-class SinCosLUT extends Module {
+class SinCosLUT(width:Int) extends Module {
     val io = IO(new Bundle {
-        val angle = Input(UInt(8.W))   // Input angle in discrete steps (e.g., 0 to 255)
-        val sinOut = Output(SInt(8.W)) // Output sine value
-        val cosOut = Output(SInt(8.W)) // Output cosine value
+        val angle = Input(UInt(width.W))   // Input angle in discrete steps (e.g., 0 to 255)
+        val sinOut = Output(SInt(width.W)) // Output sine value
+        val cosOut = Output(SInt(width.W)) // Output cosine value
     })
-
+    //LUT에 정의된 데이터는 수동으로 수정해줘야함...
     val sinLUT = VecInit(Seq(
         0.S, 3.S, 6.S, 9.S, 12.S, 16.S, 19.S, 22.S, 25.S, 28.S, 31.S, 34.S, 37.S, 40.S, 43.S, 46.S, 49.S, 52.S, 54.S, 57.S,
         60.S, 63.S, 66.S, 68.S, 71.S, 73.S, 76.S, 78.S, 81.S, 83.S, 86.S, 88.S, 90.S, 92.S, 94.S, 96.S, 98.S, 100.S, 102.S, 104.S,

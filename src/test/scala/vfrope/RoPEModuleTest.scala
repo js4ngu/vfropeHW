@@ -6,7 +6,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 class RoPEModuleTester extends AnyFlatSpec with ChiselScalatestTester {
   "RoPEModule" should "work" in {
-    test(new RoPEModule(width = 8)) { dut =>
+    test(new RoPEModule_Int(width = 8)) { dut =>
       dut.io.m.poke(0.U)
       dut.io.theta.poke(0.U)
       dut.io.i.poke(0.U)
