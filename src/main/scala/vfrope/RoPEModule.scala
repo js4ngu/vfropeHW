@@ -29,7 +29,7 @@ class RoPEModule_Int(width:Int) extends Module{
   inReg(0)  := io.in(0)
   inReg(1)  := io.in(1)
 
-  m_theta_i           := (io.m * io.theta * io.i) % (256.U)
+  m_theta_i           := (io.m * io.theta * io.i) % ((2^width).U)
   sinCosLUT.io.angle  := m_theta_i
   sinVal              := sinCosLUT.io.sinOut
   cosVal              := sinCosLUT.io.cosOut
