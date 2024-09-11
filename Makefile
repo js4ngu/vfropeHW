@@ -6,10 +6,16 @@ doit:
 test:
 	sbt test
 
+LutGen:
+	python /home/jongsang/vfropeHW/src/main/scala/vfrope/LutGen.py
+
+32Ieee754:
+	python /home/jongsang/vfropeHW/src/test/scala/vfrope/32bit-ieee754.py
+
 SinCosLUT:
 	sbt "testOnly vfrope.SinCosLUTTest"
 
-FPAddMult:
+FixedPoint:
 	sbt "testOnly vfrope.CombinedTestSuite"
 
 RoPEModule_Int:
