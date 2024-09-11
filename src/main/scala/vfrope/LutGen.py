@@ -17,10 +17,7 @@ def format_values(values, units_per_line):
     return "\n".join(formatted_lines).rstrip(",")
 
 def map_values(value):
-    if value >= 0:  # Map [0, 1] to [0, 127]
-        return np.interp(value, [0, 1], [0, 127])
-    else:  # Map [-1, 0] to [255, 0]
-        return np.interp(value, [-1, 0], [255, 128])
+    return np.interp(value, [-1, 1], [-(N//2 - 1), (N//2 - 1)])
 
 def main():
     radian_array = np.linspace(0, 2 * np.pi, N)
