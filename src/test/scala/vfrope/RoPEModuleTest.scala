@@ -4,7 +4,7 @@ import chisel3._
 import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 
-class RoPEModuleTester extends AnyFlatSpec with ChiselScalatestTester {
+class RoPEModuleIntTester extends AnyFlatSpec with ChiselScalatestTester {
   "RoPEModule" should "work" in {
     test(new RoPEModule_Int(width = 8)) { dut =>
       dut.io.m.poke(0.U)

@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.experimental.FixedPoint
 import chisel3.util.Cat
 
-class FixedPointAdder(width: Int, binaryPoint: Int) extends Module {
+class FPadder(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
     val a = Input(FixedPoint(width.W, binaryPoint.BP))
     val b = Input(FixedPoint(width.W, binaryPoint.BP))
@@ -14,7 +14,7 @@ class FixedPointAdder(width: Int, binaryPoint: Int) extends Module {
   io.out := io.a + io.b
 }
 
-class FixedPointMultiplier(width: Int, binaryPoint: Int) extends Module {
+class FPmult(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
     val a = Input(FixedPoint(width.W, binaryPoint.BP))
     val b = Input(FixedPoint(width.W, binaryPoint.BP))
