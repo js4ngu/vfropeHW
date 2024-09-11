@@ -12,7 +12,7 @@ class RoPEModuleTester extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.i.poke(0.U)
       dut.io.in(0).poke(1.U)
       dut.io.in(1).poke(1.U)
-      dut.clock.step(10)
+      dut.clock.step(2)
 
       // Fetch io.out(0) and io.out(1) values and print them correctly
       val out0 = dut.io.out(0).peek().litValue()

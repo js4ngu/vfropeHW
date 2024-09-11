@@ -1,10 +1,3 @@
-/*
- * Dummy file to start a Chisel project.
- *
- * Author: Martin Schoeberl (martin@jopdesign.com)
- * 
- */
-
 package vfrope
 
 import chisel3._
@@ -33,7 +26,7 @@ class RoPEModule_Int(width:Int) extends Module{
   sinCosLUT.io.angle  := m_theta_i
   sinVal              := sinCosLUT.io.sinOut
   cosVal              := sinCosLUT.io.cosOut
-
+  
   outReg(0) := inReg(0) * cosVal - inReg(1) * sinVal
   outReg(1) := inReg(1) * cosVal + inReg(0) * sinVal
 
