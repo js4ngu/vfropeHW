@@ -13,3 +13,31 @@ class Int32ToIEEE754Test extends AnyFlatSpec with ChiselScalatestTester {
         }
     }
 }
+
+class FP32MultiplierTest extends AnyFlatSpec with ChiselScalatestTester {
+    "FP32Multiplier" should "convert integer to IEEE 754" in {
+        test(new FP32Multiplier()) { dut =>
+            // For positive numbers, you can poke directly
+            dut.io.a.poke(0x3fc00000.U) // 1.5
+            dut.io.b.poke(0x40100000.U) // 2.25
+            dut.clock.step()
+            println(s"expected 40580000 : 0x${dut.io.y.peek().litValue.toString(16)}")
+
+            // For negative numbers, use BigInt to handle UInt interpretation correctly
+            dut.io.a.poke(BigInt("bfc00000", 16).U) // -1.5
+            dut.io.b.poke(0x40100000.U) // 2.25
+            dut.clock.step()
+            println(s"expected c0580000 : 0x${dut.io.y.peek().litValue.toString(16)}")
+
+            dut.io.a.poke(0x3fc00000.U) // 1.5
+            dut.io.b.poke(BigInt("c0100000", 16).U) // -2.25
+            dut.clock.step()
+            println(s"expected c0580000 : 0x${dut.io.y.peek().litValue.toString(16)}")
+
+            dut.io.a.poke(BigInt("bfc00000", 16).U) // -1.5
+            dut.io.b.poke(BigInt("c0100000", 16).U) // -2.25
+            dut.clock.step()
+            println(s"expected 40580000 : 0x${dut.io.y.peek().litValue.toString(16)}")
+        }
+    }
+}
