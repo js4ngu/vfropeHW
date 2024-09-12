@@ -3,7 +3,7 @@ package vfrope
 import chisel3._
 import chisel3.util._
 
-class Int32ToIEEE754 extends Module {
+class Int32ToFP32 extends Module {
   val io = IO(new Bundle {
     val inInt = Input(SInt(32.W))
     val outIEEE = Output(UInt(32.W)) // IEEE 754 형식의 결과 출력
@@ -28,7 +28,6 @@ class Int32ToIEEE754 extends Module {
   // Assign the result to the IO output
   io.outIEEE := outIEEE
 }
-
 
 class FP32Multiplier extends Module {
   val io = IO(new Bundle {
@@ -63,19 +62,79 @@ class FP32Multiplier extends Module {
   // 최종 결과 조합
   val exp_final = Mux(frac_y(47), exp_y + 1.U, exp_y)(7, 0)
   io.y := Cat(sign_y, exp_final, rounded_frac(22, 0))
-
-  // Debug prints
-  /*
-  printf("\n\nInput a: 0x%x\n", io.a)
-  printf("Input b: 0x%x\n", io.b)
-  printf("sign_a: %d, sign_b: %d, sign_y: %d\n", sign_a, sign_b, sign_y)
-  printf("exp_a: %d, exp_b: %d, exp_y: %d\n", exp_a, exp_b, exp_y)
-  printf("frac_a: 0x%x, frac_b: 0x%x\n", frac_a, frac_b)
-  printf("frac_y: 0x%x\n", frac_y)
-  printf("normalized_frac: 0x%x\n", normalized_frac)
-  printf("rounded_frac: 0x%x\n", rounded_frac)
-  printf("exp_final: %d\n", exp_final)
-  printf("Output y: 0x%x\n", io.y)
-  */
 }
 
+class FP32Adder extends Module {
+  val io = IO(new Bundle {
+    val a = Input(UInt(32.W))  // IEEE 754 input 1
+    val b = Input(UInt(32.W))  // IEEE 754 input 2
+    val result = Output(UInt(32.W))  // IEEE 754 output result
+  })
+
+  // Step 1: Extract sign, exponent, and mantissa for both inputs
+  val signA = io.a(31)
+  val exponentA = io.a(30, 23)
+  val mantissaA = Cat(1.U(1.W), io.a(22, 0))  // implicit leading 1
+
+  val signB = io.b(31)
+  val exponentB = io.b(30, 23)
+  val mantissaB = Cat(1.U(1.W), io.b(22, 0))  // implicit leading 1
+
+  // Debug: Print the extracted components
+  printf(p"Input A: 0x${Hexadecimal(io.a)}\n")
+  printf(p"Input B: 0x${Hexadecimal(io.b)}\n")
+  printf(p"Sign A:  $signA, Exponent A:  $exponentA, Mantissa A:  $mantissaA\n")
+  printf(p"Sign B:  $signB, Exponent B:  $exponentB, Mantissa B:  $mantissaB\n")
+
+  // Step 2: Compare exponents and align mantissas
+  val exponentDiff = (exponentA - exponentB).asSInt
+  val shiftAmount = Mux(exponentDiff > 0.S, exponentDiff.asUInt, (-exponentDiff).asUInt)
+
+  // Shift mantissas based on the exponent difference
+  val shiftedMantissaA = Mux(exponentDiff > 0.S, mantissaA, mantissaA >> shiftAmount)
+  val shiftedMantissaB = Mux(exponentDiff > 0.S, mantissaB >> shiftAmount, mantissaB)
+
+  // Debug: Print shifted mantissas and exponent difference
+  printf(p"Exponent Difference: $exponentDiff\n")
+  printf(p"Shifted Mantissa A:  $shiftedMantissaA\n")
+  printf(p"Shifted Mantissa B:  $shiftedMantissaB\n")
+
+  // Determine final exponent
+  val finalExponent = Mux(exponentDiff > 0.S, exponentA, exponentB)
+  printf(p"Final Exponent before normalization:  $finalExponent\n")
+
+  // Step 3: Add or subtract mantissas based on signs
+  val mantissaSum = Mux(signA === signB, shiftedMantissaA + shiftedMantissaB, 
+                        Mux(shiftedMantissaA >= shiftedMantissaB, shiftedMantissaA - shiftedMantissaB, shiftedMantissaB - shiftedMantissaA))
+
+  // Adjust the result sign based on the larger mantissa
+  val resultSign = Mux(signA === signB, signA, Mux(shiftedMantissaA >= shiftedMantissaB, signA, signB))
+
+  // Debug: Print the mantissa sum and result sign
+  printf(p"Mantissa Sum:  $mantissaSum\n")
+  printf(p"Result Sign:  $resultSign\n")
+
+  // Step 4: Normalize the result and add guard bits for rounding
+  val mantissaSumExtended = Cat(mantissaSum, 0.U(2.W)) // Add two guard bits
+  val normalizationNeeded = mantissaSumExtended(25) // 24th 비트에서 overflow 확인
+  val normalizedMantissa = Mux(normalizationNeeded, mantissaSumExtended(24, 2), mantissaSumExtended(23, 1))
+  val finalExponentNormalized = Mux(normalizationNeeded, finalExponent + 1.U, finalExponent)
+  
+  // Debug: Print normalization-related values
+  printf(p"\nmantissaSumExtended:  $mantissaSumExtended\n")
+  printf(p"Normalization Needed:  $normalizationNeeded\n")
+  printf(p"Normalized Mantissa:  $normalizedMantissa\n")
+  printf(p"Final Exponent (Normalized):  $finalExponentNormalized\n")
+
+  // Step 5: Reassemble the final floating-point result
+  val finalExponentBits = finalExponentNormalized(7, 0)  // 지수 8비트 (7:0)
+  val finalMantissaBits = normalizedMantissa(22, 0)  // 가수 23비트 (22:0)
+
+  io.result := Cat(resultSign, finalExponentBits, finalMantissaBits)  // 부호, 지수, 가수를 결합
+  
+  // Debug: Print the final result
+  printf(p"\nresultSign:  $resultSign\n")
+  printf(p"finalExponentBits:  $finalExponentBits\n")
+  printf(p"finalMantissaBits:  $finalMantissaBits\n")
+  printf(p"Result: 0x${Hexadecimal(io.result)}\n")
+}
