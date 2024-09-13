@@ -46,26 +46,26 @@ class FP32AdderTest extends AnyFlatSpec with ChiselScalatestTester {
     "FP32Adder" should "convert integer to IEEE 754" in {
         test(new FP32Adder()) { dut =>
             // For positive numbers, you can poke directly
-            dut.io.a.poke(0x3fc00000.U) // 1.5
-            dut.io.b.poke(0x40100000.U) // 2.25
+            dut.io.a.poke(0x41be0000.U) // 1.5
+            dut.io.b.poke(0x42b8cccd.U) // 2.25
             dut.clock.step()
-            println(s"1.5 + 2.25 = expected 40700000 : 0x${dut.io.result.peek().litValue.toString(16)}\n\n") // 얘 통과
+            println(s"23.75 + 92.4 = 116.15 expected 42e84ccd : 0x${dut.io.result.peek().litValue.toString(16)}\n\n") // 얘 통과
 
             // For negative numbers, use BigInt to handle UInt interpretation correctly
-            dut.io.a.poke(BigInt("bfc00000", 16).U) // -1.5
-            dut.io.b.poke(0x40100000.U) // 2.25
+            dut.io.a.poke(BigInt("c1be0000", 16).U) // -1.5
+            dut.io.b.poke(0x42b8cccd.U) // 2.25
             dut.clock.step()
-            println(s"-1.5 + 2.25 = expected 3f400000 : 0x${dut.io.result.peek().litValue.toString(16)}") // 얘 안됨
+            println(s"-23.75 + 92.4 = 68.65 expected 42894ccd : 0x${dut.io.result.peek().litValue.toString(16)}") // 얘 안됨
 
-            dut.io.a.poke(0x3fc00000.U) // 1.5
-            dut.io.b.poke(BigInt("c0100000", 16).U) // -2.25
+            dut.io.a.poke(0x41be0000.U) // 1.5
+            dut.io.b.poke(BigInt("c2b8cccd", 16).U) // -2.25
             dut.clock.step()
-            println(s"1.5 - 2.25 = expected bf400000 : 0x${dut.io.result.peek().litValue.toString(16)}") // 얘 안됨
+            println(s"23.75 + -92.4 = -68.65 expected c2894ccd : 0x${dut.io.result.peek().litValue.toString(16)}") // 얘 안됨
 
-            dut.io.a.poke(BigInt("bfc00000", 16).U) // -1.5
-            dut.io.b.poke(BigInt("c0100000", 16).U) // -2.25
+            dut.io.a.poke(BigInt("c1be0000", 16).U) // -1.5
+            dut.io.b.poke(BigInt("c2b8cccd", 16).U) // -2.25
             dut.clock.step()
-            println(s"-1.5 - 2.25 = expected c0700000 : 0x${dut.io.result.peek().litValue.toString(16)}") //얘도 OK
+            println(s"-23.75 + -92.4 = -116.15 expected c2e84ccd : 0x${dut.io.result.peek().litValue.toString(16)}") //얘도 OK
         }
     }
 }

@@ -81,10 +81,10 @@ class FP32Adder extends Module {
   val mantissaB = Cat(1.U(1.W), io.b(22, 0))  // implicit leading 1
 
   // Debug: Print the extracted components
-  printf(p"Input A: 0x${Hexadecimal(io.a)}\n")
-  printf(p"Input B: 0x${Hexadecimal(io.b)}\n")
-  printf(p"Sign A:  $signA, Exponent A:  $exponentA, Mantissa A:  $mantissaA\n")
-  printf(p"Sign B:  $signB, Exponent B:  $exponentB, Mantissa B:  $mantissaB\n")
+  //printf(p"Input A: 0x${Hexadecimal(io.a)}\n")
+  //printf(p"Input B: 0x${Hexadecimal(io.b)}\n")
+  //printf(p"Sign A:  $signA, Exponent A:  $exponentA, Mantissa A:  $mantissaA\n")
+  //printf(p"Sign B:  $signB, Exponent B:  $exponentB, Mantissa B:  $mantissaB\n")
 
   // Step 2: Compare exponents and align mantissas
   val exponentDiff = (exponentA - exponentB).asSInt
@@ -95,13 +95,13 @@ class FP32Adder extends Module {
   val shiftedMantissaB = Mux(exponentDiff > 0.S, mantissaB >> shiftAmount, mantissaB)
 
   // Debug: Print shifted mantissas and exponent difference
-  printf(p"Exponent Difference: $exponentDiff\n")
-  printf(p"Shifted Mantissa A:  $shiftedMantissaA\n")
-  printf(p"Shifted Mantissa B:  $shiftedMantissaB\n")
+  //printf(p"Exponent Difference: $exponentDiff\n")
+  //printf(p"Shifted Mantissa A:  $shiftedMantissaA\n")
+  //printf(p"Shifted Mantissa B:  $shiftedMantissaB\n")
 
   // Determine final exponent
   val finalExponent = Mux(exponentDiff > 0.S, exponentA, exponentB)
-  printf(p"Final Exponent before normalization:  $finalExponent\n")
+  //printf(p"Final Exponent before normalization:  $finalExponent\n")
 
   // Step 3: Add or subtract mantissas based on signs
   val mantissaSum = Mux(signA === signB, shiftedMantissaA + shiftedMantissaB, 
@@ -111,8 +111,8 @@ class FP32Adder extends Module {
   val resultSign = Mux(signA === signB, signA, Mux(shiftedMantissaA >= shiftedMantissaB, signA, signB))
 
   // Debug: Print the mantissa sum and result sign
-  printf(p"Mantissa Sum:  $mantissaSum\n")
-  printf(p"Result Sign:  $resultSign\n")
+  //printf(p"Mantissa Sum:  $mantissaSum\n")
+  //printf(p"Result Sign:  $resultSign\n")
 
   // Step 4: Normalize the result and add guard bits for rounding
   val mantissaSumExtended = Cat(mantissaSum, 0.U(2.W)) // Add two guard bits
@@ -121,10 +121,10 @@ class FP32Adder extends Module {
   val finalExponentNormalized = finalExponent // 지수는 그대로 유지
 
   // Debug: Print normalization-related values
-  printf(p"\nmantissaSumExtended:  $mantissaSumExtended\n")
-  printf(p"Normalization Needed:  $normalizationNeeded\n")
-  printf(p"Normalized Mantissa:  $normalizedMantissa\n")
-  printf(p"Final Exponent (Normalized):  $finalExponentNormalized\n")
+  //printf(p"\nmantissaSumExtended:  $mantissaSumExtended\n")
+  //printf(p"Normalization Needed:  $normalizationNeeded\n")
+  //printf(p"Normalized Mantissa:  $normalizedMantissa\n")
+  //printf(p"Final Exponent (Normalized):  $finalExponentNormalized\n")
 
   // Step 5: Reassemble the final floating-point result
   val finalExponentBits = finalExponentNormalized(7, 0)  // 지수 8비트 (7:0)
@@ -133,8 +133,8 @@ class FP32Adder extends Module {
   io.result := Cat(resultSign, finalExponentBits, finalMantissaBits)  // 부호, 지수, 가수를 결합
   
   // Debug: Print the final result
-  printf(p"\nresultSign:  $resultSign\n")
-  printf(p"finalExponentBits:  $finalExponentBits\n")
-  printf(p"finalMantissaBits:  $finalMantissaBits\n")
-  printf(p"Result: 0x${Hexadecimal(io.result)}\n")
+  //printf(p"\nresultSign:  $resultSign\n")
+  //printf(p"finalExponentBits:  $finalExponentBits\n")
+  //printf(p"finalMantissaBits:  $finalMantissaBits\n")
+  //printf(p"Result: 0x${Hexadecimal(io.result)}\n")
 }
