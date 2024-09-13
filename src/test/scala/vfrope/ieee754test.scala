@@ -49,13 +49,13 @@ class FP32AdderTest extends AnyFlatSpec with ChiselScalatestTester {
             dut.io.a.poke(0x3fc00000.U) // 1.5
             dut.io.b.poke(0x40100000.U) // 2.25
             dut.clock.step()
-            println(s"expected 40700000 : 0x${dut.io.result.peek().litValue.toString(16)}")
+            println(s"expected 40700000 : 0x${dut.io.result.peek().litValue.toString(16)}\n\n")
 
             // For negative numbers, use BigInt to handle UInt interpretation correctly
-            // dut.io.a.poke(BigInt("bfc00000", 16).U) // -1.5
-            // dut.io.b.poke(0x40100000.U) // 2.25
-            // dut.clock.step()
-            // println(s"expected 3f400000 : 0x${dut.io.result.peek().litValue.toString(16)}")
+            dut.io.a.poke(BigInt("bfc00000", 16).U) // -1.5
+            dut.io.b.poke(0x40100000.U) // 2.25
+            dut.clock.step()
+            println(s"expected 3f400000 : 0x${dut.io.result.peek().litValue.toString(16)}")
 
             // dut.io.a.poke(0x3fc00000.U) // 1.5
             // dut.io.b.poke(BigInt("c0100000", 16).U) // -2.25

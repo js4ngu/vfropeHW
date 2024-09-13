@@ -118,8 +118,8 @@ class FP32Adder extends Module {
   val mantissaSumExtended = Cat(mantissaSum, 0.U(2.W)) // Add two guard bits
   val normalizationNeeded = mantissaSumExtended(25) // 24th 비트에서 overflow 확인
   val normalizedMantissa = Mux(normalizationNeeded, mantissaSumExtended(24, 2), mantissaSumExtended(23, 1))
-  val finalExponentNormalized = Mux(normalizationNeeded, finalExponent + 1.U, finalExponent)
-  
+  val finalExponentNormalized = finalExponent // 지수는 그대로 유지
+
   // Debug: Print normalization-related values
   printf(p"\nmantissaSumExtended:  $mantissaSumExtended\n")
   printf(p"Normalization Needed:  $normalizationNeeded\n")
