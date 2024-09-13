@@ -55,17 +55,17 @@ class FP32AdderTest extends AnyFlatSpec with ChiselScalatestTester {
             dut.io.a.poke(BigInt("c1be0000", 16).U) // -1.5
             dut.io.b.poke(0x42b8cccd.U) // 2.25
             dut.clock.step()
-            println(s"-23.75 + 92.4 = 68.65 expected 42894ccd : 0x${dut.io.result.peek().litValue.toString(16)}") // 얘 안됨
+            println(s"-23.75 + 92.4 = 68.65 expected 42894ccd : 0x${dut.io.result.peek().litValue.toString(16)}\n\n") // 얘 안됨
 
             dut.io.a.poke(0x41be0000.U) // 1.5
             dut.io.b.poke(BigInt("c2b8cccd", 16).U) // -2.25
             dut.clock.step()
-            println(s"23.75 + -92.4 = -68.65 expected c2894ccd : 0x${dut.io.result.peek().litValue.toString(16)}") // 얘 안됨
+            println(s"23.75 + -92.4 = -68.65 expected c2894ccd : 0x${dut.io.result.peek().litValue.toString(16)}\n\n") // 얘 안됨
 
             dut.io.a.poke(BigInt("c1be0000", 16).U) // -1.5
             dut.io.b.poke(BigInt("c2b8cccd", 16).U) // -2.25
             dut.clock.step()
-            println(s"-23.75 + -92.4 = -116.15 expected c2e84ccd : 0x${dut.io.result.peek().litValue.toString(16)}") //얘도 OK
+            println(s"-23.75 + -92.4 = -116.15 expected c2e84ccd : 0x${dut.io.result.peek().litValue.toString(16)}\n\n") //얘도 OK
         }
     }
 }
