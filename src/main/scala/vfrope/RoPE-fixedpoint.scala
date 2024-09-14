@@ -20,7 +20,7 @@ class RoPE_core_FP32 extends Module {
   m_0     := io.m
   i_0     := io.i
 
-  printf(p"Stage 1 : Cacl M_theta_1\n")
+  printf(p"Stage 1 : Cacl M_theta_i\n")
   val m_theta_i_1 = RegInit(0.F(32.W, 22.BP))
   val m_i_temp_1  = Wire(UInt(32.W))  // Use Wire to declare temporary hardware signal
   m_i_temp_1 := (m_0 * i_0)(9, 0) << 22.U
