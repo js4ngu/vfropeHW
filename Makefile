@@ -14,11 +14,11 @@ SinCosLUT:
 	sbt "testOnly vfrope.SinCosLUTTest"
 
 #실수연산 관련
-32Ieee754:
-	python /home/jongsang/vfropeHW/src/test/scala/vfrope/32bit-ieee754.py
+FixedpointDecoder:
+	python /home/jongsang/vfropeHW/src/test/scala/vfrope/fixedpointDecoder.py
 
-RoPE_core_FP32Test:
-	sbt "testOnly vfrope.RoPE_core_FP32Test"
+RoPEcoreTest:
+	sbt "testOnly vfrope.RoPEcoreTest"
 
 #RoPE모듈관련
 RoPEModule_Int:
