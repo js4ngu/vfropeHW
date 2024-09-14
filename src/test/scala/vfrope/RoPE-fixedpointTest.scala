@@ -5,11 +5,11 @@ import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 import chisel3.experimental.FixedPoint
 
-class RoPE_core_FP32Test extends AnyFlatSpec with ChiselScalatestTester {
+class RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPE_core_FP32" should "run first" in {
     test(new RoPEcore(32, 22)) { dut =>
       val testCases = Seq(
-        (1.5, 25, 4)
+        (1.5, 25, 12)
       )
       for ((theta, m, i) <- testCases) {
         println(s"===== TEST CASE ====")
@@ -19,7 +19,7 @@ class RoPE_core_FP32Test extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.i.poke(i.U)  // Poke i as UInt
 
         // Step the clock to simulate one cycle
-        dut.clock.step(3)
+        dut.clock.step(5)
       }
     }
   }
