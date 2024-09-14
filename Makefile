@@ -17,14 +17,8 @@ SinCosLUT:
 32Ieee754:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/32bit-ieee754.py
 
-Int32toIEEE754:
-	sbt "testOnly vfrope.Int32ToFP32Test"
-
-FP32Mult:
-	sbt "testOnly vfrope.FP32MultiplierTest"
-
-FP32Adder:
-	sbt "testOnly vfrope.FP32AdderTest"
+RoPE_core_FP32Test:
+	sbt "testOnly vfrope.RoPE_core_FP32Test"
 
 #RoPE모듈관련
 RoPEModule_Int:
