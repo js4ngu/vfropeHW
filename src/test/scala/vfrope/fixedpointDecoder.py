@@ -15,30 +15,22 @@ def main():
     TOTAL_BITS = 32    # Total number of bits in the fixed-point representation
     FRACTIONAL_BITS = 28  # Number of fractional bits
     LUT_RES = 12
-    hex_val = ['0x00030000000']
-    for i in list(hex_val):
-        fixed_point_value = hex_to_fixed(i, FRACTIONAL_BITS + LUT_RES + 1, FRACTIONAL_BITS)
-        print(f"Fixed-point {i} in decimal (4094, m_i_norm_1): {fixed_point_value}")
 
-    hex_val = ['0x1921fb56']
+    hex_val = ['0x08000000']
     for i in list(hex_val):
         fixed_point_value = hex_to_fixed(i, TOTAL_BITS, FRACTIONAL_BITS)
-        print(f"Fixed-point {i} in decimal (pi, theta_2): {fixed_point_value}")
+        print(f"Stage 1 - m X i fixed point : {i} in decimal (810): {fixed_point_value}")
 
 
-    hex_val = ['0x007da9e8a780000000', '0x001921fb568000000']
+    hex_val = ['0x032a0000000']
     for i in list(hex_val):
-        fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS + LUT_RES + 1, 2*FRACTIONAL_BITS)
-        print(f"Fixed-point {i} in decimal (4094 * pi = 12867.9635091, m_theta_i_2): {fixed_point_value}")
+        fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS + 1, FRACTIONAL_BITS)
+        print(f"Stage 1 - m X i fixed point : {i} in decimal (810): {fixed_point_value}")
 
-    hex_val = ['0x007da9e8a78000000', '0x001921fb568000000']
+    hex_val = ['0x0065400000000000000']
     for i in list(hex_val):
-        fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS + 1, 2*FRACTIONAL_BITS)
-        print(f"Fixed-point {i} in decimal (4094 * pi = 12867.9635091, m_theta_i_2): {fixed_point_value}")
+        fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS + LUT_RES + 1, 2 * FRACTIONAL_BITS)
+        print(f"m_i_norm_1 X theta : {i} in decimal (1620.0): {fixed_point_value}")
 
-    hex_val = ['0x048000000']
-    for i in list(hex_val):
-        fixed_point_value = hex_to_fixed(i, TOTAL_BITS, FRACTIONAL_BITS)
-        print(f"Fixed-point {i} in decimal (4094 * pi % 2pi = 0 , normaized_m_theta_i_2): {fixed_point_value}")
 
 main()

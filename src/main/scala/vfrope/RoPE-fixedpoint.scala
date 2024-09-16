@@ -11,7 +11,7 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
     val theta     = Input(FixedPoint(width.W, binaryPoint.BP))
     val m         = Input(UInt(width.W))
     val i         = Input(UInt(width.W))
-    //val m_theta_i = Output(FixedPoint(width.W, binaryPoint.BP))
+    val m_theta_i = Output(FixedPoint(width.W, binaryPoint.BP))
   })
   printf(p"\n=== Update Cycle ====\n")
 
@@ -32,7 +32,7 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
 
   printf(p"\nStage 1 : Normailzie m_i\n")
   val m_i_temp1_1 = RegInit(0.U(width.W))
-  val m_i_norm_1  = RegInit(0.F((binaryPoint + LutRes + 1).W, binaryPoint.BP))
+  val m_i_norm_1  = RegInit(0.F((binaryPoint + LutRes).W, binaryPoint.BP))
   val x1_1        = RegInit(0.S(width.W))
   val x2_1        = RegInit(0.S(width.W))
   val theta_1     = RegInit(0.F(width.W, binaryPoint.BP))
@@ -50,36 +50,24 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
 
   // Step 2: Normailzie m_theta_i - 곱셈 결과 소수점 비트 고려
   val theta_2               = RegInit(0.F(width.W, binaryPoint.BP))
-  val m_theta_i_2           = RegInit(0.F((width + binaryPoint + LutRes + 1).W, (2*binaryPoint).BP))  // 소수점 비트를 2배로 설정
+  val m_theta_i_2           = RegInit(0.F((width + binaryPoint + LutRes).W, (2*binaryPoint).BP))  // 소수점 비트를 2배로 설정
   val normaized_m_theta_i_2 = RegInit(0.F(width.W, binaryPoint.BP))
   val x1_2                  = RegInit(0.S(width.W))
   val x2_2                  = RegInit(0.S(width.W))
 
-  val standard              = (2*math.Pi).F((width).W, binaryPoint.BP)
-  val piFixed = FixedPoint.fromDouble(math.Pi, width.W, binaryPoint.BP)
-
   theta_2 := theta_1
   x1_2    := x1_1
   x2_2    := x1_1
-
-  // 곱셈 결과 소수점 비트 처리 (2*binaryPoint)로 설정
   m_theta_i_2 := (m_i_norm_1 * theta_2).setBinaryPoint(2 * binaryPoint)  // 소수점 위치 설정
-  printf(p"Stage 2 - x_1, x_2,theta                        : ${x1_2}, ${x2_2}, 0x${Hexadecimal(theta_2.asUInt)}\n") // OK
-  printf(p"Stage 1 - m X i fixed point      (asUInt in hex): 0x${Hexadecimal(m_i_norm_1.asUInt)}\n")  // 여기까지 됨
-  printf(p"Stage 2 - m_i_norm_1 X theta     (asUInt in hex): 0x${Hexadecimal(m_theta_i_2.asUInt)}\n") // 여기까지 됨
 
-  // 비트 슬라이싱 후 wrap-around 처리
-  val temp = m_theta_i_2.asUInt((width + binaryPoint + 1), binaryPoint).asFixedPoint(binaryPoint.BP)
-  val tempWithPi = temp * piFixed
-  val firstWrap = Mux((tempWithPi) > standard
-                      , (tempWithPi)  - standard
-                      , (tempWithPi) )  // 첫 번째 wrap-around
-  val secondWrap = Mux(firstWrap > standard, firstWrap - standard, firstWrap)  // 두 번째 wrap-around
+  val signBit = m_theta_i_2.asSInt.head(1)  // 부호 비트 추출
+  val reduceFraction = m_theta_i_2.asUInt()(binaryPoint + binaryPoint, binaryPoint).asFixedPoint(binaryPoint.BP)
+  val paddingSize    = width - reduceFraction.getWidth - 1
+  val combinedUInt = Cat(signBit, 0.U(paddingSize.W), reduceFraction.asUInt())
+  normaized_m_theta_i_2 := combinedUInt.asFixedPoint(binaryPoint.BP)
+  printf(p"Stage 2 - normaized_m_theta_i_2                 : 0x${Hexadecimal(normaized_m_theta_i_2.asUInt)}\n")
 
-  normaized_m_theta_i_2 := secondWrap.asUInt((width + binaryPoint + 1), binaryPoint).asFixedPoint(binaryPoint.BP)
-  printf(p"Stage 2 - temp                   (asUInt in hex): 0x${Hexadecimal(tempWithPi.asUInt)}\n") // 여기까지 됨
-  printf(p"Stage 2 - firstWrap, secondWrap  (asUInt in hex): 0x${Hexadecimal(firstWrap.asUInt)}, 0x${Hexadecimal(secondWrap.asUInt)}\n")
-  printf(p"Stage 2 - normaized_m_theta_i_2  (asUInt in hex): 0x${Hexadecimal(normaized_m_theta_i_2.asUInt)}\n")
+  io.m_theta_i := normaized_m_theta_i_2
 }
 
 
