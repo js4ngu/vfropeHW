@@ -7,9 +7,10 @@ import chisel3.experimental.FixedPoint
 
 class RoPEfrontCoreTest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPE_core_FP32" should "run first" in {
-    test(new RoPEfrontCore(32, 28)) { dut =>
+    test(new RoPEfrontCore(32, 28, 12)) { dut =>
       val testCases = Seq(
-        (1, 1, 2*math.Pi, 4, 2)
+        (1, 1, 1.5, 1, 3)
+        //차라리 instruction에서 pi를 빼고 넣어주면 어떰? 말된다. 그럼 하드웨어 레벨에서 계산하기 쉬워짐 -> code 수정 불가피
       )
       for ((x1, x2, theta, m, i) <- testCases) {
         println(s"===== TEST CASE ====")
