@@ -26,13 +26,12 @@ class RoPEfrontCoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.i.poke(i.U)  // Poke i as UInt
 
         // Step the clock to simulate one cycle
-        dut.clock.step(6)
+        dut.clock.step(5)
       }
     }
   }
 }
 
-/*
 class RoPEBackCoreTest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPE_core_FP32" should "run first" in {
     test(new RoPEBackCore(32, 30)) { dut =>
@@ -53,4 +52,3 @@ class RoPEBackCoreTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
-*/

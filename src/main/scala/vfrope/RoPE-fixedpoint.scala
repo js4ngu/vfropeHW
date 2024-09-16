@@ -31,7 +31,6 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
   x2_0    := io.x2
 
   //printf(p"\nStage 1 : Normailzie m_i\n")
-  val m_i_temp1_1 = RegInit(0.U(width.W))
   val m_i_norm_1  = RegInit(0.F((binaryPoint + LutRes).W, binaryPoint.BP))
   val x1_1        = RegInit(0.S(width.W))
   val x2_1        = RegInit(0.S(width.W))
@@ -40,7 +39,7 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
   x1_1    := x1_0
   x2_1    := x1_0
   theta_1 := theta_0
-  m_i_temp1_1 := ((m_0 * i_0)(LutRes-1, 0))
+  val m_i_temp1_1 = ((m_0 * i_0)(LutRes-1, 0))
   m_i_norm_1  := m_i_temp1_1.asFixedPoint(binaryPoint.BP) << binaryPoint // 모듈러 4096
   //printf(p"Stage 1 - x_1, x_2,theta                        :   ${x1_1}, ${x2_1}, 0x${Hexadecimal(theta_1.asUInt)}\n")
   //printf(p"Stage 1 - m X i % LUT resolution                :   ${m_i_temp1_1}}\n") //ok
@@ -50,7 +49,6 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
 
   // Step 2: Normailzie m_theta_i - 곱셈 결과 소수점 비트 고려
   val theta_2               = RegInit(0.F(width.W, binaryPoint.BP))
-  val m_theta_i_2           = RegInit(0.F((width + binaryPoint + LutRes).W, (2*binaryPoint).BP))  // 소수점 비트를 2배로 설정
   val normaized_m_theta_i_2 = RegInit(0.F(width.W, binaryPoint.BP))
   val x1_2                  = RegInit(0.S(width.W))
   val x2_2                  = RegInit(0.S(width.W))
@@ -58,8 +56,7 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
   theta_2 := theta_1
   x1_2    := x1_1
   x2_2    := x1_1
-  m_theta_i_2 := (m_i_norm_1 * theta_2).setBinaryPoint(2 * binaryPoint)  // 소수점 위치 설정
-
+  val m_theta_i_2 = (m_i_norm_1 * theta_2).setBinaryPoint(2 * binaryPoint)  // 소수점 위치 설정
   val signBit = m_theta_i_2.asSInt.head(1)  // 부호 비트 추출
   val reduceFraction = m_theta_i_2.asUInt()(binaryPoint + binaryPoint, binaryPoint).asFixedPoint(binaryPoint.BP)
   val paddingSize    = width - reduceFraction.getWidth - 1
