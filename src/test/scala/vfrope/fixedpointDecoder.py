@@ -1,5 +1,3 @@
-TOTAL_BITS = 32       # Total number of bits in the fixed-point representation
-FRACTIONAL_BITS = 22  # Number of fractional bits
 
 def hex_to_fixed(hex_val, total_bits, fractional_bits):
     # Convert the hexadecimal value to an integer
@@ -14,7 +12,16 @@ def hex_to_fixed(hex_val, total_bits, fractional_bits):
     return fixed_point_value
 
 def main():
-    hex_val = ['16800000']
+    TOTAL_BITS = 32       # Total number of bits in the fixed-point representation
+    FRACTIONAL_BITS = 28  # Number of fractional bits
+    hex_val = ['1b7812af','6487ed51']
+    for i in list(hex_val):
+        fixed_point_value = hex_to_fixed(i, TOTAL_BITS, FRACTIONAL_BITS)
+        print(f"Fixed-point {i} in decimal: {fixed_point_value}")
+
+    TOTAL_BITS = 32 *2      # Total number of bits in the fixed-point representation
+    FRACTIONAL_BITS = 28  # Number of fractional bits
+    hex_val = ['00000000ac97d151', '00000000480fe400']
     for i in list(hex_val):
         fixed_point_value = hex_to_fixed(i, TOTAL_BITS, FRACTIONAL_BITS)
         print(f"Fixed-point {i} in decimal: {fixed_point_value}")

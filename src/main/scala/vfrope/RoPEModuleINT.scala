@@ -15,7 +15,7 @@ class RoPEModule_Int(width:Int) extends Module{
   val outReg    = RegInit(VecInit(Seq.fill(2)(0.S(width.W))))
   val m_theta_i = RegInit(0.U(width.W))
 
-  val sinCosLUT = Module(new SinCosLUT(width = 8))
+  val sinCosLUT = Module(new SinCosLUTINT(width = 8))
   val sinVal    = RegInit(0.S(width.W))
   val cosVal    = RegInit(0.S(width.W))
   

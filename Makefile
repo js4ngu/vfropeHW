@@ -10,6 +10,9 @@ test:
 LutGen:
 	python /home/jongsang/vfropeHW/src/main/scala/vfrope/LutGen.py
 
+SinCosINTLUT:
+	sbt "testOnly vfrope.SinCosLUTINTTest"
+
 SinCosLUT:
 	sbt "testOnly vfrope.SinCosLUTTest"
 
@@ -17,8 +20,11 @@ SinCosLUT:
 FixedpointDecoder:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/fixedpointDecoder.py
 
-RoPEcoreTest:
-	sbt "testOnly vfrope.RoPEcoreTest"
+RoPEfrontCoreTest:
+	sbt "testOnly vfrope.RoPEfrontCoreTest"
+
+RoPEbackCoreTest:
+	sbt "testOnly vfrope.RoPEBackCoreTest"
 
 #RoPE모듈관련
 RoPEModule_Int:
