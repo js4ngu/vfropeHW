@@ -22,15 +22,15 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
   val x1_0    = RegInit(0.S(width.W))
   val x2_0    = RegInit(0.S(width.W))
 
-  printf(p"Stage 0 : Read Input\n")
-  printf(p"Stage 0 - x_1, x_2, m_0, i_0, theta_0 : ${x1_0}, ${x2_0}, ${m_0}, ${i_0}, 0x${Hexadecimal(theta_0.asUInt)}\n")
+  //printf(p"Stage 0 : Read Input\n")
+  //printf(p"Stage 0 - x_1, x_2, m_0, i_0, theta_0 : ${x1_0}, ${x2_0}, ${m_0}, ${i_0}, 0x${Hexadecimal(theta_0.asUInt)}\n")
   theta_0 := io.theta
   m_0     := io.m
   i_0     := io.i
   x1_0    := io.x1
   x2_0    := io.x2
 
-  printf(p"\nStage 1 : Normailzie m_i\n")
+  //printf(p"\nStage 1 : Normailzie m_i\n")
   val m_i_temp1_1 = RegInit(0.U(width.W))
   val m_i_norm_1  = RegInit(0.F((binaryPoint + LutRes).W, binaryPoint.BP))
   val x1_1        = RegInit(0.S(width.W))
@@ -42,9 +42,9 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
   theta_1 := theta_0
   m_i_temp1_1 := ((m_0 * i_0)(LutRes-1, 0))
   m_i_norm_1  := m_i_temp1_1.asFixedPoint(binaryPoint.BP) << binaryPoint // 모듈러 4096
-  printf(p"Stage 1 - x_1, x_2,theta                        :   ${x1_1}, ${x2_1}, 0x${Hexadecimal(theta_1.asUInt)}\n")
-  printf(p"Stage 1 - m X i % LUT resolution                :   ${m_i_temp1_1}}\n") //ok
-  printf(p"Stage 1 - m X i fixed point      (asUInt in hex): 0x${Hexadecimal(m_i_norm_1.asUInt)}\n")  // 4094 확인
+  //printf(p"Stage 1 - x_1, x_2,theta                        :   ${x1_1}, ${x2_1}, 0x${Hexadecimal(theta_1.asUInt)}\n")
+  //printf(p"Stage 1 - m X i % LUT resolution                :   ${m_i_temp1_1}}\n") //ok
+  //printf(p"Stage 1 - m X i fixed point      (asUInt in hex): 0x${Hexadecimal(m_i_norm_1.asUInt)}\n")  // 4094 확인
   //여끼가지는 맞음 mi가 resoultion 보다 크게 나오면 한 바퀴 도는거라 mod 해준거랑 같음.
 
 
