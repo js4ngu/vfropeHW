@@ -2,6 +2,7 @@ package vfrope
 
 import chisel3._
 import chisel3.util._
+import chisel3.experimental.FixedPoint  // This is necessary to use FixedPoint in Chisel
 
 class Int32ToFP32 extends Module {
   val io = IO(new Bundle {
@@ -138,3 +139,76 @@ class FP32Adder extends Module {
   //printf(p"finalMantissaBits:  $finalMantissaBits\n")
   //printf(p"Result: 0x${Hexadecimal(io.result)}\n")
 }
+
+
+
+class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
+  val io = IO(new Bundle {
+    val fixedInput = Input(FixedPoint(width.W, binaryPoint.BP))
+    val ieeeOutput = Output(UInt(32.W)) // IEEE 754 single-precision (32-bit)
+  })
+
+  // Extract sign bit
+  val sign = io.fixedInput.asUInt.head(1)
+
+  // Convert FixedPoint to absolute value
+  val absVal = Mux(io.fixedInput < 0.F(width.W, binaryPoint.BP), -io.fixedInput, io.fixedInput)
+
+  // Consider adding a small tolerance for rounding errors (optional)
+  val tolerance = 1.0.F(width.W, binaryPoint.BP) / (1 << 5).F(width.W, binaryPoint.BP) // Adjust tolerance as needed
+
+  // Shift the fixed-point value with tolerance consideration
+  val shiftedAbsVal = Mux(absVal.asUInt >= tolerance, absVal.asUInt >> (binaryPoint - 23).U, 0.U)(22, 0)
+
+  // Adjust exponent based on the number of bits shifted
+  val exponentShift = shiftedAbsVal.getWidth.U - 23.U // Calculate shift based on mantissa size
+  val exponent = Mux(exponentShift >= 0.U, 127.U + exponentShift, 127.U) // IEEE 754 bias is 127
+
+  // Combine sign, exponent, and mantissa for IEEE 754
+  val ieeeExponent = exponent(6, 0) // Extract all 7 bits of the exponent
+  val ieee754 = Cat(sign, ieeeExponent, shiftedAbsVal) // Combine sign, exponent, and mantissa
+
+  // Output IEEE 754 format
+  io.ieeeOutput := ieee754
+
+  // Print debug information (optional)
+  // ...
+}
+
+
+
+
+
+class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module {
+  val io = IO(new Bundle {
+    val ieeeInput = Input(UInt(32.W)) // IEEE 754 single-precision (32-bit)
+    val fixedOutput = Output(FixedPoint(width.W, binaryPoint.BP))
+  })
+
+  // Extract sign, exponent, and mantissa
+  val sign = io.ieeeInput(31)
+  val exponent = io.ieeeInput(30, 23).zext
+  val mantissa = Cat(1.U(1.W), io.ieeeInput(22, 0)) // Leading 1 in normalized form
+
+  // Calculate the shift amount
+  val shift = exponent.asSInt - 127.S + binaryPoint.S - 23.S
+
+  // Perform the shift
+  val shiftedMantissa = Mux(shift >= 0.S, 
+                            mantissa << shift.asUInt, 
+                            mantissa >> (-shift).asUInt)
+
+  // Convert mantissa to fixed point, and apply the sign
+  val fixedValue = (shiftedMantissa.asFixedPoint(binaryPoint.BP) * 
+                    Mux(sign === 1.U, -1.F(width.W, binaryPoint.BP), 1.F(width.W, binaryPoint.BP)))
+
+  // Debug prints
+  /*
+  printf(p"IEEE Input: 0x${Hexadecimal(io.ieeeInput)}\n")
+  printf(p"Sign: $sign, Exponent: $exponent, Mantissa: 0x${Hexadecimal(mantissa)}\n")
+  printf(p"Shift: $shift, Shifted Mantissa: 0x${Hexadecimal(shiftedMantissa)}\n")
+  printf(p"Fixed Value: ${fixedValue.asUInt}\n")
+  */
+  io.fixedOutput := fixedValue
+}
+
