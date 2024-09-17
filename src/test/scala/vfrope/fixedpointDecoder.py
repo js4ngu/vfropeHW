@@ -22,15 +22,12 @@ def main():
         print(f"Stage 1 - m X i fixed point : {i} in decimal (810): {fixed_point_value}")
 
 
-    hex_val = ['0x032a0000000']
+    hex_val = ['0xfffffff60000000', '0x0000000a0000000', '0x000000140000000', '0x000000000000000']
     for i in list(hex_val):
-        fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS + 1, FRACTIONAL_BITS)
+        fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS, FRACTIONAL_BITS)
         print(f"Stage 1 - m X i fixed point : {i} in decimal (810): {fixed_point_value}")
 
-    hex_val = ['0x0065400000000000000']
-    for i in list(hex_val):
-        fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS + LUT_RES + 1, 2 * FRACTIONAL_BITS)
-        print(f"m_i_norm_1 X theta : {i} in decimal (1620.0): {fixed_point_value}")
+
 
 
 main()

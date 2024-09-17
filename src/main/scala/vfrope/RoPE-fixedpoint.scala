@@ -70,55 +70,67 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
 
 class RoPEBackCore(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
-    val x1   = Input(UInt(width.W))
-    val x2   = Input(UInt(width.W))
-    val sin  = Input(FixedPoint(width.W, (width-2).BP))
-    val cos  = Input(FixedPoint(width.W, (width-2).BP))
+    val x1   = Input(SInt(width.W))
+    val x2   = Input(SInt(width.W))
+    val sin  = Input(FixedPoint((width).W, binaryPoint.BP))
+    val cos  = Input(FixedPoint((width).W, binaryPoint.BP))
+    val x1hat= Output(FixedPoint((width + binaryPoint).W, binaryPoint.BP))
+    val x2hat= Output(FixedPoint((width + binaryPoint).W, binaryPoint.BP))
   })
   printf(p"\n=== Update Cycle ====\n")
 
   // stage0
-  val x1_0    = RegInit(0.U(width.W))
-  val x2_0    = RegInit(0.U(width.W))
-  val sin_0   = RegInit(0.F(width.W, (width-2).BP))
-  val cos_0   = RegInit(0.F(width.W, (width-2).BP))
+  val x1_0    = RegInit(0.S(width.W))
+  val x2_0    = RegInit(0.S(width.W))
+  val sin_0   = RegInit(0.F((width).W, binaryPoint.BP))
+  val cos_0   = RegInit(0.F((width).W, binaryPoint.BP))
 
   printf(p"Stage 0 : Read Input\n")
-  printf(p"Stage 0 - x_1, x_2, sin_0, cos_0 : ${x1_0}, ${x2_0}, 0x${Hexadecimal(sin_0.asUInt)} , 0x${Hexadecimal(cos_0.asUInt)}\n")
   x1_0    := io.x1
   x2_0    := io.x2
   sin_0   := io.sin
   cos_0   := io.cos
+  printf(p"Stage 0 - x_1, x_2, sin_0, cos_0 : ${x1_0}, ${x2_0}, 0x${Hexadecimal(sin_0.asUInt)} , 0x${Hexadecimal(cos_0.asUInt)}\n")
 
   // stage1
   printf(p"Stage 1 : Cacl each comp\n")
-  val x1_1       = Wire(0.F((2 * width).W, (width-2).BP))
-  val x2_1       = Wire(0.F((2 * width).W, (width-2).BP))
-  val sin_1      = Wire(0.F((2 * width).W, (width-2).BP))
-  val cos_1      = Wire(0.F((2 * width).W, (width-2).BP))
-  val x1_sin_1   = RegInit(0.F((2 * width).W, (width-2).BP))
-  val x1_cos_1   = RegInit(0.F((2 * width).W, (width-2).BP))
+  val x1_1       = RegInit(0.S(width.W))
+  val x2_1       = RegInit(0.S(width.W))
+  val sin_1      = RegInit(0.F(width.W, binaryPoint.BP))
+  val cos_1      = RegInit(0.F(width.W, binaryPoint.BP))
+  val x1_sin_1   = RegInit(0.F((width + binaryPoint).W, binaryPoint.BP))
+  val x1_cos_1   = RegInit(0.F((width + binaryPoint).W, binaryPoint.BP))
+  val x2_sin_1   = RegInit(0.F((width + binaryPoint).W, binaryPoint.BP))
+  val x2_cos_1   = RegInit(0.F((width + binaryPoint).W, binaryPoint.BP))
 
-  // conver to Fixed point type
-  x1_1  := Cat(0.U(31.W), x1_0.asUInt) 
-  x2_1  := Cat(0.U(31.W), x2_0.asUInt) 
-  sin_1 := Cat(0.U(31.W), x1_0.asUInt) 
-  cos_1 := Cat(0.U(31.W), x2_0.asUInt) 
+  x1_1 := x1_0
+  x2_1 := x2_0
+  sin_1 := sin_0
+  cos_1 := cos_0
 
-  printf(p"Stage 1 -  x1_1,  x2_1 : 0x${Hexadecimal(x1_1.asUInt)} , 0x${Hexadecimal(x2_1.asUInt)}\n")
-  printf(p"Stage 1 - sin_1, cos_1 : 0x${Hexadecimal(sin_1.asUInt)} , 0x${Hexadecimal(cos_1.asUInt)}\n")
+  val x1_1_fixed = (x1_1 << binaryPoint).asFixedPoint(binaryPoint.BP)
+  val x2_1_fixed = (x2_1 << binaryPoint).asFixedPoint(binaryPoint.BP)
+  printf(p"Stage 1 - sin_1, cos_1           : 0x${Hexadecimal(sin_1.asSInt)} , 0x${Hexadecimal(cos_1.asSInt)}\n")
+  printf(p"Stage 1 - x1_1_fixed, x1_2_fixed : 0x${Hexadecimal(x1_1_fixed.asUInt)} , 0x${Hexadecimal(x2_1_fixed.asUInt)}\n")
+  printf(p"Stage 1 - x1/2_1_fixed Size      : ${x1_1_fixed.getWidth} , ${x2_1_fixed.getWidth}\n")
 
-  /*
-  val x2_sin_1   = RegInit(0.F(width.W, (width-2).BP))
-  val x2_cos_1   = RegInit(0.F(width.W, (width-2).BP))
+  x1_sin_1 := x1_1_fixed * sin_1 // -10
+  x1_cos_1 := x1_1_fixed * cos_1 // 10
+  x2_sin_1 := x2_1_fixed * sin_1 // -10
+  x2_cos_1 := x2_1_fixed * cos_1 // 10
+  printf(p"Stage 1 - x1_sin_1, x1_cos_1 : 0x${Hexadecimal(x1_sin_1.asUInt)} , 0x${Hexadecimal(x1_cos_1.asUInt)}\n")
+  printf(p"Stage 1 - x2_sin_1, x2_cos_1 : 0x${Hexadecimal(x2_sin_1.asUInt)} , 0x${Hexadecimal(x2_cos_1.asUInt)}\n")
+  printf(p"Stage 1 - x1/2_sin/cos_1 Size: ${x1_sin_1.getWidth} , ${x1_cos_1.getWidth}, ${x2_sin_1.getWidth} , ${x2_cos_1.getWidth}\n")
 
-  //x1_sin_1 := x1_0 * sin_0
-  //x1_cos_1 := x1_0 * cos_0
-  x2_sin_1 := x2_0 * sin_0
-  x2_cos_1 := x2_0 * cos_0
-  */
-  //printf(p"Stage 1 - x1_sin_1, x1_cos_1 : 0x${Hexadecimal(x1_sin_1.asUInt)} , 0x${Hexadecimal(x1_cos_1.asUInt)}\n")
-  //printf(p"Stage 1 - x2_sin_1, x2_cos_1 : 0x${Hexadecimal(x2_sin_1.asUInt)} , 0x${Hexadecimal(x2_cos_1.asUInt)}\n")
+  val x1_hat_2   = RegInit(0.F((width + binaryPoint).W, binaryPoint.BP))
+  val x2_hat_2   = RegInit(0.F((width + binaryPoint).W, binaryPoint.BP))
 
-  //stage2
+  x1_hat_2 := x1_cos_1 - x2_sin_1
+  x2_hat_2 := x2_cos_1 + x1_sin_1
+  printf(p"Stage 1 - x1_hat_2, x2_hat_1 : 0x${Hexadecimal(x1_hat_2.asUInt)} , 0x${Hexadecimal(x2_hat_2.asUInt)}\n")
+
+  io.x1hat := x1_hat_2
+  io.x2hat := x2_hat_2
+  printf(p"Stage 1 - io.x1hat, io.x2hat : 0x${Hexadecimal(io.x1hat.asUInt)} , 0x${Hexadecimal(io.x2hat.asUInt)}\n")
+
 }
