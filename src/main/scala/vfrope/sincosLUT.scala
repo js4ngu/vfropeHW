@@ -49,7 +49,8 @@ class SinCosLUTINT(width:Int) extends Module {
 
 class SinCosLUT(width: Int, binaryPoint: Int, lutSize: Int) extends Module {
     val io = IO(new Bundle {
-        val angle =  Input(UInt(width.W)) // Input angle in fixed point
+        //val angle =  Input(UInt(width.W)) // Input angle in fixed point
+        val angle = Input(FixedPoint(width.W, binaryPoint.BP)) // Input angle in fixed point (0 to 2)
         val sin   = Output(FixedPoint(width.W, binaryPoint.BP)) // Output sine in fixed point
         val cos   = Output(FixedPoint(width.W, binaryPoint.BP)) // Output cosine in fixed point
     })
@@ -58,10 +59,16 @@ class SinCosLUT(width: Int, binaryPoint: Int, lutSize: Int) extends Module {
     val sinLUT = VecInit(Seq.tabulate(lutSize)(i => FixedPoint.fromDouble(math.sin(2 * math.Pi * i / lutSize), width.W, binaryPoint.BP)))
     val cosLUT = VecInit(Seq.tabulate(lutSize)(i => FixedPoint.fromDouble(math.cos(2 * math.Pi * i / lutSize), width.W, binaryPoint.BP)))
 
-    // Convert SInt angle to UInt, and ensure it is within LUT bounds
-    val index = (io.angle.abs().asUInt())
+    // Scale the input angle to match the LUT range
+    val lutSizeFixed = FixedPoint.fromDouble(lutSize.toDouble / 2.0, (width + binaryPoint).W, binaryPoint.BP)
+    val angle_scaled = (io.angle * lutSizeFixed).asUInt()
+    val angle_scaled_int = angle_scaled((binaryPoint * 2 + width - 1), (binaryPoint * 2))
+
+    //printf(p"angle_scaled: 0x${Hexadecimal(angle_scaled_int)}, bit size: ${angle_scaled_int.getWidth}\n")
+
+    // val fractionalPart = angle_scaled.asUInt()(binaryPoint - 1, 0).asFixedPoint(binaryPoint.BP)
 
     // Use the index to access the LUT
-    io.sin := sinLUT(index)
-    io.cos := cosLUT(index)
+    io.sin := sinLUT(angle_scaled_int)
+    io.cos := cosLUT(angle_scaled_int)
 }

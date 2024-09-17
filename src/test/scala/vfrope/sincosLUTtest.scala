@@ -37,15 +37,15 @@ class SinCosLUTINTTest extends AnyFlatSpec with ChiselScalatestTester {
 class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "SinCosLUT"
   it should "calculate sin and cos correctly for various angles" in {
-    test(new SinCosLUT(32,28,2048)) { dut =>
-      val testAngles = Seq( 0, 256, 512, 1024, 1563, 2048)
+    test(new SinCosLUT(32,28,4096)) { dut =>
+      val testAngles = Seq( 0, 0.25, 0.5, 1.0, 1.75, 2.0)
       for (angle <- testAngles) {
-        dut.io.angle.poke(angle.U)
+        dut.io.angle.poke(FixedPoint.fromDouble(angle, 32.W, 28.BP))
+        dut.clock.step()
         val sinOut = dut.io.sin.peek().litValue()
         val cosOut = dut.io.cos.peek().litValue()
-        
         // Convert BigInt to Hexadecimal String
-        println(f"Angle: $angle, Sin: 0x${sinOut}%x, Cos: 0x${cosOut}%x")
+        println(f"Angle: $angle, Sin: ${sinOut}%x, Cos: ${cosOut}%x")
       }
     }
   }
