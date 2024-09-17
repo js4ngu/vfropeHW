@@ -83,36 +83,61 @@ class RoPEcoreInnerLUT(width: Int, binaryPoint: Int, LutSize: Int) extends Modul
     val m         = Input(UInt(width.W))
     val i         = Input(UInt(width.W))
   })
-
-  val inX1      = RegInit(0.S(width.W))
-  val inX2      = RegInit(0.S(width.W))
+  printf(p"\n==== Cycle update ====\n")
+  //추후에 Enable 신호 FWD 하는 방식으로 제어하게 개선
+  val X1_0      = RegInit(0.S(width.W))
+  val X2_0      = RegInit(0.S(width.W))
+  val X1hat_0   = RegInit(0.S(width.W))
+  val X2hat_0   = RegInit(0.S(width.W))
   val inM       = RegInit(0.U(width.W))
   val inI       = RegInit(0.U(width.W))
   val inTheta   = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
   val m_theta_i = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
 
-  inX1    := io.x1
-  inX2    := io.x2
+  X1_0    := io.x1
+  X2_0    := io.x2
   inM     := io.m
   inI     := io.i
   inTheta := io.theta
 
   val FrontCore = Module(new RoPEfrontCore(width, binaryPoint, LutSize))
-  FrontCore.io.x1     := inX1
-  FrontCore.io.x2     := inX1
+  FrontCore.io.x1     := X1_0
+  FrontCore.io.x2     := X2_0
   FrontCore.io.m      := inM
   FrontCore.io.i      := inI
   FrontCore.io.theta  := inTheta
   m_theta_i           := FrontCore.io.m_theta_i 
+  X1hat_0             := FrontCore.io.x1hat
+  X2hat_0             := FrontCore.io.x2hat
 
-  printf(p"m_theta_i: ${Hexadecimal(m_theta_i.asUInt())}\n")
+  printf(p"m_theta_i, x1, x2 : ${Hexadecimal(m_theta_i.asUInt())} ${Hexadecimal(X1hat_0)} ${Hexadecimal(X2hat_0)}\n")
 
-  val SinCosLUT = Module(new SinCosLUT(width, binaryPoint, LutSize))
-  val sin   = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
-  val cos   = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
+  val SinCosLUT = Module(new SinCosLUT(width, binaryPoint, (2^LutSize)))
+  val sin       = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
+  val cos       = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
+  val X1_1      = RegInit(0.S(width.W))
+  val X2_1      = RegInit(0.S(width.W))
+  val X1hat_1   = RegInit(0.S(width.W))
+  val X2hat_1   = RegInit(0.S(width.W))
+
   SinCosLUT.io.angle  := m_theta_i
+  SinCosLUT.io.x1     := X1hat_0
+  SinCosLUT.io.x2     := X2hat_0
   sin                 := SinCosLUT.io.sin
   cos                 := SinCosLUT.io.cos
-  printf(p"sin, cos : ${Hexadecimal(sin.asUInt())} ${Hexadecimal(cos.asUInt())}\n")
+  X1hat_1             := SinCosLUT.io.x1hat
+  X2hat_1             := SinCosLUT.io.x2hat
 
+  printf(p"sin, cos, x1, x2: ${Hexadecimal(sin.asUInt())} ${Hexadecimal(cos.asUInt())} ${Hexadecimal(X1hat_1)} ${Hexadecimal(X2hat_1)}\n")
+
+  val BackCore = Module(new RoPEBackCore(width, binaryPoint))
+  val X1hat_2   = RegInit(FixedPoint.fromDouble(0.0, (width + binaryPoint).W, binaryPoint.BP))
+  val X2hat_2   = RegInit(FixedPoint.fromDouble(0.0, (width + binaryPoint).W, binaryPoint.BP))
+  BackCore.io.x1  := X1hat_1
+  BackCore.io.x2  := X2hat_1
+  BackCore.io.sin := sin
+  BackCore.io.cos := cos
+  X1hat_2         := BackCore.io.x1hat
+  X2hat_2         := BackCore.io.x2hat
+  printf(p"x1, x2: ${Hexadecimal(X1hat_2.asUInt)} ${Hexadecimal(X2hat_2.asUInt)}\n")
 }

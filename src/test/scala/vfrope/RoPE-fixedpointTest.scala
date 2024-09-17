@@ -75,7 +75,7 @@ class RoPEcoreInnerLUTtest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.i.poke(i.U)  // Poke i as UInt
 
         // Step the clock to simulate one cycle
-        dut.clock.step(2)
+        dut.clock.step(7)
       }
     }
   }
