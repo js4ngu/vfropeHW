@@ -26,7 +26,7 @@ class RoPEfrontCoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.i.poke(i.U)  // Poke i as UInt
 
         // Step the clock to simulate one cycle
-        dut.clock.step(5)
+        dut.clock.step()
       }
     }
   }
@@ -48,7 +48,7 @@ class RoPEBackCoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.cos.poke(FixedPoint.fromDouble(cos, 32.W, 28.BP))  // Increased width to accommodate theta
 
         // Step the clock to simulate one cycle
-        dut.clock.step(5)
+        dut.clock.step()
       }
     }
   }

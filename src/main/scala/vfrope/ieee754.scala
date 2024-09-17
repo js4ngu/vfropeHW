@@ -141,42 +141,51 @@ class FP32Adder extends Module {
 }
 
 
-
 class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
     val fixedInput = Input(FixedPoint(width.W, binaryPoint.BP))
-    val ieeeOutput = Output(UInt(32.W)) // IEEE 754 single-precision (32-bit)
+    val ieeeOutput = Output(UInt(32.W))
   })
 
-  // Extract sign bit
-  val sign = io.fixedInput.asUInt.head(1)
+  val sign = io.fixedInput(width - 1)
+  val absValue = Mux(sign, -io.fixedInput, io.fixedInput).asUInt
+  val integerPart = absValue >> binaryPoint
+  val fractionalPart = absValue(binaryPoint - 1, 0)
 
-  // Convert FixedPoint to absolute value
-  val absVal = Mux(io.fixedInput < 0.F(width.W, binaryPoint.BP), -io.fixedInput, io.fixedInput)
+  printf("Input: %x, Sign: %d, AbsValue: %x\n", io.fixedInput.asUInt, sign, absValue)
+  printf("IntegerPart: %x, FractionalPart: %x\n", integerPart, fractionalPart)
 
-  // Consider adding a small tolerance for rounding errors (optional)
-  val tolerance = 1.0.F(width.W, binaryPoint.BP) / (1 << 5).F(width.W, binaryPoint.BP) // Adjust tolerance as needed
+  val leadingZeros = PriorityEncoder(Reverse(absValue))
+  val normalizedValue = (absValue << leadingZeros)(width - 1, 0)
 
-  // Shift the fixed-point value with tolerance consideration
-  val shiftedAbsVal = Mux(absVal.asUInt >= tolerance, absVal.asUInt >> (binaryPoint - 23).U, 0.U)(22, 0)
+  printf("LeadingZeros: %d, NormalizedValue: %x\n", leadingZeros, normalizedValue)
 
-  // Adjust exponent based on the number of bits shifted
-  val exponentShift = shiftedAbsVal.getWidth.U - 23.U // Calculate shift based on mantissa size
-  val exponent = Mux(exponentShift >= 0.U, 127.U + exponentShift, 127.U) // IEEE 754 bias is 127
+  val exponentBias = 127.U
+  val exponent = Wire(UInt(8.W))
+  val mantissa = Wire(UInt(23.W))
 
-  // Combine sign, exponent, and mantissa for IEEE 754
-  val ieeeExponent = exponent(6, 0) // Extract all 7 bits of the exponent
-  val ieee754 = Cat(sign, ieeeExponent, shiftedAbsVal) // Combine sign, exponent, and mantissa
+  when(absValue === 0.U) {
+    exponent := 0.U
+    mantissa := 0.U
+  }.otherwise {
+    val adjustedLeadingZeros = Mux(integerPart === 0.U, leadingZeros - (width - binaryPoint).U, leadingZeros)
+    exponent := exponentBias + (width - binaryPoint - 1).U - adjustedLeadingZeros
+    mantissa := Mux(integerPart === 0.U,
+      normalizedValue(width - 2, width - 24) << 1,
+      normalizedValue(width - 2, width - 24)
+    )
+  }
 
-  // Output IEEE 754 format
-  io.ieeeOutput := ieee754
+  printf("Exponent: %d\n", exponent)
+  printf("Mantissa: %x\n", mantissa)
+  printf("Width: %d, BinaryPoint: %d\n", width.U, binaryPoint.U)
+  printf("Adjusted LeadingZeros: %d\n", Mux(integerPart === 0.U, leadingZeros - (width - binaryPoint).U, leadingZeros))
+  
+  val result = Cat(sign, exponent, mantissa)
+  io.ieeeOutput := result
 
-  // Print debug information (optional)
-  // ...
+  printf("Final IEEE 754 result: %x\n\n", result)
 }
-
-
-
 
 
 class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module {
