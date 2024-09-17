@@ -12,9 +12,8 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
     val m         = Input(UInt(width.W))
     val i         = Input(UInt(width.W))
     val m_theta_i = Output(FixedPoint(width.W, binaryPoint.BP))
+    //val m_theta_i = Output(UInt(width.W))
   })
-
-  printf(p"\n=== Update Cycle ====\n")
 
   // stage0: 입력값 저장 및 연산 준비
   val theta_0 = io.theta
@@ -36,10 +35,8 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
   val paddingSize = width - reduceFraction.getWidth - 1
   val combinedUInt = Cat(signBit, 0.U(paddingSize.W), reduceFraction.asUInt())
   io.m_theta_i := combinedUInt.asFixedPoint(binaryPoint.BP)
-
   printf(p"Final Output - normaized_m_theta_i_2 : 0x${Hexadecimal(io.m_theta_i.asUInt)}\n")
 }
-
 
 class RoPEBackCore(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
@@ -70,4 +67,48 @@ class RoPEBackCore(width: Int, binaryPoint: Int) extends Module {
   io.x2hat := x2_hat
 
   printf(p"Final Output - io.x1hat, io.x2hat : 0x${Hexadecimal(io.x1hat.asUInt)}, 0x${Hexadecimal(io.x2hat.asUInt)}\n")
+}
+
+
+
+class RoPEcoreInnerLUT(width: Int, binaryPoint: Int, LutSize: Int) extends Module { // Module 상속
+  val io = IO(new Bundle {
+    val x1        = Input(SInt(width.W))
+    val x2        = Input(SInt(width.W))
+    val theta     = Input(FixedPoint(width.W, binaryPoint.BP))
+    val m         = Input(UInt(width.W))
+    val i         = Input(UInt(width.W))
+  })
+
+  val inX1      = RegInit(0.S(width.W))
+  val inX2      = RegInit(0.S(width.W))
+  val inM       = RegInit(0.U(width.W))
+  val inI       = RegInit(0.U(width.W))
+  val inTheta   = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
+  val m_theta_i = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
+
+  inX1    := io.x1
+  inX2    := io.x2
+  inM     := io.m
+  inI     := io.i
+  inTheta := io.theta
+
+  val FrontCore = Module(new RoPEfrontCore(width, binaryPoint, LutSize))
+  FrontCore.io.x1     := inX1
+  FrontCore.io.x2     := inX1
+  FrontCore.io.m      := inM
+  FrontCore.io.i      := inI
+  FrontCore.io.theta  := inTheta
+  m_theta_i           := FrontCore.io.m_theta_i 
+
+  printf(p"m_theta_i: ${Hexadecimal(m_theta_i.asUInt())}\n")
+
+  val SinCosLUT = Module(new SinCosLUT(width, binaryPoint, LutSize))
+  val sin   = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
+  val cos   = RegInit(0.F(width.W, binaryPoint.BP))  // FixedPoint initialization
+  SinCosLUT.io.angle  := m_theta_i
+  sin                 := SinCosLUT.io.sin
+  cos                 := SinCosLUT.io.cos
+  printf(p"sin, cos : ${Hexadecimal(sin.asUInt())} ${Hexadecimal(cos.asUInt())}\n")
+
 }

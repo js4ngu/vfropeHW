@@ -25,6 +25,8 @@ RoPEfrontCoreTest:
 
 RoPEbackCoreTest:
 	sbt "testOnly vfrope.RoPEBackCoreTest"
+RoPECoreInnerTest:
+	sbt "testOnly vfrope.RoPEcoreInnerLUTtest"
 
 #RoPE모듈관련
 RoPEModule_Int:
