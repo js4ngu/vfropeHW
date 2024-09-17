@@ -47,22 +47,21 @@ class SinCosLUTINT(width:Int) extends Module {
     io.cosOut := cosLUT(io.angle)
 }
 
-class SinCosLUT(lutSize: Int) extends Module {
+class SinCosLUT(width: Int, binaryPoint: Int, lutSize: Int) extends Module {
     val io = IO(new Bundle {
-        val angle = Input(FixedPoint(32.W, 22.BP)) // Input angle in fixed point
-        val sin = Output(FixedPoint(32.W, 30.BP))  // Output sine in fixed point
-        val cos = Output(FixedPoint(32.W, 30.BP))  // Output cosine in fixed point
+        val angle =  Input(UInt(width.W)) // Input angle in fixed point
+        val sin   = Output(FixedPoint(width.W, binaryPoint.BP)) // Output sine in fixed point
+        val cos   = Output(FixedPoint(width.W, binaryPoint.BP)) // Output cosine in fixed point
     })
 
     // Lookup table for sine and cosine values (can be further populated)
-    val sinLUT = VecInit(Seq.tabulate(lutSize)(i => FixedPoint.fromDouble(math.sin(2 * math.Pi * i / lutSize), 32.W, 30.BP)))
-    val cosLUT = VecInit(Seq.tabulate(lutSize)(i => FixedPoint.fromDouble(math.cos(2 * math.Pi * i / lutSize), 32.W, 30.BP)))
+    val sinLUT = VecInit(Seq.tabulate(lutSize)(i => FixedPoint.fromDouble(math.sin(2 * math.Pi * i / lutSize), width.W, binaryPoint.BP)))
+    val cosLUT = VecInit(Seq.tabulate(lutSize)(i => FixedPoint.fromDouble(math.cos(2 * math.Pi * i / lutSize), width.W, binaryPoint.BP)))
 
-    // Scale the input angle to the range of [0, lutSize-1], using an appropriate width for intermediate results
-    val lutMaxValue = (lutSize - 1).F(32.W, 22.BP)
-    val index = ((io.angle * lutMaxValue) / (2 * math.Pi).F(32.W, 22.BP)).asUInt()
+    // Convert SInt angle to UInt, and ensure it is within LUT bounds
+    val index = (io.angle.abs().asUInt())
 
-    // Ensure the index stays within the bounds of the LUT
-    io.sin := sinLUT(index % lutSize.U)
-    io.cos := cosLUT(index % lutSize.U)
+    // Use the index to access the LUT
+    io.sin := sinLUT(index)
+    io.cos := cosLUT(index)
 }

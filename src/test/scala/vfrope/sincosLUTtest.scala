@@ -33,44 +33,20 @@ class SinCosLUTINTTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-/*
+
 class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "SinCosLUT"
-
   it should "calculate sin and cos correctly for various angles" in {
-    test(new SinCosLUT(lutSize = 1024)) { dut =>
-      def toFixedPoint(d: Double): BigInt = {
-        val scaled = (d * (1L << 22)).round
-        if (scaled >= 0) scaled else scaled + (1L << 32)
-      }
-
-      def fromFixedPoint(bits: BigInt): Double = {
-        val signed = if (bits >= (1L << 31)) bits - (1L << 32) else bits
-        signed.toDouble / (1L << 22)
-      }
-
-      def approxEqual(a: Double, b: Double, tolerance: Double = 0.01): Boolean = {
-        (a - b).abs < tolerance
-      }
-
-      val testAngles = Seq( 0, 2* math.Pi/8, 2* math.Pi/7, 2* math.Pi/6,
-                               2* math.Pi/5, 2* math.Pi/4, 2* math.Pi/3,
-                               2* math.Pi/2, 2* math.Pi)
-
+    test(new SinCosLUT(32,28,2048)) { dut =>
+      val testAngles = Seq( 0, 256, 512, 1024, 1563, 2048)
       for (angle <- testAngles) {
-        val fixedAngle = toFixedPoint(angle)
-        dut.io.angle.poke(FixedPoint.fromBigInt(fixedAngle, 32.W, 22.BP))
-        dut.clock.step()
+        dut.io.angle.poke(angle.U)
+        val sinOut = dut.io.sin.peek().litValue()
+        val cosOut = dut.io.cos.peek().litValue()
         
-        val sinResult = fromFixedPoint(dut.io.sin.peek().litValue)
-        val cosResult = fromFixedPoint(dut.io.cos.peek().litValue)
-        
-        val expectedSin = math.sin(angle)
-        val expectedCos = math.cos(angle)
-        
-        println(f"Angle: $angle%.4f, Sin: $sinResult%.4f (expected: $expectedSin%.4f), Cos: $cosResult%.4f (expected: $expectedCos%.4f)")
+        // Convert BigInt to Hexadecimal String
+        println(f"Angle: $angle, Sin: 0x${sinOut}%x, Cos: 0x${cosOut}%x")
       }
     }
   }
 }
-*/

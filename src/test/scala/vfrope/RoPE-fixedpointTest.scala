@@ -36,7 +36,8 @@ class RoPEBackCoreTest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPE_core_FP32" should "run first" in {
     test(new RoPEBackCore(32, 28)) { dut =>
       val testCases = Seq(
-        (10, 10, -1, 1)
+        (10, 10, -1, 1),
+        (10, 10, -1, 2)
       )
       for ((x1, x2, sin, cos) <- testCases) {
         println(s"===== TEST CASE ====")
