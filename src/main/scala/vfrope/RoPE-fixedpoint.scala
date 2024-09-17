@@ -12,7 +12,8 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
     val m         = Input(UInt(width.W))
     val i         = Input(UInt(width.W))
     val m_theta_i = Output(FixedPoint(width.W, binaryPoint.BP))
-    //val m_theta_i = Output(UInt(width.W))
+    val x1hat     = Output(SInt(width.W))
+    val x2hat     = Output(SInt(width.W))
   })
 
   // stage0: 입력값 저장 및 연산 준비
@@ -34,8 +35,11 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
   // 최종 결과 생성 (부호 비트와 고정 소수점 결합)
   val paddingSize = width - reduceFraction.getWidth - 1
   val combinedUInt = Cat(signBit, 0.U(paddingSize.W), reduceFraction.asUInt())
+
   io.m_theta_i := combinedUInt.asFixedPoint(binaryPoint.BP)
-  printf(p"Final Output - normaized_m_theta_i_2 : 0x${Hexadecimal(io.m_theta_i.asUInt)}\n")
+  io.x1hat := x1_0
+  io.x2hat := x2_0
+  // printf(p"Final Output - io.x1hat, io.x2hat, io.m_theta_i : 0x${Hexadecimal(io.x1hat.asUInt)}, 0x${Hexadecimal(io.x2hat.asUInt)}, 0x${Hexadecimal(io.m_theta_i.asUInt)}\n")
 }
 
 class RoPEBackCore(width: Int, binaryPoint: Int) extends Module {

@@ -5,7 +5,7 @@ import chisel3.util._
 
 class RoPEModule_Int(width:Int) extends Module{
   val io = IO(new Bundle{
-    val in = Input(Vec(2, UInt(width.W)))
+    val in    = Input(Vec(2, UInt(width.W)))
     val m     = Input(UInt(width.W))
     val theta = Input(UInt(width.W))   
     val i     = Input(UInt(width.W))
