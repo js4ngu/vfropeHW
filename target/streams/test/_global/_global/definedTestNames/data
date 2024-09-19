@@ -1,1 +1,0 @@
-["vfrope.FP32AdderTest","vfrope.IEEE754ToFixedTest","vfrope.CombinedTestSuite","vfrope.SinCosLUTTest","vfrope.RoPEfrontCoreTest","vfrope.FP32MultiplierTest","vfrope.FixedToIEEE754Test","vfrope.ConversionTestSuite","vfrope.Int32ToFP32Test","vfrope.SinCosLUTINTTest","vfrope.RoPEModuleIntTester","vfrope.RoPEcoreInnerLUTtest","vfrope.RoPEBackCoreTest"]

@@ -39,12 +39,14 @@ def FP32MULT(a,b):
 
 
 def main():
-    a = 23.75
+    a = 1.5
+    '''
     b = 92.4
     FP32ADD(a,b)
     FP32ADD(-a,b)
     FP32ADD(a,-b)
     FP32ADD(-a,-b)
-    Uint32toIEEE754(-15)
+    '''
+    Uint32toIEEE754(a)
 
 main()

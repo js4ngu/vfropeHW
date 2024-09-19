@@ -1,7 +1,0 @@
-[0m[[0m[31merror[0m] [0m[0m/home/jongsang/vfropeHW/src/main/scala/vfrope/RoPE-fixedpoint.scala:49:190: value outEN is not a member of chisel3.Bundle{val x1: chisel3.SInt; val x2: chisel3.SInt; val theta: chisel3.experimental.FixedPoint; val m: chisel3.UInt; val i: chisel3.UInt; val inEN: chisel3.Bool; val m_theta_i: chisel3.experimental.FixedPoint; val x1hat: chisel3.SInt; val x2hat: chisel3.SInt}[0m
-[0m[[0m[31merror[0m] [0m[0m  printf(p"Final Output - io.x1hat, io.x2hat, io.m_theta_i : 0x${Hexadecimal(io.x1hat.asUInt)}, 0x${Hexadecimal(io.x2hat.asUInt)}, 0x${Hexadecimal(io.m_theta_i.asUInt)}, 0x${Hexadecimal(io.outEN.asUInt)}\n")[0m
-[0m[[0m[31merror[0m] [0m[0m                                                                                                                                                                                             ^[0m
-[0m[[0m[31merror[0m] [0m[0m/home/jongsang/vfropeHW/src/main/scala/vfrope/RoPE-fixedpoint.scala:125:41: value outEN is not a member of chisel3.Bundle{val x1: chisel3.SInt; val x2: chisel3.SInt; val theta: chisel3.experimental.FixedPoint; val m: chisel3.UInt; val i: chisel3.UInt; val inEN: chisel3.Bool; val m_theta_i: chisel3.experimental.FixedPoint; val x1hat: chisel3.SInt; val x2hat: chisel3.SInt}[0m
-[0m[[0m[31merror[0m] [0m[0m    val outEN0           = FrontCore.io.outEN[0m
-[0m[[0m[31merror[0m] [0m[0m                                        ^[0m
-[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
