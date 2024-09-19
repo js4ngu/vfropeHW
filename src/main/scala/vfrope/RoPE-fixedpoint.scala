@@ -54,33 +54,41 @@ class RoPEfrontCore(width: Int, binaryPoint: Int, LutRes: Int) extends Module {
 
 class RoPEBackCore(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
-    val x1   = Input(SInt(width.W))
-    val x2   = Input(SInt(width.W))
-    val sin  = Input(FixedPoint((width).W, binaryPoint.BP))
-    val cos  = Input(FixedPoint((width).W, binaryPoint.BP))
-    val x1hat= Output(FixedPoint((width + binaryPoint).W, binaryPoint.BP))
-    val x2hat= Output(FixedPoint((width + binaryPoint).W, binaryPoint.BP))
+    val x1    = Input(SInt(width.W))
+    val x2    = Input(SInt(width.W))
+    val sin   = Input(FixedPoint((width).W, binaryPoint.BP))
+    val cos   = Input(FixedPoint((width).W, binaryPoint.BP))
+    val inEN  = Input(Bool())
+    val x1hat = Output(FixedPoint((width + binaryPoint).W, binaryPoint.BP))
+    val x2hat = Output(FixedPoint((width + binaryPoint).W, binaryPoint.BP))
+    val outEN = Output(Bool())
   })
+  when(io.inEN) {
+    val EN_0    = io.inEN
+    // 입력값 처리 및 고정소수점 변환
+    val x1_fixed = (io.x1 << binaryPoint).asFixedPoint(binaryPoint.BP)
+    val x2_fixed = (io.x2 << binaryPoint).asFixedPoint(binaryPoint.BP)
 
-  // 입력값 처리 및 고정소수점 변환
-  val x1_fixed = (io.x1 << binaryPoint).asFixedPoint(binaryPoint.BP)
-  val x2_fixed = (io.x2 << binaryPoint).asFixedPoint(binaryPoint.BP)
+    // x1과 x2에 sin, cos 연산
+    val x1_sin = x1_fixed * io.sin
+    val x1_cos = x1_fixed * io.cos
+    val x2_sin = x2_fixed * io.sin
+    val x2_cos = x2_fixed * io.cos
 
-  // x1과 x2에 sin, cos 연산
-  val x1_sin = x1_fixed * io.sin
-  val x1_cos = x1_fixed * io.cos
-  val x2_sin = x2_fixed * io.sin
-  val x2_cos = x2_fixed * io.cos
+    // 최종 결과 계산
+    val x1_hat = x1_cos - x2_sin
+    val x2_hat = x2_cos + x1_sin
 
-  // 최종 결과 계산
-  val x1_hat = x1_cos - x2_sin
-  val x2_hat = x2_cos + x1_sin
-
-  // 출력값 설정
-  io.x1hat := x1_hat
-  io.x2hat := x2_hat
-
-  //printf(p"Final Output - io.x1hat, io.x2hat : 0x${Hexadecimal(io.x1hat.asUInt)}, 0x${Hexadecimal(io.x2hat.asUInt)}\n")
+    // 출력값 설정
+    io.x1hat := x1_hat
+    io.x2hat := x2_hat
+    io.outEN := EN_0
+  }.otherwise {
+    io.x1hat := (0.S).asFixedPoint(binaryPoint.BP)
+    io.x2hat := (0.S).asFixedPoint(binaryPoint.BP)
+    io.outEN := 0.B
+  }
+  printf(p"Final Output - io.x1hat, io.x2hat : 0x${Hexadecimal(io.x1hat.asUInt)}, 0x${Hexadecimal(io.x2hat.asUInt)}\n")
 }
 
 

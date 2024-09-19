@@ -19,8 +19,7 @@ def main():
         fixed_point_value = hex_to_fixed(i, TOTAL_BITS, FRACTIONAL_BITS)
         print(f"{i} in decimal : {fixed_point_value}")
     '''
-    hex_val = ['0x00000000000000000000000', '0x00000020000000000000000', '0x00000040000000000000000', '0x00000080000000000000000',
-               '0x000000e0000000000000000', '0x00000100000000000000000']
+    hex_val = ['0x000000010000000', '0x000000020000000']
     for i in list(hex_val):
         fixed_point_value = hex_to_fixed(i, TOTAL_BITS + FRACTIONAL_BITS, FRACTIONAL_BITS)
         print(f"{i} in decimal : {fixed_point_value}")
