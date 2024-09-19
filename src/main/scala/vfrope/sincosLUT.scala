@@ -57,7 +57,6 @@ class SinCosLUT(width: Int, binaryPoint: Int, lutSize: Int) extends Module {
         val cos       = Output(FixedPoint(width.W, binaryPoint.BP)) // Output cosine in fixed point
         val x1hat     = Output(SInt(width.W))
         val x2hat     = Output(SInt(width.W))
-        val outEN     = Output(Bool())
     })
     when(io.inEN) {
         val EN_0    = io.inEN
@@ -81,12 +80,10 @@ class SinCosLUT(width: Int, binaryPoint: Int, lutSize: Int) extends Module {
         io.cos := cosLUT(angle_scaled_int)
         io.x1hat := x1_0
         io.x2hat := x2_0
-        io.outEN := EN_0
     }.otherwise {
         io.sin   := (0.U).asFixedPoint(binaryPoint.BP)
         io.cos   := (0.U).asFixedPoint(binaryPoint.BP)
         io.x1hat := 0.S
         io.x2hat := 0.S
-        io.outEN := 0.B
     }
 }

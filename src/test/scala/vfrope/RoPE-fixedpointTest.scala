@@ -57,7 +57,6 @@ class RoPEBackCoreTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-/*
 class RoPEcoreInnerLUTtest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPEcoreInnerLUT" should "run first" in {
     test(new RoPEcoreInnerLUT(32, 28, 12)) { dut =>
@@ -77,6 +76,7 @@ class RoPEcoreInnerLUTtest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.x2.poke(x2.S)  // Poke i as UInt
         dut.io.m.poke(m.U)  // Poke m as UInt
         dut.io.i.poke(i.U)  // Poke i as UInt
+        dut.io.inEN.poke(1.B)  // Poke m as UInt
 
         // Step the clock to simulate one cycle
         dut.clock.step(7)
@@ -84,4 +84,3 @@ class RoPEcoreInnerLUTtest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
-*/
