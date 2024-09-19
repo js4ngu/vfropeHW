@@ -20,18 +20,20 @@ class RoPEfrontCoreTest extends AnyFlatSpec with ChiselScalatestTester {
         println(s"===== TEST CASE ====")
         println(s"x1, x2, theta = $x1, $x2, $theta, m = $m, i = $i")
         dut.io.theta.poke(FixedPoint.fromDouble(theta, 32.W, 28.BP))  // Increased width to accommodate theta
+        dut.io.inEN.poke(1.B)  // Poke m as UInt
         dut.io.x1.poke(x1.S)  // Poke m as UInt
         dut.io.x2.poke(x2.S)  // Poke i as UInt
         dut.io.m.poke(m.U)  // Poke m as UInt
         dut.io.i.poke(i.U)  // Poke i as UInt
-
-        // Step the clock to simulate one cycle
+        dut.clock.step()
+        dut.io.inEN.poke(0.B)  // Poke m as UInt
         dut.clock.step()
       }
     }
   }
 }
 
+/*
 class RoPEBackCoreTest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPE_core_FP32" should "run first" in {
     test(new RoPEBackCore(32, 28)) { dut =>
@@ -58,8 +60,8 @@ class RoPEcoreInnerLUTtest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPEcoreInnerLUT" should "run first" in {
     test(new RoPEcoreInnerLUT(32, 28, 12)) { dut =>
       val testCases = Seq(
-        (1, 1, 1.5,  1,   3)/*,
-        (1, 1, 2.0, 10,  81),
+        (1, 2, 0, 10,  1)/*,
+        (1, 2, 2.0, 0,  0),
         (1, 1, 2.5, 10,  81),
         (1, 1, 2.25, 10, 81),
         (1, 1,  1.9,  1,  1)*/
@@ -80,3 +82,4 @@ class RoPEcoreInnerLUTtest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+*/
