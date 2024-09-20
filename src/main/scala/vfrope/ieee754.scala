@@ -170,13 +170,14 @@ class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module {
 class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
     val fixedInput = Input(FixedPoint(width.W, binaryPoint.BP))
-  })
+    val ieeeOutput = Output(UInt(32.W)) // IEEE 754 single-precision (32-bit)
 
+  })
   val sign           = io.fixedInput(width - 1)
   val absVal         = io.fixedInput((width - 2), 0)
   
-  printf(p"Input: 0x${Hexadecimal(io.fixedInput.asUInt)}, Sign: $sign\n")
-  printf(p"Abs  : 0x${Hexadecimal(absVal)}\n")
+  //printf(p"Input: 0x${Hexadecimal(io.fixedInput.asUInt)}, Sign: $sign\n")
+  //printf(p"Abs  : 0x${Hexadecimal(absVal)}\n")
 
   val msbPos = (PriorityEncoder(io.fixedInput.asUInt)) + 1.U
   val expTemp = Wire(UInt(8.W))
@@ -185,14 +186,15 @@ class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
   expTemp := (msbPos.asUInt - binaryPoint.asUInt + 1.U)
   exp     := (expTemp + 127.U)
 
-  printf(p"Input binary : ${Binary(io.fixedInput.asUInt)}\n")
-  printf(p"MSB : $msbPos\n")
-  printf(p"exp: $expTemp\n")
-  printf(p"exp: $exp ${Binary(exp)}\n")
+  //printf(p"Input binary : ${Binary(io.fixedInput.asUInt)}\n")
+  //printf(p"MSB : $msbPos\n")
+  //printf(p"exp: $expTemp\n")
+  //printf(p"exp: $exp ${Binary(exp)}\n")
 
- val mentisa = (absVal >> (expTemp.asUInt))(15, 0) << 7.U // (binaryPoint - 1 , 0) << {23 - (binaryPoint)} : Hard coding 해야함
-  printf(p"mentisa: $mentisa ${Binary(mentisa)}\n")
+  val mentisa = (absVal >> (expTemp.asUInt))(15, 0) << 7.U // (binaryPoint - 1 , 0) << {23 - (binaryPoint)} : Hard coding 해야함
+  //printf(p"mentisa: $mentisa ${Binary(mentisa)}\n")
 
   val IEEE754 = Cat(sign, exp(7, 0), mentisa(22, 0))
-  printf(p"IEEE754 Expected (0x40600000) : 0x${Hexadecimal(IEEE754)} ${Binary(IEEE754)}\n")  
+  //printf(p"IEEE754 Expected (0x40600000) : 0x${Hexadecimal(IEEE754)} ${Binary(IEEE754)}\n")  
+  io.ieeeOutput := IEEE754
 }

@@ -93,9 +93,7 @@ class IEEE754ToFixedTest extends AnyFlatSpec with ChiselScalatestTester { // OK
   }
 }
 
-/*
 class ConversionTestSuite extends AnyFlatSpec with ChiselScalatestTester {
-
   "Fixed to IEEE 754 and IEEE 754 to Fixed" should "work correctly" in {
     // Test Fixed to IEEE 754 conversion
     test(new FixedToIEEE754(32, 28)) { dut =>
@@ -126,4 +124,3 @@ class ConversionTestSuite extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
-*/
