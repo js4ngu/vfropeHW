@@ -140,6 +140,7 @@ class FP32Adder extends Module {
   //printf(p"Result: 0x${Hexadecimal(io.result)}\n")
 }
 
+/*
 class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module { //작동
   val io = IO(new Bundle {
     val ieeeInput = Input(UInt(32.W)) // IEEE 754 single-precision (32-bit)
@@ -165,7 +166,6 @@ class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module { //작동
 
   io.fixedOutput := fixedValue
 }
-/*
 
 class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
@@ -211,7 +211,6 @@ class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
   printf(p"Mantissa: 0x${Hexadecimal(mantissa)}\n")
   printf(p"IEEE754 Output: 0x${Hexadecimal(ieeeOutput)}\n")
 }
-*/
 
 
 class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
@@ -265,3 +264,4 @@ class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
   // Final debug prints
   printf(p"IEEE754 Expected (0x40dc7ae1) : 0x${Hexadecimal(IEEE754)} ${Binary(IEEE754)}\n")
 }
+*/
