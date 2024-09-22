@@ -30,7 +30,7 @@ class Int32ToFP32 extends Module { //검증됨
   io.outIEEE := outIEEE
 }
 
-class FP32Multiplier extends Module {
+class FP32Multiplier extends Module { //검증됨
   val io = IO(new Bundle {
     val a = Input(UInt(32.W))
     val b = Input(UInt(32.W))
