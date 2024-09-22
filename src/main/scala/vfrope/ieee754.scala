@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 import chisel3.experimental.FixedPoint  // This is necessary to use FixedPoint in Chisel
 
-class Int32ToFP32 extends Module {
+class Int32ToFP32 extends Module { //검증됨
   val io = IO(new Bundle {
     val inInt = Input(SInt(32.W))
     val outIEEE = Output(UInt(32.W)) // IEEE 754 형식의 결과 출력
@@ -140,7 +140,7 @@ class FP32Adder extends Module {
   //printf(p"Result: 0x${Hexadecimal(io.result)}\n")
 }
 
-class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module {
+class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module { //작동
   val io = IO(new Bundle {
     val ieeeInput = Input(UInt(32.W)) // IEEE 754 single-precision (32-bit)
     val fixedOutput = Output(FixedPoint(width.W, binaryPoint.BP))
@@ -165,36 +165,103 @@ class IEEE754ToFixed(width: Int, binaryPoint: Int) extends Module {
 
   io.fixedOutput := fixedValue
 }
+/*
+
+class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
+  val io = IO(new Bundle {
+    val fixedInput = Input(FixedPoint(width.W, binaryPoint.BP))
+    val ieeeOutput = Output(UInt(32.W)) // IEEE 754 single-precision (32-bit)
+  })
+
+  // Step 1: Extract the sign
+  val sign = io.fixedInput(width - 1)
+  val absVal = Mux(sign === 1.U, -io.fixedInput, io.fixedInput)
+
+  // Step 2: Find the MSB position of the absolute value
+  val absUInt = absVal.asUInt
+  val msbPos = PriorityEncoder(Reverse(absUInt))
+
+  // Step 3: Calculate the exponent
+  val exponent = Wire(UInt(8.W))
+  val expBias = 127.U
+  val normalizedExp = msbPos.asUInt - binaryPoint.U
+
+  // Print statement to debug exponent calculations
+  printf(p"DEBUG: absVal = 0x${Hexadecimal(absUInt)}, msbPos = $msbPos, normalizedExp = $normalizedExp\n")
+
+  exponent := normalizedExp + expBias
+
+  // Additional debug print to check the final exponent
+  printf(p"DEBUG: Exponent (with bias): 0x${Hexadecimal(exponent)}\n")
+
+  // Step 4: Normalize mantissa by shifting based on msbPos
+  val mantissaShift = (absUInt << (31.U - msbPos))(width - 2, 0)
+  val mantissa = mantissaShift(22, 0) // IEEE754 single precision mantissa is 23 bits
+
+  // Step 5: Assemble the IEEE 754 output
+  val ieeeOutput = Cat(sign, exponent, mantissa)
+  
+  // Output the result
+  io.ieeeOutput := ieeeOutput
+
+  // Debug prints for other components
+  printf(p"Input: 0x${Hexadecimal(io.fixedInput.asUInt)}, Sign: $sign\n")
+  printf(p"AbsVal: 0x${Hexadecimal(absUInt)}, MSB: $msbPos\n")
+  printf(p"Exponent: 0x${Hexadecimal(exponent)}\n")
+  printf(p"Mantissa: 0x${Hexadecimal(mantissa)}\n")
+  printf(p"IEEE754 Output: 0x${Hexadecimal(ieeeOutput)}\n")
+}
+*/
 
 
 class FixedToIEEE754(width: Int, binaryPoint: Int) extends Module {
   val io = IO(new Bundle {
     val fixedInput = Input(FixedPoint(width.W, binaryPoint.BP))
     val ieeeOutput = Output(UInt(32.W)) // IEEE 754 single-precision (32-bit)
-
   })
-  val sign           = io.fixedInput(width - 1)
-  val absVal         = io.fixedInput((width - 2), 0)
+
+  // Step 1: Extract the sign
+  val sign = io.fixedInput(width - 1)
+  val absVal = Mux(sign === 1.U, -io.fixedInput, io.fixedInput)
+
+  // Debug prints
+  printf(p"Input: 0x${Hexadecimal(io.fixedInput.asUInt)}, Sign: $sign\n")
+  printf(p"Abs  : 0x${Hexadecimal(absVal.asUInt)}\n")
+
+  // Step 2: Find the MSB position of the absolute value
+  val absUInt = absVal.asUInt
+  val msbPos = width.U - PriorityEncoder(Reverse(absUInt)) - 1.U // Adjusted MSB detection logic
+
+  // Print statement to debug exponent calculation at the beginning
+  printf(p"DEBUG START: Input = 0x${Hexadecimal(io.fixedInput.asUInt)}, AbsVal = 0x${Hexadecimal(absUInt)}, MSB Position = $msbPos\n")
+
+  // Step 3: Calculate the exponent using signed arithmetic
+  val normalizedExp = Wire(SInt(16.W)) // Use sufficient width to prevent overflow
+  normalizedExp := msbPos.asSInt - binaryPoint.S + 1.S
+
+  // Print statement to debug exponent calculations
+  printf(p"DEBUG: msbPos = $msbPos, normalizedExp = $normalizedExp\n")
+
+  // Calculate final exponent with bias
+  val exp = Wire(UInt(8.W))
+  exp := (normalizedExp + 127.S).asUInt
+
+  // Additional debug print to check the final exponent
+  printf(p"DEBUG: Final Exponent (with bias): 0x${Hexadecimal(exp)}\n")
+
+  // Step 4: Normalize mantissa by shifting based on msbPos
+  val mantissaShift = absUInt << (31.U - msbPos) // Adjust shift amount
+  val mantissa = mantissaShift(width - 2, width - 25) // Extract 23 bits for mantissa
+
+  // Debug prints for mantissa
+  printf(p"DEBUG: Mantissa Shifted: 0x${Hexadecimal(mantissaShift.asUInt)}, Mantissa: 0x${Hexadecimal(mantissa)}\n")
+
+  // Step 5: Assemble the IEEE 754 output
+  val IEEE754 = Cat(sign, exp, mantissa)
   
-  //printf(p"Input: 0x${Hexadecimal(io.fixedInput.asUInt)}, Sign: $sign\n")
-  //printf(p"Abs  : 0x${Hexadecimal(absVal)}\n")
-
-  val msbPos = (PriorityEncoder(io.fixedInput.asUInt)) + 1.U
-  val expTemp = Wire(UInt(8.W))
-  val exp     = Wire(UInt(8.W))
-
-  expTemp := (msbPos.asUInt - binaryPoint.asUInt + 1.U)
-  exp     := (expTemp + 127.U)
-
-  //printf(p"Input binary : ${Binary(io.fixedInput.asUInt)}\n")
-  //printf(p"MSB : $msbPos\n")
-  //printf(p"exp: $expTemp\n")
-  //printf(p"exp: $exp ${Binary(exp)}\n")
-
-  val mentisa = (absVal >> (expTemp.asUInt))(15, 0) << 7.U // (binaryPoint - 1 , 0) << {23 - (binaryPoint)} : Hard coding 해야함
-  //printf(p"mentisa: $mentisa ${Binary(mentisa)}\n")
-
-  val IEEE754 = Cat(sign, exp(7, 0), mentisa(22, 0))
-  //printf(p"IEEE754 Expected (0x40600000) : 0x${Hexadecimal(IEEE754)} ${Binary(IEEE754)}\n")  
+  // Output the result
   io.ieeeOutput := IEEE754
+
+  // Final debug prints
+  printf(p"IEEE754 Expected (0x40dc7ae1) : 0x${Hexadecimal(IEEE754)} ${Binary(IEEE754)}\n")
 }

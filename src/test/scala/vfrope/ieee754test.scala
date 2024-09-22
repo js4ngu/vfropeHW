@@ -9,7 +9,7 @@ import chisel3.experimental.FixedPoint  // This is necessary to use FixedPoint i
 class Int32ToFP32Test extends AnyFlatSpec with ChiselScalatestTester {
     "Int32ToFP32" should "convert integer to IEEE 754" in {
         test(new Int32ToFP32()) { dut =>
-            dut.io.inInt.poke(-15.S) // 0x41700000
+            dut.io.inInt.poke(-49551.S) // 0x41700000
             dut.clock.step()
             println(s"Result: 0x${dut.io.outIEEE.peek().litValue.toString(16)}")
         }
@@ -74,11 +74,11 @@ class FP32AdderTest extends AnyFlatSpec with ChiselScalatestTester {
 
 class FixedToIEEE754Test extends AnyFlatSpec with ChiselScalatestTester {
   "Fixed to IEEE 754" should "work correctly" in {
-    test(new FixedToIEEE754(32, 16)) { dut =>
+    test(new FixedToIEEE754(32, 28)) { dut =>
       // Use a smaller value that fits within 32 bits
-      dut.io.fixedInput.poke(3.5.F(32.W, 16.BP))
+      dut.io.fixedInput.poke(6.89.F(32.W, 28.BP))
       dut.clock.step() // Simulate one clock cycle
-      //println(s"IEEE 754 Output: 0x${dut.io.ieeeOutput.peek().litValue.toString(16)}")
+      println(s"IEEE 754 Output: 0x${dut.io.ieeeOutput.peek().litValue.toString(16)}")
     }
   }
 }
@@ -98,7 +98,7 @@ class ConversionTestSuite extends AnyFlatSpec with ChiselScalatestTester {
     // Test Fixed to IEEE 754 conversion
     test(new FixedToIEEE754(32, 28)) { dut =>
       val testCases = Seq(
-        (1.5, "3fc00000")
+        (3.5, "40600000")
       )
 
       for ((fixedVal, expectedIeee) <- testCases) {
@@ -112,7 +112,7 @@ class ConversionTestSuite extends AnyFlatSpec with ChiselScalatestTester {
     // Test IEEE 754 to Fixed conversion
     test(new IEEE754ToFixed(32, 28)) { dut =>
       val testCases = Seq(
-        ("3fc00000", 1.5)
+        ("40600000", 3.5)
       )
 
       for ((ieeeVal, expectedFixed) <- testCases) {
