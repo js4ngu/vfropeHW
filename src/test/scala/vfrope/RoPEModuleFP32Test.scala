@@ -36,10 +36,11 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
   "FP32RoPEcoreTest" should "FP32RoPEcoreTest" in {
     test(new FP32RoPEcore()) { dut =>
       val testCases = Seq(
-        ("3F800000", "3F800000", "3F800000", "3F800000")
+        ("3F800000", "3F800000", "3F800000", "3F800000", "00000000", "40000000"),
+        ("40000000", "40000000", "40000000", "40000000", "00000000", "41000000")
       )
 
-      for ((x1, x2, sin, cos) <- testCases) {
+      for ((x1, x2, sin, cos, x2hat, x1hat) <- testCases) {
         dut.io.x(0).poke(BigInt(x1, 16).U)
         dut.io.x(1).poke(BigInt(x2, 16).U)
 
@@ -48,8 +49,7 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(1.B)
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
-
-        dut.clock.step(4)
+        dut.clock.step(3)
       }
     }
   }
