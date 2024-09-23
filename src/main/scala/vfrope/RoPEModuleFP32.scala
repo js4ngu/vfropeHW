@@ -41,8 +41,7 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     printf(s"thetaFP32, miFP32, m_theta_i : %d, %d, %d\n", thetaFP32(2), miFP32, m_theta_i)
 
     //Stage 4
-    val m_theta_i_norm = Wire(UInt(32.W))
-    val modMask = (1.U(32.W) << (LutSize - 1)) - 1.U
-    m_theta_i_norm := m_theta_i & modMask
-    printf(s"modMask, m_theta_i_norm : %d, %d\n", modMask, m_theta_i_norm)
+    val FP32DivPOW2 = Module(new FP32DivPOW2())
+
+    //printf(s"modMask, m_theta_i_norm : %d, %d\n", modMask, m_theta_i_norm)
 }

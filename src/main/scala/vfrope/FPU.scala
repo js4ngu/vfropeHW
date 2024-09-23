@@ -68,10 +68,11 @@ class Int32ToFP32 extends Module {
   // 결과를 IO 출력에 할당
   io.outIEEE := outIEEE
 }
+
 class FP32DivPOW2 extends Module {
   val io = IO(new Bundle {
     val a = Input(UInt(32.W))
-    val x = Input(UInt(5.W))
+    val x = Input(UInt(12.W))  // Changed from 5.W to 12.W
     val result = Output(UInt(32.W))
   })
 

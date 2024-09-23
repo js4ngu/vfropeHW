@@ -125,6 +125,17 @@ class FP32DivPOW2Test extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 
+  it should "correctly divide by 4096 (x = 12)" in {
+    test(new FP32DivPOW2()) { dut =>
+      // 8192.0 in FP32: 0x46000000
+      dut.io.a.poke("h46000000".U)
+      dut.io.x.poke(12.U) // Divide by 2^12 = 4096
+
+      // Expected result: 2.0 in FP32: 0x40000000
+      dut.io.result.expect("h40000000".U)
+    }
+  }
+
   it should "not saturate when result is 1 or greater" in {
     test(new FP32DivPOW2()) { dut =>
       // 2.0 in FP32: 0x40000000
