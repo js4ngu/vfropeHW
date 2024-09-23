@@ -75,3 +75,64 @@ class Int32ToFP32Test extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+class FP32DivPOW2Test extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32DivideByPowerOfTwo"
+
+  it should "correctly divide 4.5 by 2 to get 2.25" in {
+    test(new FP32DivPOW2()) { dut =>
+      // 4.5 in FP32: 0x40900000
+      // Sign: 0, Exponent: 10000010 (130), Mantissa: 00100000000000000000000
+      dut.io.a.poke("h40900000".U)
+      dut.io.x.poke(1.U) // Divide by 2^1 = 2
+
+      // Expected result: 2.25 in FP32: 0x40100000
+      // Sign: 0, Exponent: 10000001 (129), Mantissa: 00100000000000000000000
+      dut.io.result.expect("h40100000".U)
+    }
+  }
+
+  it should "handle division by 1 (x = 0)" in {
+    test(new FP32DivPOW2()) { dut =>
+      // Use 3.14 as an example: 0x4048f5c3
+      dut.io.a.poke("h4048f5c3".U)
+      dut.io.x.poke(0.U) // Divide by 2^0 = 1
+
+      // Expected result should be the same as input
+      dut.io.result.expect("h4048f5c3".U)
+    }
+  }
+
+  it should "handle division by 4 (x = 2)" in {
+    test(new FP32DivPOW2()) { dut =>
+      // Use 16.0 as an example: 0x41800000
+      dut.io.a.poke("h41800000".U)
+      dut.io.x.poke(2.U) // Divide by 2^2 = 4
+
+      // Expected result: 4.0 in FP32: 0x40800000
+      dut.io.result.expect("h40800000".U)
+    }
+  }
+
+  it should "saturate to zero when result is less than 1" in {
+    test(new FP32DivPOW2()) { dut =>
+      // 0.5 in FP32: 0x3f000000
+      dut.io.a.poke("h3f000000".U)
+      dut.io.x.poke(1.U) // Divide by 2^1 = 2
+
+      // Expected result: 0.0 in FP32: 0x00000000
+      dut.io.result.expect("h00000000".U)
+    }
+  }
+
+  it should "not saturate when result is 1 or greater" in {
+    test(new FP32DivPOW2()) { dut =>
+      // 2.0 in FP32: 0x40000000
+      dut.io.a.poke("h40000000".U)
+      dut.io.x.poke(1.U) // Divide by 2^1 = 2
+
+      // Expected result: 1.0 in FP32: 0x3f800000
+      dut.io.result.expect("h3f800000".U)
+    }
+  }
+}

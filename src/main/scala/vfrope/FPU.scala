@@ -68,3 +68,30 @@ class Int32ToFP32 extends Module {
   // 결과를 IO 출력에 할당
   io.outIEEE := outIEEE
 }
+class FP32DivPOW2 extends Module {
+  val io = IO(new Bundle {
+    val a = Input(UInt(32.W))
+    val x = Input(UInt(5.W))
+    val result = Output(UInt(32.W))
+  })
+
+  // Extract sign, exponent, and mantissa
+  val sign = io.a(31)
+  val exponent = io.a(30, 23)
+  val mantissa = io.a(22, 0)
+
+  // Subtract x from the exponent
+  val newExponent = exponent -& io.x
+
+  // Check if the result is less than 0 (exponent < 127 in IEEE 754)
+  val isLessThanZero = newExponent < 127.U
+
+  // If less than zero, set to zero, otherwise use the calculated result
+  val saturatedExponent = Mux(isLessThanZero, 0.U(8.W), newExponent)
+  val saturatedMantissa = Mux(isLessThanZero, 0.U(23.W), mantissa)
+
+  // Combine the parts back into an FP32 number
+  io.result := Cat(0.U(1.W), saturatedExponent, saturatedMantissa)
+
+  // Note: This implementation doesn't handle special cases like infinity and NaN
+}
