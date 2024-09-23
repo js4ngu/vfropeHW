@@ -4,6 +4,7 @@ import hardfloat._
 import chisel3._
 import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
+import java.lang.Float.intBitsToFloat  // Import the method explicitly
 
 class FP32AdderTest extends AnyFlatSpec with ChiselScalatestTester {
   "FP32Adder" should "add two floating-point numbers correctly" in {
@@ -120,6 +121,7 @@ class Int32ToFP32Test extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
 
 class FP32DivPOW2Test extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32DivideByPowerOfTwo"

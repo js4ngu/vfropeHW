@@ -87,11 +87,12 @@ class Int32ToFP32 extends Module {
   io.outIEEE := outIEEE
 }
 
+
 class FP32DivPOW2 extends Module {
   val io = IO(new Bundle {
     val a = Input(UInt(32.W))
     val x = Input(UInt(12.W))  // Changed from 5.W to 12.W
-    val result = Output(UInt(32.W))
+    val result = Output(UInt(32.W)) //몫이 소수점으로 나오면 안됨
   })
 
   // Extract sign, exponent, and mantissa

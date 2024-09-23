@@ -21,10 +21,8 @@ pyFP:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/FP.py
 FPadd:
 	sbt "testOnly vfrope.FP32AdderTest"
-
 FPsub:
 	sbt "testOnly vfrope.FP32SubTest"
-
 FPMult:
 	sbt "testOnly vfrope.FP32MultiplierTest"
 Int2FP:
@@ -45,6 +43,8 @@ RoPECoreInnerTest:
 #FP32 RoPE 관련
 FP32angle:
 	sbt "testOnly vfrope.FP32angleCaclulatorTest"
+FP32core:
+	sbt "testOnly vfrope.FP32RoPEcoreTest"
 
 
 clean:

@@ -14,7 +14,7 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     printf(s"\n=== UPDATE CYCLE ===\n\n")
 
     //setup pipe
-    val ENReg     = RegInit(VecInit(Seq.fill(6)(0.B)))
+    val ENReg    = RegInit(VecInit(Seq.fill(6)(0.B)))
     ENReg(0)    := io.EN
     ENReg(1)    := RegNext(ENReg(0))
     ENReg(2)    := RegNext(ENReg(1))
@@ -79,4 +79,66 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     io.out         := Mux(ENReg(5),FP32Sub.io.result,0.U(32.W))
     io.ENout       := Mux(ENReg(5),ENReg(5), 0.B)
     printf(s"(EN) m_theta_i - modVal = Output : (%b) %d - %d = %d\n",io.ENout, m_theta_i,  modVal, io.out)
+}
+
+
+class FP32RoPEcore() extends Module {
+    val io = IO(new Bundle {
+        val EN      = Input(Bool())
+        val x       = Input(Vec(2, UInt(32.W)))
+        val sin     = Input(UInt(32.W))
+        val cos     = Input(UInt(32.W))
+        val xhat    = Output(Vec(2, UInt(32.W)))
+    })
+    printf(s"\n=== UPDATE CYCLE ===\n\n")
+    //setup pipe
+    val ENReg    = RegInit(VecInit(Seq.fill(2)(0.B)))
+    ENReg(0)    := io.EN
+    ENReg(1)    := RegNext(ENReg(0))
+    printf(s"EN    : %d, %d\n", ENReg(0), ENReg(1))   //ok
+
+    //stage1
+    val x1sin = RegInit(0.U(32.W))
+    val x1cos = RegInit(0.U(32.W))
+    val x2sin = RegInit(0.U(32.W))
+    val x2cos = RegInit(0.U(32.W))
+
+    val FP32Mult0     = Module(new FP32Multiplier())
+    FP32Mult0.io.a   := io.x(0)
+    FP32Mult0.io.b   := io.sin
+    x1sin            := FP32Mult0.io.result
+
+    val FP32Mult1     = Module(new FP32Multiplier())
+    FP32Mult1.io.a   := io.x(1)
+    FP32Mult1.io.b   := io.sin
+    x2sin            := FP32Mult1.io.result
+
+    val FP32Mult2     = Module(new FP32Multiplier())
+    FP32Mult2.io.a   := io.x(0)
+    FP32Mult2.io.b   := io.cos
+    x1cos            := FP32Mult2.io.result
+    
+    val FP32Mult3     = Module(new FP32Multiplier())
+    FP32Mult3.io.a   := io.x(1)
+    FP32Mult3.io.b   := io.cos
+    x2cos            := FP32Mult3.io.result
+
+    printf(s"x1, x2   : %d, %d\n", io.x(0), io.x(1))  //ok
+    printf(s"sin, cos : %d, %d\n", io.sin, io.cos)  //ok
+    printf(s"x1sin, x2sin, x1cos, x2cos : %d, %d,  %d, %d\n", x1sin, x2sin, x1cos, x2cos)  //ok
+
+    //stage2
+    val FP32Sub     = Module(new FP32Sub())
+    FP32Sub.io.a   := x1cos
+    FP32Sub.io.b   := x2sin
+    val x1cos_x2sin = FP32Sub.io.result
+
+    val FP32add     = Module(new FP32Adder())
+    FP32add.io.a   := x2cos
+    FP32add.io.b   := x1sin
+    val x2cos_x1sin = FP32add.io.result
+
+    io.xhat(0)  := Mux(ENReg(1),x1cos_x2sin, 0.U(32.W))
+    io.xhat(1)  := Mux(ENReg(1),x2cos_x1sin, 0.U(32.W))
+    printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
 }
