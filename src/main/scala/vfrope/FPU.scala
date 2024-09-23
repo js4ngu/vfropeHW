@@ -29,12 +29,14 @@ class FP32Multiplier extends Module {
         val result = Output(UInt(32.W))
     })
 
-    val multiplier = Module(new MulRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
+    val mulAddRecFN = Module(new MulAddRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
 
-    multiplier.io.a := io.a         // Connect first operand
-    multiplier.io.b := io.b         // Connect second operand
-    multiplier.io.roundingMode := 0.U // Round to nearest even
-    multiplier.io.detectTininess := 0.U // Tininess after rounding
+    mulAddRecFN.io.op := 0.U  // Set to multiplication operation
+    mulAddRecFN.io.a := recFNFromFN(8, 24, io.a)
+    mulAddRecFN.io.b := recFNFromFN(8, 24, io.b)
+    mulAddRecFN.io.c := 0.U(33.W)  // Set to 0 for multiplication only
+    mulAddRecFN.io.roundingMode := 0.U // RNE: Round to Nearest, ties to Even
+    mulAddRecFN.io.detectTininess := 1.U // Tininess detected after rounding
 
-    io.result := multiplier.io.out // Output the result
+    io.result := fNFromRecFN(8, 24, mulAddRecFN.io.out)
 }

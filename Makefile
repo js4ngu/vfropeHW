@@ -21,6 +21,8 @@ pyFP:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/FP.py
 FPadd:
 	sbt "testOnly vfrope.FP32AdderTest"
+FPMult:
+	sbt "testOnly vfrope.FP32MultiplierTest"
 
 #RoPE모듈관련
 RoPEModule_Int:

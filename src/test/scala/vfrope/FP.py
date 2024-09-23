@@ -39,6 +39,8 @@ def FP32MULT(a,b):
 
 
 def main():
-    FP32ADD(1.5, 2.25)
-    IEEE754toUint32("40680000")
+    FP32ADD(1.5, 2.125)
+    FP32MULT(1.5, 2.125)
+
+    IEEE754toUint32("404c0000")
 main()

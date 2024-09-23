@@ -28,3 +28,27 @@ class FP32AdderTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+class FP32MultiplierTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32Multiplier"
+
+  it should "multiply two floating-point numbers correctly" in {
+    test(new FP32Multiplier) { dut =>
+      val inputA = "3fc00000"  // 1.5 in IEEE 754 format
+      val inputB = "40000000"  // 2.0 in IEEE 754 format
+      val expectedResult = "40400000"  // Result of 1.5 * 2.0 = 3.0
+
+      dut.io.a.poke(BigInt(inputA, 16).U)
+      dut.io.b.poke(BigInt(inputB, 16).U)
+
+      dut.clock.step()
+
+      val resultValue = dut.io.result.peek().litValue()
+      println(s"inputA      : 0x$inputA = ${java.lang.Float.intBitsToFloat(Integer.parseInt(inputA, 16))}")
+      println(s"inputB      : 0x$inputB = ${java.lang.Float.intBitsToFloat(Integer.parseInt(inputB, 16))}")
+      println(s"Multiplication Result: 0x${resultValue.toInt.toHexString} = ${java.lang.Float.intBitsToFloat(resultValue.toInt)}")
+      
+      assert(resultValue.toInt.toHexString == expectedResult)
+    }
+  }
+}
