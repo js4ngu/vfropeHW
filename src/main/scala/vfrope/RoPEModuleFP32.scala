@@ -4,21 +4,31 @@ import chisel3.util._
 
 class FP32angleCaclulator(LutSize : Int) extends Module {
     val io = IO(new Bundle {
+        val EN      = Input(Bool())
         val m       = Input(UInt(32.W))
         val i       = Input(UInt(32.W))
         val theta   = Input(UInt(32.W))
         val out     = Output(UInt(32.W))
-
+        val ENout   = Output(Bool())
     })
     printf(s"\n=== UPDATE CYCLE ===\n\n")
 
     //setup pipe
+    val ENReg     = RegInit(VecInit(Seq.fill(6)(0.B)))
+    ENReg(0)    := io.EN
+    ENReg(1)    := RegNext(ENReg(0))
+    ENReg(2)    := RegNext(ENReg(1))
+    ENReg(3)    := RegNext(ENReg(2))
+    ENReg(4)    := RegNext(ENReg(3))
+    ENReg(5)    := RegNext(ENReg(4))
+
     val thetaFP32 = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
     thetaFP32(0) := io.theta
     thetaFP32(1) := RegNext(thetaFP32(0))
     thetaFP32(2) := RegNext(thetaFP32(1))
 
     printf(s"theta : %d, %d, %d\n", thetaFP32(0), thetaFP32(1), thetaFP32(2))   //ok
+    printf(s"EN    : %d, %d, %d, %d, %d, %d\n\n", ENReg(0), ENReg(1), ENReg(2), ENReg(3), ENReg(4), ENReg(5))   //ok
 
     //Stage 1
     val mi = RegInit(0.S(32.W))
@@ -52,7 +62,7 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     val lutFP32        = RegInit(0.U(32.W))
     Int32ToFP32_2.io.inInt   := LutSize.asSInt
     lutFP32                  := Int32ToFP32_2.io.outIEEE
-    printf(s"quotient, lutFP32 : %d %d\n", quotient, lutFP32) // OK
+    printf(s"quotient, lutFP32 : %d %d\n", quotient, lutFP32) // 여기서 몫이 소수점으로 나옴.
 
     //Stage 5
     val modVal       = RegInit(0.U(32.W))
@@ -66,6 +76,7 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     val FP32Sub    = Module(new FP32Sub())
     FP32Sub.io.a   := m_theta_i // m theta i 
     FP32Sub.io.b   := modVal
-    io.out         := FP32Sub.io.result
-    printf(s"m_theta_i - modVal = Output : %d - %d = %d\n", m_theta_i,  modVal, io.out)
+    io.out         := Mux(ENReg(5),FP32Sub.io.result,0.U(32.W))
+    io.ENout       := Mux(ENReg(5),ENReg(5), 0.B)
+    printf(s"(EN) m_theta_i - modVal = Output : (%b) %d - %d = %d\n",io.ENout, m_theta_i,  modVal, io.out)
 }
