@@ -1,0 +1,3 @@
+[submodule "lib/hardfloat"]
+	path = lib/hardfloat
+	url = https://github.com/ucb-bar/berkeley-hardfloat.git
