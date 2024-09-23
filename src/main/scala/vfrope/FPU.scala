@@ -5,9 +5,9 @@ import hardfloat._
 
 class FP32Adder extends Module {
     val io = IO(new Bundle {
-        val a = Input(UInt(33.W))
-        val b = Input(UInt(33.W))
-        val result = Output(UInt(33.W))
+        val a = Input(UInt(32.W))
+        val b = Input(UInt(32.W))
+        val result = Output(UInt(32.W))
     })
 
     val adder = Module(new AddRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24

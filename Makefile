@@ -37,6 +37,11 @@ RoPEbackCoreTest:
 RoPECoreInnerTest:
 	sbt "testOnly vfrope.RoPEcoreInnerLUTtest"
 
+#FP32 RoPE 관련
+FP32angle:
+	sbt "testOnly vfrope.FP32angleCaclulatorTest"
+
+
 clean:
 	git clean -fd
 
