@@ -52,3 +52,26 @@ class FP32MultiplierTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+class Int32ToFP32Test extends AnyFlatSpec with ChiselScalatestTester {
+  "Int32ToFP32" should "convert integer to IEEE 754" in {
+    test(new Int32ToFP32()) { dut =>
+      val testCases = Seq(
+        (-49551, "c7418f00"),
+        (0, "0"),
+        (12345, "4640e400"),
+        (-1, "bf800000"),
+        (2147483647, "4effffff"),
+        (-2147483648, "cf000000")
+      )
+
+      for ((intVal, expectedHex) <- testCases) {
+        dut.io.inInt.poke(intVal.S)
+        dut.clock.step()
+        val result = dut.io.outIEEE.peek().litValue.toString(16)
+        println(f"Input: $intVal%11d, Expected: 0x$expectedHex, Result: 0x$result")
+        assert(result == expectedHex, s"Failed for input $intVal")
+      }
+    }
+  }
+}

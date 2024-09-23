@@ -24,6 +24,9 @@ FPadd:
 FPMult:
 	sbt "testOnly vfrope.FP32MultiplierTest"
 
+Int2FP:
+	sbt "testOnly vfrope.Int32ToFP32Test"
+
 #RoPE모듈관련
 RoPEModule_Int:
 	sbt "testOnly vfrope.RoPEModuleIntTester"
