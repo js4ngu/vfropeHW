@@ -17,20 +17,20 @@ SinCosLUT:
 	sbt "testOnly vfrope.SinCosLUTTest"
 
 #실수연산 관련
-FixedpointDecoder:
-	python /home/jongsang/vfropeHW/src/test/scala/vfrope/fixedpointDecoder.py
-
-RoPEfrontCoreTest:
-	sbt "testOnly vfrope.RoPEfrontCoreTest"
-
-RoPEbackCoreTest:
-	sbt "testOnly vfrope.RoPEBackCoreTest"
-RoPECoreInnerTest:
-	sbt "testOnly vfrope.RoPEcoreInnerLUTtest"
+pyFP:
+	python /home/jongsang/vfropeHW/src/test/scala/vfrope/FP.py
+FPadd:
+	sbt "testOnly vfrope.FP32AdderTest"
 
 #RoPE모듈관련
 RoPEModule_Int:
 	sbt "testOnly vfrope.RoPEModuleIntTester"
+RoPEfrontCoreTest:
+	sbt "testOnly vfrope.RoPEfrontCoreTest"
+RoPEbackCoreTest:
+	sbt "testOnly vfrope.RoPEBackCoreTest"
+RoPECoreInnerTest:
+	sbt "testOnly vfrope.RoPEcoreInnerLUTtest"
 
 clean:
 	git clean -fd
