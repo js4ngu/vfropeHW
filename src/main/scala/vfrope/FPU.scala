@@ -3,54 +3,38 @@ package vfrope
 import chisel3._
 import hardfloat._
 
-
 class FP32Adder extends Module {
-  val io = IO(new Bundle {
-    val a      = Input(UInt(32.W))  // Input floating-point number in IEEE 754 format
-    val b      = Input(UInt(32.W))  // Input floating-point number in IEEE 754 format
-    val result = Output(UInt(32.W)) // Result in IEEE 754 format
-  })
+    val io = IO(new Bundle {
+        val a = Input(UInt(33.W))
+        val b = Input(UInt(33.W))
+        val result = Output(UInt(33.W))
+    })
 
-  // Create a floating-point adder for 32-bit floating-point numbers
-  val adder = Module(new AddRecFN(8, 24)) // 8 exponent bits, 24 mantissa bits
+    val adder = Module(new AddRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
 
-  // Convert inputs to RecFN format (required by HardFloat)
-  val aRecFN = Module(new INToRecFN(8, 24, 32)) // Convert input a
-  val bRecFN = Module(new INToRecFN(8, 24, 32)) // Convert input b
+    adder.io.subOp := 0.B  // Ensure addition operation
+    adder.io.a := io.a         // Connect first operand
+    adder.io.b := io.b         // Connect second operand
+    adder.io.roundingMode := 1.U // Round to nearest even
+    adder.io.detectTininess := 1.U // Tininess after rounding
 
-  // Initialize inputs to RecFN conversion modules
-  aRecFN.io.in := io.a
-  bRecFN.io.in := io.b
-  aRecFN.io.signedIn := false.B
-  bRecFN.io.signedIn := false.B
+    io.result := adder.io.out // Output the result
+}
 
-  // Initialize control signals for rounding and tininess detection
-  aRecFN.io.roundingMode := 0.U // Round to nearest even
-  aRecFN.io.detectTininess := false.B
-  bRecFN.io.roundingMode := 0.U // Round to nearest even
-  bRecFN.io.detectTininess := false.B
 
-  // Connect the inputs to the adder
-  adder.io.a := aRecFN.io.out
-  adder.io.b := bRecFN.io.out
-  adder.io.subOp := false.B // Perform addition (set to true for subtraction)
-  adder.io.roundingMode := 0.U // Round to nearest even
-  adder.io.detectTininess := false.B
+class FP32Multiplier extends Module {
+    val io = IO(new Bundle {
+        val a = Input(UInt(32.W))
+        val b = Input(UInt(32.W))
+        val result = Output(UInt(32.W))
+    })
 
-  // Convert the result back to IEEE 754 format
-  val resultRecFN = Module(new RecFNToIN(8, 24, 32))
-  resultRecFN.io.in := adder.io.out
-  resultRecFN.io.roundingMode := 0.U
-  resultRecFN.io.signedOut := false.B
+    val multiplier = Module(new MulRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
 
-  // Output the result
-  io.result := resultRecFN.io.out
+    multiplier.io.a := io.a         // Connect first operand
+    multiplier.io.b := io.b         // Connect second operand
+    multiplier.io.roundingMode := 0.U // Round to nearest even
+    multiplier.io.detectTininess := 0.U // Tininess after rounding
 
-  // Print internal signals
-  printf(p"Input A (IEEE 754): ${io.a}\n")
-  printf(p"Input B (IEEE 754): ${io.b}\n")
-  printf(p"RecFN A: ${aRecFN.io.out}\n")
-  printf(p"RecFN B: ${bRecFN.io.out}\n")
-  printf(p"Adder Output: ${adder.io.out}\n")
-  printf(p"Final Result (IEEE 754): ${io.result}\n")
+    io.result := multiplier.io.out // Output the result
 }
