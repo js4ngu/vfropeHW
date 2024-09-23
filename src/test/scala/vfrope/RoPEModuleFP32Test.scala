@@ -11,7 +11,7 @@ class FP32angleCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.theta.poke(BigInt(theta, 16).U)
       dut.io.m.poke(2.U)
       dut.io.i.poke(1.U)
-      dut.clock.step(9)
+      dut.clock.step(12)
     }
   }
 }

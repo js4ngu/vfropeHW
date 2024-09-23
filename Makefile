@@ -21,6 +21,10 @@ pyFP:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/FP.py
 FPadd:
 	sbt "testOnly vfrope.FP32AdderTest"
+
+FPsub:
+	sbt "testOnly vfrope.FP32SubTest"
+
 FPMult:
 	sbt "testOnly vfrope.FP32MultiplierTest"
 Int2FP:

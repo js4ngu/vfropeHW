@@ -21,6 +21,24 @@ class FP32Adder extends Module {
     io.result := adder.io.out // Output the result
 }
 
+class FP32Sub extends Module {
+    val io = IO(new Bundle {
+        val a = Input(UInt(32.W))
+        val b = Input(UInt(32.W))
+        val result = Output(UInt(32.W))
+    })
+
+    val adder = Module(new AddRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
+
+    adder.io.subOp := 1.B  // Ensure addition operation
+    adder.io.a := io.a         // Connect first operand
+    adder.io.b := io.b         // Connect second operand
+    adder.io.roundingMode := 1.U // Round to nearest even
+    adder.io.detectTininess := 1.U // Tininess after rounding
+
+    io.result := adder.io.out // Output the result
+}
+
 
 class FP32Multiplier extends Module {
     val io = IO(new Bundle {
