@@ -13,13 +13,12 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     printf(s"\n=== UPDATE CYCLE ===\n\n")
 
     //setup pipe
-    val thetaFP32 = RegInit(VecInit(Seq.fill(5)(0.U(32.W))))
+    val thetaFP32 = RegInit(VecInit(Seq.fill(6)(0.U(32.W))))
     thetaFP32(0) := io.theta
     thetaFP32(1) := RegNext(thetaFP32(0))
     thetaFP32(2) := RegNext(thetaFP32(1))
-    thetaFP32(3) := RegNext(thetaFP32(4))
-    thetaFP32(4) := RegNext(thetaFP32(5))
-    thetaFP32(5) := RegNext(thetaFP32(6))
+    thetaFP32(4) := RegNext(thetaFP32(3))
+    thetaFP32(5) := RegNext(thetaFP32(4))
     printf(s"theta : %d, %d, %d, %d, %d, %d\n", thetaFP32(0), thetaFP32(1), thetaFP32(2) , thetaFP32(3), thetaFP32(4), thetaFP32(5))
 
     //Stage 1
@@ -65,6 +64,9 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     printf(s"quotient, lutFP32, modVal : %d %d %d\n", quotient, lutFP32, modVal)
 
     //stage 6
-    io.out := thetaFP32(5) - modVal
+    val FP32Sub    = Module(new FP32Sub())
+    FP32Sub.io.a   := lutFP32
+    FP32Sub.io.b   := modVal
+    io.out         := FP32Sub.io.result
     printf(s"Output : %d\n", io.out)
 }

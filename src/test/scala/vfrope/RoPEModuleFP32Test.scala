@@ -7,11 +7,11 @@ import org.scalatest.flatspec.AnyFlatSpec
 class FP32angleCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
   "RoPEModule" should "work" in {
     test(new FP32angleCaclulator(LutSize = 12)) { dut =>
-      val theta = "3F800000"
+      val theta = "3F800000" // 1
       dut.io.theta.poke(BigInt(theta, 16).U)
       dut.io.m.poke(2.U)
       dut.io.i.poke(1.U)
-      dut.clock.step(12)
+      dut.clock.step(9)
     }
   }
 }
