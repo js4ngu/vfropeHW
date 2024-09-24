@@ -11,7 +11,7 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
         val out     = Output(UInt(32.W))
         val ENout   = Output(Bool())
     })
-    printf(s"\n=== UPDATE CYCLE ===\n\n")
+    //printf(s"=== UPDATE CYCLE ===\n\n")
 
     //setup pipe
     val ENReg    = RegInit(VecInit(Seq.fill(6)(0.B)))

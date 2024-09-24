@@ -5,29 +5,25 @@ import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 
 class FP32angleCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
-  "RoPEModule" should "work" in {
+  "FP32angleCaclulatorTest" should "work for various test cases" in {
     test(new FP32angleCaclulator(LutSize = 12)) { dut =>
-      val theta = "3F800000" // 1
-      dut.io.theta.poke(BigInt(theta, 16).U)
-      dut.io.m.poke(2.U)
-      dut.io.i.poke(1.U)
-      dut.io.EN.poke(1.B)
-      dut.clock.step(1)
-      dut.io.EN.poke(0.B)
-      dut.clock.step(11)
-    }
-  }
-  "RoPEModule Test #2" should "work" in {
-    test(new FP32angleCaclulator(LutSize = 12)) { dut =>
-      val theta = "447A0000" // 1000
-      dut.io.theta.poke(BigInt(theta, 16).U)
-      dut.io.m.poke(51.U)  //51
-      dut.io.i.poke(100.U)  //100 mi expect 1004 : 여기까지는 나오는 최종 mod 과정 즉 fpdiv과정에서 몫에 소수점이 붙어있는 문제가 발생함
-      dut.io.EN.poke(1.B)
-      dut.clock.step(1)
-      dut.io.EN.poke(0.B)
-      dut.clock.step(12)
-      //expect 480 43F00000
+      val testCases = Seq(
+        ("3F800000",  2,   1, BigInt("40000000", 16).U),  // theta = 1, m = 2, i = 1
+        ("447A0000", 51, 100, BigInt("43F00000", 16).U)  // theta = 1000, m = 51, i = 100
+      )
+
+      for ((theta, m, i, expected) <- testCases) {
+        dut.io.theta.poke(BigInt(theta, 16).U)
+        dut.io.m.poke(m.U)
+        dut.io.i.poke(i.U)
+        dut.io.EN.poke(1.B)
+        dut.clock.step(1)
+        dut.io.EN.poke(0.B)
+        dut.clock.step(10)
+        dut.io.out.expect(expected)
+        dut.clock.step(2)
+        println("------------------------------------------------------")
+      }
     }
   }
 }
