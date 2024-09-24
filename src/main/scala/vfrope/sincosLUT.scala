@@ -82,7 +82,7 @@ class SinCosLUT(LutSize: Int, LutSizeHEX: Int) extends Module {
     FP32toINT32.io.ieee754 := FP32TruncateIndex
     
     //이하 문제 많음
-    val cosIndex = FP32toINT32.io.int32.asUInt(LutSize - 2, 0) + 1.U
+    val cosIndex = FP32toINT32.io.int32.asUInt(LutSize - 1, 0)
     val sinIndex = (cosIndex + (1.U << (LutSize - 4).U)).asUInt(LutSize - 1, 0)
 
     // Outputs
