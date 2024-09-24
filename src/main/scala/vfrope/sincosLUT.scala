@@ -66,6 +66,7 @@ class SinCosLUT(LutSize: Int, LutSizeHEX: Int) extends Module {
 
     val FP32toINT32         = Module(new FP32toINT32())
     FP32toINT32.io.ieee754 := FP32TruncateIndex
-    val sinIndex            = FP32toINT32.io.int32
-    printf(p"Angle: ${io.angle}, LutSizeHEX: ${LutSizeHEX.U}, FP32Index: ${FP32Index}, FP32TruncateIndex: ${FP32TruncateIndex} , sinIndex: ${sinIndex}\n")
+    val cosIndex            = FP32toINT32.io.int32
+    val sinIndex            = (cosIndex + (1.U << (LutSize.U - 4.U)).asSInt)(LutSize - 1, 0) // LutSize를 SInt로 변환
+    printf(p"Angle: ${io.angle}, LutSizeHEX: ${LutSizeHEX.U}, FP32Index: ${FP32Index}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${cosIndex}, sinIndex: ${sinIndex}\n")
 }
