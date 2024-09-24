@@ -25,8 +25,11 @@ FPsub:
 	sbt "testOnly vfrope.FP32SubTest"
 FPMult:
 	sbt "testOnly vfrope.FP32MultiplierTest"
-Int2FP:
+Int322FP:
 	sbt "testOnly vfrope.Int32ToFP32Test"
+Int642FP:
+	sbt "testOnly vfrope.Int64ToFP32Test"
+
 FPdiv:
 	sbt "testOnly vfrope.FP32DivPOW2Test"
 FP32Truncate:

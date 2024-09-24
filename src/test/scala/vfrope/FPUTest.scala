@@ -122,6 +122,29 @@ class Int32ToFP32Test extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
+class Int64ToFP32Test extends AnyFlatSpec with ChiselScalatestTester {
+  "Int64ToFP32" should "convert integer to IEEE 754" in {
+    test(new Int64ToFP32()) { dut =>
+      val testCases = Seq(
+        (-49551L, "c7418f00"),
+        (0L, "00000000"),
+        (12345L, "4640e400"),
+        (-1L, "bf800000"),
+        (2147483647L, "4effffff"),
+        (1L << 32, "4f800000"),  // 2^32
+        (-(1L << 32), "cf800000") // -2^32
+      )
+
+      for ((intVal, expectedHex) <- testCases) {
+        dut.io.inInt.poke(intVal.S)
+        dut.clock.step()
+        val result = dut.io.outIEEE.peek().litValue.toString(16).padTo(8, '0').takeRight(8)
+        println(f"Input: $intVal%20d, Expected: 0x$expectedHex, Result: 0x$result")
+        assert(result == expectedHex, s"Failed for input $intVal")
+      }
+    }
+  }
+}
 
 class FP32DivPOW2Test extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32DivideByPowerOfTwo"
