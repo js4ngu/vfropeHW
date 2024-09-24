@@ -44,7 +44,8 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
     test(new FP32RoPEcore()) { dut =>
       val testCases = Seq(
         ("3F800000", "3F800000", "3F800000", "3F800000", "00000000", "40000000"),
-        ("40000000", "40000000", "40000000", "40000000", "00000000", "41000000")
+        ("40000000", "40000000", "40000000", "40000000", "00000000", "41000000"),
+        ("431b0000", "43be8000", "3f4ac083", "beaf1aa0", "c3b16189", "c0f15810")
       )
 
       for ((x1, x2, sin, cos, x2hat, x1hat) <- testCases) {
@@ -56,7 +57,26 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(1.B)
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
-        dut.clock.step(3)
+        dut.clock.step(2)
+      
+        val X0 = dut.io.x(0).peek().litValue
+        val X1 = dut.io.x(1).peek().litValue
+        val floatX0 = Float.intBitsToFloat(X0.toInt)
+        val floatX1 = Float.intBitsToFloat(X1.toInt)
+
+        val SIN = dut.io.sin.peek().litValue
+        val COS = dut.io.cos.peek().litValue
+        val floatSIN = Float.intBitsToFloat(SIN.toInt)
+        val floatCOS = Float.intBitsToFloat(COS.toInt)
+
+        val result0 = dut.io.xhat(0).peek().litValue
+        val result1 = dut.io.xhat(1).peek().litValue
+        val floatResult0 = Float.intBitsToFloat(result0.toInt)
+        val floatResult1 = Float.intBitsToFloat(result1.toInt)
+        println(f"x0, x1 : $floatX0%.6f \t $floatX1%.6f")
+        println(f"SIN,COS: $floatSIN%.6f \t $floatCOS%.6f")
+        println(f"Result : $floatResult0%.6f \t $floatResult1%.6f")
+        println(f"----------------------------------------------")
       }
     }
   }

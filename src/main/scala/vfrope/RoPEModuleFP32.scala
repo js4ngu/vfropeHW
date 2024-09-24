@@ -92,12 +92,12 @@ class FP32RoPEcore() extends Module {
         val cos     = Input(UInt(32.W))
         val xhat    = Output(Vec(2, UInt(32.W)))
     })
-    printf(s"\n=== UPDATE CYCLE ===\n\n")
-    //setup pipe
+    // printf(s"\n=== UPDATE CYCLE ===\n\n")
+    // setup pipe
     val ENReg    = RegInit(VecInit(Seq.fill(2)(0.B)))
     ENReg(0)    := io.EN
     ENReg(1)    := RegNext(ENReg(0))
-    printf(s"EN    : %d, %d\n", ENReg(0), ENReg(1))   //ok
+    // printf(s"EN    : %d, %d\n", ENReg(0), ENReg(1))   //ok
 
     //stage1
     val x1sin = RegInit(0.U(32.W))
@@ -124,11 +124,11 @@ class FP32RoPEcore() extends Module {
     FP32Mult3.io.a   := io.x(1)
     FP32Mult3.io.b   := io.cos
     x2cos            := FP32Mult3.io.result
-
+    /*
     printf(s"x1, x2   : %d, %d\n", io.x(0), io.x(1))  //ok
     printf(s"sin, cos : %d, %d\n", io.sin, io.cos)  //ok
     printf(s"x1sin, x2sin, x1cos, x2cos : %d, %d,  %d, %d\n", x1sin, x2sin, x1cos, x2cos)  //ok
-
+    */
     //stage2
     val FP32Sub     = Module(new FP32Sub())
     FP32Sub.io.a   := x1cos
@@ -142,5 +142,5 @@ class FP32RoPEcore() extends Module {
 
     io.xhat(0)  := Mux(ENReg(1),x1cos_x2sin, 0.U(32.W))
     io.xhat(1)  := Mux(ENReg(1),x2cos_x1sin, 0.U(32.W))
-    printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
+    // printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
 }
