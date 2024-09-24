@@ -54,3 +54,35 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+
+class FP32TruncateTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32Truncate"
+
+  it should "truncate fractional parts correctly" in {
+    test(new FP32Truncate) { dut =>
+      // Test cases in raw FP32 format (using BigInt for hex values)
+      val testCases = Seq(
+        (BigInt("40490FDB", 16).U, BigInt("40400000", 16).U), // 3.14159 -> 3.0
+        (BigInt("C0490FDB", 16).U, BigInt("C0400000", 16).U), // -3.14159 -> -3.0
+        (BigInt("3F000000", 16).U, BigInt("00000000", 16).U), // 0.5 -> 0.0
+        (BigInt("BF000000", 16).U, BigInt("00000000", 16).U), // -0.5 -> 0.0
+        (BigInt("3FFFFFFF", 16).U, BigInt("3F800000", 16).U), // 1.99999988079 -> 1.0
+        (BigInt("BFFFFFFF", 16).U, BigInt("BF800000", 16).U), // -1.99999988079 -> -1.0
+        (BigInt("42C98000", 16).U, BigInt("42C80000", 16).U), // 100.75 -> 100.0
+        (BigInt("C2C98000", 16).U, BigInt("C2C80000", 16).U), // -100.75 -> -100.0
+        (BigInt("00000000", 16).U, BigInt("00000000", 16).U), // 0.0 -> 0.0
+        (BigInt("3F800000", 16).U, BigInt("3F800000", 16).U), // 1.0 -> 1.0
+        (BigInt("BF800000", 16).U, BigInt("BF800000", 16).U)  // -1.0 -> -1.0
+      )
+
+      for ((input, expected) <- testCases) {
+        println(f"Test case: input = 0x${input.litValue}%08X, expected = 0x${expected.litValue}%08X")
+        dut.io.in.poke(input)
+        dut.clock.step(1)
+        dut.io.out.expect(expected)
+        println("----------------------------------------")
+      }
+    }
+  }
+}

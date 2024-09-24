@@ -30,6 +30,9 @@ Int2FP:
 FPdiv:
 	sbt "testOnly vfrope.FP32DivPOW2Test"
 
+FP32Truncate:
+	sbt "testOnly vfrope.FP32TruncateTest"
+
 #RoPE모듈관련
 RoPEModule_Int:
 	sbt "testOnly vfrope.RoPEModuleIntTester"

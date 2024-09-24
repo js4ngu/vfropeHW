@@ -115,3 +115,46 @@ class FP32DivPOW2 extends Module {
 
   // Note: This implementation doesn't handle special cases like infinity and NaN
 }
+
+class FP32Truncate extends Module {
+  val io = IO(new Bundle {
+    val in = Input(UInt(32.W))
+    val out = Output(UInt(32.W))
+  })
+
+  // FP32 형식: 1비트 부호, 8비트 지수, 23비트 가수
+  val sign = io.in(31)
+  val exponent = io.in(30, 23)
+  val mantissa = io.in(22, 0)
+
+  printf(p"Input: 0x${Hexadecimal(io.in)}\n")
+  printf(p"Sign: $sign, Exponent: 0x${Hexadecimal(exponent)}, Mantissa: 0x${Hexadecimal(mantissa)}\n")
+
+  val result = Wire(UInt(32.W))
+  
+  when(exponent < 127.U) {
+    // 절대값이 1 미만인 경우, 0으로 처리
+    result := 0.U
+  }.elsewhen(exponent >= 150.U) {
+    // 이미 정수인 경우 (2^23 이상), 그대로 출력
+    result := io.in
+  }.otherwise {
+    // 소수점 이하를 버림
+    val shift = exponent - 127.U
+    val mask = Wire(UInt(23.W))
+    mask := ((1.U(23.W) << shift) - 1.U) << (23.U - shift)
+    val truncated_mantissa = Wire(UInt(23.W))
+    truncated_mantissa := mantissa & mask
+    
+    printf(p"Shift: $shift\n")
+    printf(p"Original mantissa : 0x${Hexadecimal(mantissa)}\n")
+    printf(p"Mas               : 0x${Hexadecimal(mask)}\n")
+    printf(p"Truncated mantissa: 0x${Hexadecimal(truncated_mantissa)}\n")
+    
+    result := Cat(sign, exponent, truncated_mantissa)
+  }
+
+  io.out := result
+  printf(p"Output: 0x${Hexadecimal(io.out)}\n")
+  printf("-------------------\n")
+}
