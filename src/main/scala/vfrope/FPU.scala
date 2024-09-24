@@ -31,25 +31,6 @@ class FP32Adder extends Module {
     io.result := fNFromRecFN(expWidth, sigWidth, adder.io.out)
 }
 
-/*
-class FP32Sub extends Module {
-    val io = IO(new Bundle {
-        val a = Input(UInt(32.W))
-        val b = Input(UInt(32.W))
-        val result = Output(UInt(32.W))
-    })
-
-    val adder = Module(new AddRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
-
-    adder.io.subOp := 1.B  // Ensure addition operation
-    adder.io.a := io.a         // Connect first operand
-    adder.io.b := io.b         // Connect second operand
-    adder.io.roundingMode := 1.U // Round to nearest even
-    adder.io.detectTininess := 1.U // Tininess after rounding
-
-    io.result := adder.io.out // Output the result
-}
-*/
 class FP32Sub extends Module {
     val io = IO(new Bundle {
         val a = Input(UInt(32.W))
@@ -226,4 +207,36 @@ class FP32DivPOW2INT extends Module {
   FP32Truncate.io.in := FP32Div.io.result
 
   io.result := FP32Truncate.io.out
+}
+
+class FP32toINT32 extends Module {
+  val io = IO(new Bundle {
+    val ieee754 = Input(UInt(32.W))  // 32-bit IEEE754 input
+    val int32 = Output(SInt(32.W))   // 32-bit integer output
+  })
+
+  // Extract sign, exponent, and mantissa
+  val sign = io.ieee754(31)                   // 1-bit sign
+  val exponent = io.ieee754(30, 23).asSInt    // 8-bit exponent, biased by 127
+  val mantissa = io.ieee754(22, 0).asUInt     // 23-bit mantissa
+
+  // Normalize the mantissa by adding the implicit leading 1
+  val mantissaWithLeadingOne = Cat(1.U(1.W), mantissa)
+
+  // Calculate the true exponent by subtracting the bias (127)
+  val trueExponent = exponent - 127.S
+
+  // Calculate the shift amount for the mantissa
+  val shiftAmount = trueExponent - 23.S
+
+  // Shift the mantissa to the appropriate position based on the exponent
+  val shiftedMantissa = Mux(shiftAmount >= 0.S,
+    mantissaWithLeadingOne << shiftAmount.asUInt,
+    mantissaWithLeadingOne >> -shiftAmount.asUInt)
+
+  // Handle the sign (positive or negative result)
+  val result = Mux(sign === 0.U, shiftedMantissa.asSInt, -shiftedMantissa.asSInt)
+
+  // Assign the result to the output
+  io.int32 := result
 }

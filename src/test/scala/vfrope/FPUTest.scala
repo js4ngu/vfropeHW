@@ -341,3 +341,29 @@ class FP32DivPOW2INTTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+class FP32toINT32Test extends AnyFlatSpec with ChiselScalatestTester {
+  "FP32toINT32Test" should "convert IEEE754 to Int32 correctly" in {
+    test(new FP32toINT32) { c =>
+      // Example value: IEEE 754 representation of 10.0 is 0x41200000
+      c.io.ieee754.poke("h41200000".U)  // 10.0 in IEEE754
+      c.clock.step(1)
+      c.io.int32.expect(10.S)           // Should output 10 as an integer
+
+      // Example value: IEEE 754 representation of -5.0 is 0xC0A00000
+      c.io.ieee754.poke("hC0A00000".U)  // -5.0 in IEEE754
+      c.clock.step(1)
+      c.io.int32.expect(-5.S)           // Should output -5 as an integer
+
+      // Example value: IEEE 754 representation of 0.5 is 0x3F000000
+      c.io.ieee754.poke("h3F000000".U)  // 0.5 in IEEE754
+      c.clock.step(1)
+      c.io.int32.expect(0.S)            // Should output 0 since it's an integer conversion
+
+      // Example value: IEEE 754 representation of -1.5 is 0xBF800000
+      c.io.ieee754.poke("hBF800000".U)  // -1.5 in IEEE754
+      c.clock.step(1)
+      c.io.int32.expect(-1.S)           // Should output -1 after conversion
+    }
+  }
+}

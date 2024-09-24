@@ -7,12 +7,6 @@ test:
 	sbt test
 
 # 삼각함수 관련
-LutGen:
-	python /home/jongsang/vfropeHW/src/main/scala/vfrope/LutGen.py
-
-SinCosINTLUT:
-	sbt "testOnly vfrope.SinCosLUTINTTest"
-
 SinCosLUT:
 	sbt "testOnly vfrope.SinCosLUTTest"
 
@@ -29,6 +23,8 @@ Int322FP:
 	sbt "testOnly vfrope.Int32ToFP32Test"
 Int642FP:
 	sbt "testOnly vfrope.Int64ToFP32Test"
+FP322Int:
+	sbt "testOnly vfrope.FP32toINT32Test"
 
 FPdiv:
 	sbt "testOnly vfrope.FP32DivPOW2Test"
