@@ -52,7 +52,7 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     FP32Mult(0).io.b   := thetaFP32(2)
     m_theta_i       := FP32Mult(0).io.result
 
-    printf(s"thetaFP32, miFP32, m_theta_i : %d, %d, %d\n", thetaFP32(2), miFP32, m_theta_i) //OK m theta i 1004000
+    //printf(s"thetaFP32, miFP32, m_theta_i : %d, %d, %d\n", thetaFP32(2), miFP32, m_theta_i) //OK m theta i 1004000
 
     //Stage 4
     val quotient       = RegInit(0.U(32.W))
