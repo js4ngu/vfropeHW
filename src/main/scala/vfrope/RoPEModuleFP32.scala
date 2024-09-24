@@ -84,7 +84,6 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     //printf(s"(EN) m_theta_i - modVal = Output : (%b) %d - %d = %d\n",io.ENout, m_theta_i,  modVal, io.out)
 }
 
-/*
 class FP32RoPEcore() extends Module {
     val io = IO(new Bundle {
         val EN      = Input(Bool())
@@ -93,7 +92,6 @@ class FP32RoPEcore() extends Module {
         val cos     = Input(UInt(32.W))
         val xhat    = Output(Vec(2, UInt(32.W)))
     })
-    printf(s"\n=== UPDATE CYCLE ===\n\n")
     // setup pipe
     val ENReg    = RegInit(VecInit(Seq.fill(2)(0.B)))
     ENReg(0)    := io.EN
@@ -126,10 +124,6 @@ class FP32RoPEcore() extends Module {
     FP32Mult3.io.b   := io.cos
     x2cos            := FP32Mult3.io.result
 
-    printf(s"x1, x2   : %d, %d\n", io.x(0), io.x(1))  //ok
-    printf(s"sin, cos : %d, %d\n", io.sin, io.cos)  //ok
-    printf(s"x1sin, x2sin, x1cos, x2cos : %d, %d,  %d, %d\n", x1sin, x2sin, x1cos, x2cos)  //ok
-
     //stage2
     val FP32Sub     = Module(new FP32Sub())
     FP32Sub.io.a   := x1cos
@@ -140,73 +134,18 @@ class FP32RoPEcore() extends Module {
     FP32add.io.a   := x2cos
     FP32add.io.b   := x1sin
     val x2cos_x1sin = FP32add.io.result
-    printf(s"x1cos_x2sin, x2cos_x1sin : %d, %d\n", x1cos_x2sin, x2cos_x1sin )
 
     io.xhat(0)  := Mux(ENReg(1),x1cos_x2sin, 0.U(32.W))
     io.xhat(1)  := Mux(ENReg(1),x2cos_x1sin, 0.U(32.W))
-    printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
-}
-*/
-class FP32RoPEcore() extends Module {
-    val io = IO(new Bundle {
-        val EN      = Input(Bool())
-        val x       = Input(Vec(2, UInt(32.W)))
-        val sin     = Input(UInt(32.W))
-        val cos     = Input(UInt(32.W))
-        val xhat    = Output(Vec(2, UInt(32.W)))
-    })
-    
-    // Pipeline registers
-    val stage1Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
-    val stage2Reg = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
-    val ENReg     = RegInit(VecInit(Seq.fill(3)(false.B)))
-
-    // Stage 1: Multiplication
-    val FP32Mult = Seq.fill(4)(Module(new FP32Multiplier()))
-    FP32Mult(0).io.a := io.x(0)
-    FP32Mult(0).io.b := io.sin
-    FP32Mult(1).io.a := io.x(1)
-    FP32Mult(1).io.b := io.sin
-    FP32Mult(2).io.a := io.x(0)
-    FP32Mult(2).io.b := io.cos
-    FP32Mult(3).io.a := io.x(1)
-    FP32Mult(3).io.b := io.cos
-
-    // Register stage 1 results
-    stage1Reg(0) := FP32Mult(0).io.result // x1*sin
-    stage1Reg(1) := FP32Mult(1).io.result // x2*sin
-    stage1Reg(2) := FP32Mult(2).io.result // x1*cos
-    stage1Reg(3) := FP32Mult(3).io.result // x2*cos
-
-    // Stage 2: Addition and Subtraction
-    val FP32Sub = Module(new FP32Sub())
-    val FP32Add = Module(new FP32Adder())
-
-    FP32Sub.io.a := stage1Reg(2) // x1*cos
-    FP32Sub.io.b := stage1Reg(1) // x2*sin
-    FP32Add.io.a := stage1Reg(3) // x2*cos
-    FP32Add.io.b := stage1Reg(0) // x1*sin
-
-    // Register stage 2 results
-    stage2Reg(0) := FP32Sub.io.result // x1*cos - x2*sin
-    stage2Reg(1) := FP32Add.io.result // x2*cos + x1*sin
-
-    // Pipeline the enable signal
-    ENReg(0) := io.EN
-    ENReg(1) := ENReg(0)
-    ENReg(2) := ENReg(1)
-
-    // Output
-    io.xhat(0) := Mux(ENReg(2), stage2Reg(0), 0.U)
-    io.xhat(1) := Mux(ENReg(2), stage2Reg(1), 0.U)
     /*
-    // Debug prints (hexadecimal format for easier IEEE 754 analysis)
-    printf(s"\n=== UPDATE CYCLE ===\n")
-    printf(s"x1, x2   : 0x%x, 0x%x\n", io.x(0), io.x(1))
-    printf(s"sin, cos : 0x%x, 0x%x\n", io.sin, io.cos)
-    printf(s"Stage 1 (x1*sin, x2*sin, x1*cos, x2*cos): 0x%x, 0x%x, 0x%x, 0x%x\n", 
-           stage1Reg(0), stage1Reg(1), stage1Reg(2), stage1Reg(3))
-    printf(s"Stage 2 (x1*cos-x2*sin, x2*cos+x1*sin): 0x%x, 0x%x\n", stage2Reg(0), stage2Reg(1))
-    printf(s"[EN] Output: [%b] 0x%x, 0x%x\n", ENReg(2), io.xhat(0), io.xhat(1))
+    printf(s"\n=== UPDATE CYCLE ===\n\n")
+
+    printf(s"x1, x2   : %d, %d\n", io.x(0), io.x(1))  //ok
+    printf(s"sin, cos : %d, %d\n", io.sin, io.cos)  //ok
+    printf(s"x1sin, x2sin, x1cos, x2cos : %d, %d,  %d, %d\n", x1sin, x2sin, x1cos, x2cos)  //ok
+
+    printf(s"x1cos_x2sin, x2cos_x1sin : %d, %d\n", x1cos_x2sin, x2cos_x1sin )
+
+    printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
     */
 }
