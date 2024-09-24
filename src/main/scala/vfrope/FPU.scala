@@ -2,24 +2,7 @@ package vfrope
 import chisel3._
 import chisel3.util._
 import hardfloat._
-/*
-class FP32Adder extends Module {
-    val io = IO(new Bundle {
-        val a = Input(UInt(32.W))
-        val b = Input(UInt(32.W))
-        val result = Output(UInt(32.W))
-    })
 
-    val adder = Module(new AddRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
-
-    adder.io.subOp := 0.B         // Ensure addition operation
-    adder.io.a := io.a            // Connect first operand
-    adder.io.b := io.b            // Connect second operand
-    adder.io.roundingMode := 1.U  // Round to nearest even
-    adder.io.detectTininess := 1.U// Tininess after rounding
-    io.result := adder.io.out     // Output the result
-}
-*/
 class FP32Adder extends Module {
     val io = IO(new Bundle {
         val a = Input(UInt(32.W))
@@ -48,6 +31,7 @@ class FP32Adder extends Module {
     io.result := fNFromRecFN(expWidth, sigWidth, adder.io.out)
 }
 
+/*
 class FP32Sub extends Module {
     val io = IO(new Bundle {
         val a = Input(UInt(32.W))
@@ -65,7 +49,34 @@ class FP32Sub extends Module {
 
     io.result := adder.io.out // Output the result
 }
+*/
+class FP32Sub extends Module {
+    val io = IO(new Bundle {
+        val a = Input(UInt(32.W))
+        val b = Input(UInt(32.W))
+        val result = Output(UInt(32.W))
+    })
 
+    // Constants for FP32
+    val expWidth = 8
+    val sigWidth = 24
+
+    val adder = Module(new AddRecFN(expWidth, sigWidth))
+
+    // Convert IEEE 754 to recoded format
+    val a_recoded = recFNFromFN(expWidth, sigWidth, io.a)
+    val b_recoded = recFNFromFN(expWidth, sigWidth, io.b)
+
+    // Connect inputs to adder
+    adder.io.subOp := true.B  // Set to subtraction operation
+    adder.io.a := a_recoded
+    adder.io.b := b_recoded
+    adder.io.roundingMode := consts.round_near_even
+    adder.io.detectTininess := consts.tininess_afterRounding
+
+    // Convert result back to IEEE 754 format
+    io.result := fNFromRecFN(expWidth, sigWidth, adder.io.out)
+}
 
 class FP32Multiplier extends Module {
     val io = IO(new Bundle {

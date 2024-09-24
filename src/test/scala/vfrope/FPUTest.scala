@@ -51,28 +51,49 @@ class FP32AdderTest extends AnyFlatSpec with ChiselScalatestTester {
 }
 
 class FP32SubTest extends AnyFlatSpec with ChiselScalatestTester {
-  "FP32Sub" should "Sub two floating-point numbers correctly" in {
+  "FP32Sub" should "Sub two floating-point numbers correctly for various test cases" in {
     test(new FP32Sub) { dut =>
-      // IEEE 754 format for 1.5 and 2.25
-      val inputA = "40080000"  // 2.125 in IEEE 754 format
-      val inputB = "3fc00000"  // 1.5 in IEEE 754 format
-      val expectedResult = "3F200000"  // 3.625 in IEEE 754 format
-                            
-      // Provide inputs to the adder
-      dut.io.a.poke(BigInt(inputA, 16).U)
-      dut.io.b.poke(BigInt(inputB, 16).U)
+      val testCases = Seq(
+        ("3fc00000", "40080000", "bf200000"),  // 1.5 - 2.125 = -0.625
+        ("40000000", "40000000", "00000000"),  // 2.0 - 2.0 = 0.0
+        ("bf800000", "3f800000", "c0000000"),  // -1.0 - 1.0 = -2.0
+        ("41200000", "c1200000", "41a00000"),  // 10.0 - (-10.0) = 20.0
+        ("00000000", "40000000", "c0000000"),  // 0.0 - 2.0 = -2.0
+        ("3f800000", "3f800000", "00000000")   // 1.0 - 1.0 = 0.0
+      )
 
-      // Step the clock
-      dut.clock.step()
-      
-      // Optionally print the internal signals
-      val resultValue = dut.io.result.peek().litValue().toInt  // Convert BigInt to Int safely since it's within the 32-bit range
-      println(s"inputA      : 0x$inputA = ${java.lang.Float.intBitsToFloat(Integer.parseInt(inputA, 16))}")
-      println(s"inputB      : 0x$inputB = ${java.lang.Float.intBitsToFloat(Integer.parseInt(inputB, 16))}")
-      println(s"Sub Result: $resultValue = 0x${resultValue.toHexString}, ${java.lang.Float.intBitsToFloat(resultValue)}")
+      for ((inputA, inputB, expectedResult) <- testCases) {
+        // Provide inputs to the adder
+        dut.io.a.poke(BigInt(inputA, 16).U)
+        dut.io.b.poke(BigInt(inputB, 16).U)
+
+        // Step the clock
+        dut.clock.step()
+        
+        // Get the result
+        val resultValue = dut.io.result.peek().litValue
+
+        // Function to convert hex string to float
+        def hexToFloat(hex: String): Float = {
+          java.lang.Float.intBitsToFloat(Integer.parseUnsignedInt(hex, 16))
+        }
+
+        // Print the inputs, expected output, and actual output
+        println(s"inputA      : 0x$inputA = ${hexToFloat(inputA)}")
+        println(s"inputB      : 0x$inputB = ${hexToFloat(inputB)}")
+        println(s"Expected    : 0x$expectedResult = ${hexToFloat(expectedResult)}")
+        println(s"Sub Result: 0x${resultValue.toString(16).padTo(8, '0').takeRight(8)} = ${java.lang.Float.intBitsToFloat(resultValue.toInt)}")
+        println("---")
+
+        // Assert that the result matches the expected value
+        assert(resultValue == BigInt(expectedResult, 16), 
+               s"Failed for inputs 0x$inputA and 0x$inputB")
+      }
     }
   }
 }
+
+
 
 
 class FP32MultiplierTest extends AnyFlatSpec with ChiselScalatestTester {
