@@ -146,3 +146,19 @@ class FP32Truncate extends Module {
 
   io.out := result
 }
+
+class FP32DivPOW2INT extends Module {
+  val io = IO(new Bundle {
+    val a = Input(UInt(32.W))
+    val x = Input(UInt(12.W))  // Changed from 5.W to 12.W
+    val result = Output(UInt(32.W)) //몫이 소수점으로 나오면 안됨
+  })
+  val FP32Div = Module(new FP32DivPOW2())
+  FP32Div.io.a := io.a
+  FP32Div.io.x := io.x
+
+  val FP32Truncate = Module(new FP32Truncate())
+  FP32Truncate.io.in := FP32Div.io.result
+
+  io.result := FP32Truncate.io.out
+}

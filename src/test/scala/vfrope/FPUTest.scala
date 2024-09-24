@@ -194,3 +194,86 @@ class FP32DivPOW2Test extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+class FP32TruncateTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32Truncate"
+
+  it should "truncate fractional parts correctly" in {
+    test(new FP32Truncate) { dut =>
+      // Test cases in raw FP32 format (using BigInt for hex values)
+      val testCases = Seq(
+        (BigInt("40490FDB", 16).U, BigInt("40400000", 16).U), // 3.14159 -> 3.0
+        (BigInt("C0490FDB", 16).U, BigInt("C0400000", 16).U), // -3.14159 -> -3.0
+        (BigInt("3F000000", 16).U, BigInt("00000000", 16).U), // 0.5 -> 0.0
+        (BigInt("BF000000", 16).U, BigInt("00000000", 16).U), // -0.5 -> 0.0
+        (BigInt("3FFFFFFF", 16).U, BigInt("3F800000", 16).U), // 1.99999988079 -> 1.0
+        (BigInt("BFFFFFFF", 16).U, BigInt("BF800000", 16).U), // -1.99999988079 -> -1.0
+        (BigInt("42C98000", 16).U, BigInt("42C80000", 16).U), // 100.75 -> 100.0
+        (BigInt("C2C98000", 16).U, BigInt("C2C80000", 16).U), // -100.75 -> -100.0
+        (BigInt("00000000", 16).U, BigInt("00000000", 16).U), // 0.0 -> 0.0
+        (BigInt("3F800000", 16).U, BigInt("3F800000", 16).U), // 1.0 -> 1.0
+        (BigInt("BF800000", 16).U, BigInt("BF800000", 16).U),  // -1.0 -> -1.0
+        // 추가 테스트 케이스
+        (BigInt("3F400000", 16).U, BigInt("00000000", 16).U), // 0.75 -> 0.0
+        (BigInt("BF400000", 16).U, BigInt("00000000", 16).U), // -0.75 -> 0.0
+        (BigInt("3DCCCCCD", 16).U, BigInt("00000000", 16).U), // 0.1 -> 0.0
+        (BigInt("BDCCCCCD", 16).U, BigInt("00000000", 16).U), // -0.1 -> 0.0
+        (BigInt("41200000", 16).U, BigInt("41200000", 16).U), // 10.0 -> 10.0
+        (BigInt("C1200000", 16).U, BigInt("C1200000", 16).U), // -10.0 -> -10.0
+        (BigInt("40000000", 16).U, BigInt("40000000", 16).U), // 2.0 -> 2.0
+        (BigInt("C0000000", 16).U, BigInt("C0000000", 16).U), // -2.0 -> -2.0
+        (BigInt("4B000000", 16).U, BigInt("4B000000", 16).U), // 8388608.0 -> 8388608.0 (2^23, 최소의 정확한 정수)
+        (BigInt("CB000000", 16).U, BigInt("CB000000", 16).U), // -8388608.0 -> -8388608.0
+        (BigInt("4B000001", 16).U, BigInt("4B000001", 16).U), // 8388609.0 -> 8388609.0 (2^23 + 1)
+        (BigInt("CB000001", 16).U, BigInt("CB000001", 16).U), // -8388609.0 -> -8388609.0
+        (BigInt("7F7FFFFF", 16).U, BigInt("7F7FFFFF", 16).U), // 3.4028234e38 (FLT_MAX) -> 3.4028234e38
+        (BigInt("FF7FFFFF", 16).U, BigInt("FF7FFFFF", 16).U), // -3.4028234e38 (-FLT_MAX) -> -3.4028234e38
+        (BigInt("00800000", 16).U, BigInt("00000000", 16).U), // 1.1754944e-38 (FLT_MIN) -> 0.0
+        (BigInt("80800000", 16).U, BigInt("00000000", 16).U), // -1.1754944e-38 (-FLT_MIN) -> 0.0
+        (BigInt("3F7FFFFF", 16).U, BigInt("00000000", 16).U), // 0.99999994 -> 0.0
+        (BigInt("BF7FFFFF", 16).U, BigInt("00000000", 16).U), // -0.99999994 -> 0.0
+        (BigInt("3F800001", 16).U, BigInt("3F800000", 16).U), // 1.00000012 -> 1.0
+        (BigInt("BF800001", 16).U, BigInt("BF800000", 16).U)  // -1.00000012 -> -1.0
+      )
+
+      for ((input, expected) <- testCases) {
+        println(f"Test case: input = 0x${input.litValue}%08X, expected = 0x${expected.litValue}%08X")
+        dut.io.in.poke(input)
+        dut.clock.step(1)
+        dut.io.out.expect(expected)
+        println("----------------------------------------")
+      }
+    }
+  }
+}
+
+class FP32DivPOW2INTTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32DivPOW2INT"
+
+  it should "correctly divide and truncate FP32 numbers" in {
+    test(new FP32DivPOW2INT()) { dut =>
+      // Test cases in raw FP32 format (using BigInt for hex values)
+      val testCases = Seq(
+        (BigInt("40900000", 16).U, 1.U, BigInt("40000000", 16).U), // 4.5 / 2 = 2.0
+        (BigInt("40900000", 16).U, 0.U, BigInt("40800000", 16).U), // 4.5 / 1 = 4.0
+        (BigInt("41800000", 16).U, 2.U, BigInt("40800000", 16).U), // 16.0 / 4 = 4.0
+        (BigInt("3F000000", 16).U, 1.U, BigInt("00000000", 16).U), // 0.5 / 2 = 0.0 (truncated)
+        (BigInt("46000000", 16).U,12.U, BigInt("40000000", 16).U), // 8192.0 / 4096 = 2.0
+        (BigInt("40000000", 16).U, 1.U, BigInt("3F800000", 16).U), // 2.0 / 2 = 1.0
+        (BigInt("42C80000", 16).U, 3.U, BigInt("41400000", 16).U), // 100.0 / 8 = 12.0
+        (BigInt("447A0000", 16).U, 8.U, BigInt("40400000", 16).U), // 1000.0 / 256 = 3.0 (truncated)
+        (BigInt("40490FDB", 16).U, 2.U, BigInt("00000000", 16).U), // 3.14159 / 4 = 0.0 (truncated)
+        (BigInt("C1700000", 16).U, 4.U, BigInt("00000000", 16).U), // -15.0 / 16 = -0.0 (truncated)
+      )
+
+      for ((input, x, expected) <- testCases) {
+        println(f"Test case: input = 0x${input.litValue}%08X, x = $x, expected = 0x${expected.litValue}%08X")
+        dut.io.a.poke(input)
+        dut.io.x.poke(x)
+        dut.clock.step(1)
+        dut.io.result.expect(expected)
+        println("----------------------------------------")
+      }
+    }
+  }
+}
