@@ -48,25 +48,52 @@ class SinCosLUTINT(width:Int) extends Module {
 }
 
 
+class CosLUT() extends Module {
+    val io = IO(new Bundle {
+        val index  = Input(UInt(32.W))
+        val value = Output(SInt(32.W))
+    })
+    /*
+    val cosLUT = VecInit(Seq(
+        0.S, ,,, 4094.S, 4095.S
+    ))
+    */
+    val cosLUT = VecInit((0 to 4095).map(_.S))
+    io.value := cosLUT(io.index)
+}
+
 class SinCosLUT(LutSize: Int, LutSizeHEX: Int) extends Module {
     val io = IO(new Bundle {
-        val angle = Input(UInt(32.W)) // Input angle in discrete steps (e.g., 0 to 255)
-        //val sinOut = Output(UInt(32.W)) // Output sine value
-        //val cosOut = Output(UInt(32.W)) // Output cosine value
+        val angle = Input(UInt(32.W))
+        val sinOut = Output(SInt(32.W))
+        val cosOut = Output(SInt(32.W))
     })
-
-    val FP32Mult   = Module(new FP32Multiplier())
+    // Index calculation
+    val FP32Mult = Module(new FP32Multiplier())
     FP32Mult.io.a := io.angle
     FP32Mult.io.b := LutSizeHEX.U
-    val FP32Index  = FP32Mult.io.result
+    val FP32Index = FP32Mult.io.result
 
-    val FP32Truncate       = Module(new FP32Truncate())
-    FP32Truncate.io.in    := FP32Index
-    val FP32TruncateIndex  = FP32Truncate.io.out
+    val FP32Truncate = Module(new FP32Truncate())
+    FP32Truncate.io.in := FP32Index
+    val FP32TruncateIndex = FP32Truncate.io.out
 
-    val FP32toINT32         = Module(new FP32toINT32())
+    val FP32toINT32 = Module(new FP32toINT32())
     FP32toINT32.io.ieee754 := FP32TruncateIndex
-    val cosIndex            = FP32toINT32.io.int32
-    val sinIndex            = (cosIndex + (1.U << (LutSize.U - 4.U)).asSInt)(LutSize -1, 0) // LutSize를 SInt로 변환
-    printf(p"Angle: ${io.angle}, LutSizeHEX: ${LutSizeHEX.U}, FP32Index: ${FP32Index}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${cosIndex}, sinIndex: ${sinIndex}\n")
+    
+    //이하 문제 많음
+    val cosIndex = FP32toINT32.io.int32.asUInt(LutSize - 2, 0) + 1.U
+    val sinIndex = (cosIndex + (1.U << (LutSize - 4).U)).asUInt(LutSize - 1, 0)
+
+    // Outputs
+    val cosLUT = Module(new CosLUT())
+    val sinLUT = Module(new CosLUT())
+
+    cosLUT.io.index := cosIndex
+    io.cosOut := cosLUT.io.value
+
+    sinLUT.io.index := sinIndex
+    io.sinOut := sinLUT.io.value
+
+    printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${cosIndex}, sinIndex: ${sinIndex}\n")
 }
