@@ -13,7 +13,8 @@ class FP32angleCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
       val testCases = Seq(
         ("3F800000", 2, 1, "Test 1"),    // theta = 1.0, m = 2, i = 1
         ("447A0000", 51, 100, "Test 2"), // theta = 1000.0, m = 51, i = 100
-        ("3A000000", 151, 70, "Test 3")  // theta = 2/4096, m = 151, i = 70
+        ("3A000000", 151, 70, "Test 3"),  // theta = 2/4096, m = 151, i = 70
+        ("3A000000", 4096, 4096, "Test 4")  // theta = 2/4096, m = 4096, i = 4096
       )
 
       for ((theta, m, i, testName) <- testCases) {
