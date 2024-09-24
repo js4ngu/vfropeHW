@@ -126,10 +126,6 @@ class FP32Truncate extends Module {
   val sign = io.in(31)
   val exponent = io.in(30, 23)
   val mantissa = io.in(22, 0)
-
-  printf(p"Input: 0x${Hexadecimal(io.in)}\n")
-  printf(p"Sign: $sign, Exponent: 0x${Hexadecimal(exponent)}, Mantissa: 0x${Hexadecimal(mantissa)}\n")
-
   val result = Wire(UInt(32.W))
   
   when(exponent < 127.U) {
@@ -144,17 +140,9 @@ class FP32Truncate extends Module {
     val mask = Wire(UInt(23.W))
     mask := ((1.U(23.W) << shift) - 1.U) << (23.U - shift)
     val truncated_mantissa = Wire(UInt(23.W))
-    truncated_mantissa := mantissa & mask
-    
-    printf(p"Shift: $shift\n")
-    printf(p"Original mantissa : 0x${Hexadecimal(mantissa)}\n")
-    printf(p"Mas               : 0x${Hexadecimal(mask)}\n")
-    printf(p"Truncated mantissa: 0x${Hexadecimal(truncated_mantissa)}\n")
-    
+    truncated_mantissa := mantissa & mask    
     result := Cat(sign, exponent, truncated_mantissa)
   }
 
   io.out := result
-  printf(p"Output: 0x${Hexadecimal(io.out)}\n")
-  printf("-------------------\n")
 }
