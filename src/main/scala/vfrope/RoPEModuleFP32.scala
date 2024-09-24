@@ -26,21 +26,21 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     thetaFP32(0) := io.theta
     thetaFP32(1) := RegNext(thetaFP32(0))
     thetaFP32(2) := RegNext(thetaFP32(1))
-
+    /*
     printf(s"theta : %d, %d, %d\n", thetaFP32(0), thetaFP32(1), thetaFP32(2))   //ok
     printf(s"EN    : %d, %d, %d, %d, %d, %d\n\n", ENReg(0), ENReg(1), ENReg(2), ENReg(3), ENReg(4), ENReg(5))   //ok
-
+    */
     //Stage 1
     val mi = RegInit(0.S(32.W))
     mi     := Cat(0.U((32-LutSize).W),(io.m * io.i)(LutSize - 1,0)).asSInt
-    printf(s"m, i, mi : %d, %d, %d\n", io.m, io.i, mi)  //ok
+    //printf(s"m, i, mi : %d, %d, %d\n", io.m, io.i, mi)  //ok
     
     //Stage 2
     val Int32ToFP32 = Module(new Int32ToFP32())
     val miFP32      = RegInit(0.U(32.W))
     Int32ToFP32.io.inInt    := mi
     miFP32                  := Int32ToFP32.io.outIEEE
-    printf(s"mi, miFP32 : %d, %d\n", mi, miFP32) //ok
+    //printf(s"mi, miFP32 : %d, %d\n", mi, miFP32) //ok
 
     //Stage 3
     val m_theta_i   = RegInit(0.U(32.W))
@@ -49,28 +49,29 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     FP32Mult.io.b   := thetaFP32(2)
     m_theta_i       := FP32Mult.io.result
 
-    printf(s"thetaFP32, miFP32, m_theta_i : %d, %d, %d\n", thetaFP32(2), miFP32, m_theta_i) //OK
+    //printf(s"thetaFP32, miFP32, m_theta_i : %d, %d, %d\n", thetaFP32(2), miFP32, m_theta_i) //OK m theta i 1004000
 
     //Stage 4
     val quotient       = RegInit(0.U(32.W))
-    val FP32DivPOW2    = Module(new FP32DivPOW2())
+    val FP32DivPOW2    = Module(new FP32DivPOW2INT())
     FP32DivPOW2.io.a  := m_theta_i
     FP32DivPOW2.io.x  := (LutSize - 1).U
     quotient          := FP32DivPOW2.io.result
+    //printf(p"${m_theta_i} / (2^${LutSize}) = ${quotient}\n") //490
 
     val Int32ToFP32_2 = Module(new Int32ToFP32())
-    val lutFP32        = RegInit(0.U(32.W))
-    Int32ToFP32_2.io.inInt   := LutSize.asSInt
+    val lutFP32       = RegInit(0.U(32.W))
+    Int32ToFP32_2.io.inInt   := (((1.U << (LutSize - 1)) & ((1.U << 32) - 1.U))).asSInt
     lutFP32                  := Int32ToFP32_2.io.outIEEE
-    printf(s"quotient, lutFP32 : %d %d\n", quotient, lutFP32) // 여기서 몫이 소수점으로 나옴.
+    //printf(s"quotient, lutFP32 : %d %d\n", quotient, lutFP32) // 여기서 몫 490
 
     //Stage 5
     val modVal       = RegInit(0.U(32.W))
     val FP32Mult2    = Module(new FP32Multiplier())
     FP32Mult2.io.a   := quotient
-    FP32Mult2.io.b   := lutFP32
+    FP32Mult2.io.b   := lutFP32 // 2^LUT한걸 해야함
     modVal           := FP32Mult2.io.result
-    printf(s"quotient, lutFP32, modVal : %d %d %d\n", quotient, lutFP32, modVal) // ok
+    //printf(s"quotient, lutFP32, modVal : %d %d %d\n", quotient, lutFP32, modVal) // modVal 5880
 
     //stage 6
     val FP32Sub    = Module(new FP32Sub())
@@ -80,7 +81,6 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     io.ENout       := Mux(ENReg(5),ENReg(5), 0.B)
     printf(s"(EN) m_theta_i - modVal = Output : (%b) %d - %d = %d\n",io.ENout, m_theta_i,  modVal, io.out)
 }
-
 
 class FP32RoPEcore() extends Module {
     val io = IO(new Bundle {
