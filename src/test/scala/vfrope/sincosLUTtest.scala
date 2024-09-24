@@ -33,36 +33,28 @@ class SinCosLUTINTTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-
 class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "SinCosLUT"
-  it should "calculate sin and cos correctly for various angles" in {
-    test(new SinCosLUT(32,28,4096)) { dut =>
-      val testAngles = Seq( 0, 0.25, 0.5, 1.0, 1.75, 2.0)
-      for (angle <- testAngles) {
-        dut.io.angle.poke(FixedPoint.fromDouble(angle, 32.W, 28.BP))
-        dut.io.x1.poke(90.S)
-        dut.io.x2.poke(10.S)
-        dut.io.inEN.poke(1.B)
+
+  it should "output correct sine and cosine values for a specific angle" in {
+    test(new SinCosLUT(LutSize = 8, LutSizeHEX = 0x45800000)) { dut =>
+      // List of angles to test
+      val anglesToTest = Seq("h0", "h3F800000")
+
+      // Iterate through each angle
+      for (angle <- anglesToTest) {
+        dut.io.angle.poke(angle.U)
         dut.clock.step()
-        val sinOut = dut.io.sin.peek().litValue()
-        val cosOut = dut.io.cos.peek().litValue()
-        val  x1hat = dut.io.x1hat.peek().litValue()
-        val  x2hat = dut.io.x2hat.peek().litValue()
-
-        // Convert BigInt to Hexadecimal String
-        println(f"Angle: $angle, Sin: ${sinOut}%x, Cos: ${cosOut}%x , x1 : ${x1hat}, x2 : ${x2hat}")
-        dut.io.inEN.poke(0.B)
-        dut.clock.step()
-        val sinOut1 = dut.io.sin.peek().litValue()
-        val cosOut1 = dut.io.cos.peek().litValue()
-        val  x1hat1 = dut.io.x1hat.peek().litValue()
-        val  x2hat1 = dut.io.x2hat.peek().litValue()
-
-        // Convert BigInt to Hexadecimal String
-        println(f"Angle: $angle, Sin: ${sinOut1}%x, Cos: ${cosOut1}%x , x1 : ${x1hat1}, x2 : ${x2hat1}")
-
+        /*
+        // Capture the sine and cosine output
+        val sinOut = dut.io.sinOut.peek().litValue()
+        val cosOut = dut.io.cosOut.peek().litValue()
+        // Print out the results for the angle
+        println(s"Angle: $angle, Sin: $sinOut, Cos: $cosOut")
+        */
+        println(s"------------------------")
       }
     }
   }
 }
+

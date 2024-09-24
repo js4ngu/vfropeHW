@@ -25,7 +25,6 @@ Int642FP:
 	sbt "testOnly vfrope.Int64ToFP32Test"
 FP322Int:
 	sbt "testOnly vfrope.FP32toINT32Test"
-
 FPdiv:
 	sbt "testOnly vfrope.FP32DivPOW2Test"
 FP32Truncate:

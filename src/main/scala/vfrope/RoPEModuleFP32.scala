@@ -62,6 +62,7 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     quotient          := FP32DivPOW2.io.result
     //printf(p"${m_theta_i} / (2^${LutSize}) = ${quotient}\n") //490
 
+    // 추후 pre-compute 형식으로 바꾸는게 좋을듯
     val Int32ToFP32           = Module(new Int32ToFP32())
     val lutFP32               = RegInit(0.U(32.W))
     Int32ToFP32.io.inInt     := (((1.U << (LutSize - 1)) & ((1.U << 32) - 1.U))).asSInt
