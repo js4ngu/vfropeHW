@@ -62,13 +62,13 @@ class CosLUT() extends Module {
     io.value := cosLUT(io.index)
 }
 
-class SinCosLUT(LutSize: Int, LutSizeHEX: Int) extends Module {
+class IndexCalculator(LutSize: Int, LutSizeHEX: Int, SinCosOffset : Int) extends Module {
     val io = IO(new Bundle {
         val angle = Input(UInt(32.W))
-        val sinOut = Output(SInt(32.W))
-        val cosOut = Output(SInt(32.W))
+        val cosIndex = Output(UInt(9.W))
+        val sinIndex = Output(UInt(9.W))
     })
-    // Index calculation
+
     val FP32Mult = Module(new FP32Multiplier())
     FP32Mult.io.a := io.angle
     FP32Mult.io.b := LutSizeHEX.U
@@ -80,20 +80,31 @@ class SinCosLUT(LutSize: Int, LutSizeHEX: Int) extends Module {
 
     val FP32toINT32 = Module(new FP32toINT32())
     FP32toINT32.io.ieee754 := FP32TruncateIndex
-    
-    //이하 문제 많음
-    val cosIndex = FP32toINT32.io.int32.asUInt(LutSize - 1, 0)
-    val sinIndex = (cosIndex + (1.U << (LutSize - 4).U)).asUInt(LutSize - 1, 0)
+    val cosIndex = FP32toINT32.io.int32.asUInt
+    val sinIndex = (cosIndex + SinCosOffset.U)(LutSize - 1, 0) //비트 슬라이싱으로 범위제한 추가
 
-    // Outputs
-    val cosLUT = Module(new CosLUT())
-    val sinLUT = Module(new CosLUT())
+    io.cosIndex := cosIndex
+    io.sinIndex := sinIndex
 
-    cosLUT.io.index := cosIndex
-    io.cosOut := cosLUT.io.value
-
-    sinLUT.io.index := sinIndex
-    io.sinOut := sinLUT.io.value
-
+    //printf(p"Angle: ${io.angle}, LutSizeHEX: ${LutSizeHEX.U}, FP32Index: ${FP32Index}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${cosIndex}, sinIndex: ${sinIndex}\n")
     printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${cosIndex}, sinIndex: ${sinIndex}\n")
+}
+
+class SinCosLUT(LutSize: Int, LutSizeHEX: Int, SinCosOffset : Int) extends Module {
+  val io = IO(new Bundle {
+    val angle = Input(UInt(32.W))
+    val sinOut = Output(SInt(32.W))
+    val cosOut = Output(SInt(32.W))
+  })
+
+  val indexCalculator = Module(new IndexCalculator(LutSize, LutSizeHEX, SinCosOffset))
+  val cosLUT = Module(new CosLUT())
+
+  indexCalculator.io.angle := io.angle
+
+  cosLUT.io.index := indexCalculator.io.cosIndex
+  io.cosOut := cosLUT.io.value
+
+  cosLUT.io.index := indexCalculator.io.sinIndex
+  io.sinOut := cosLUT.io.value
 }

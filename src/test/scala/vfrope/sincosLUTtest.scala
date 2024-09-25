@@ -37,10 +37,10 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "SinCosLUT"
 
   it should "output correct sine and cosine values for a specific angle" in {
-    test(new SinCosLUT(LutSize = 12, LutSizeHEX = 0x45800000)) { dut =>
+    test(new SinCosLUT(LutSize = 12, LutSizeHEX = 0x45800000, SinCosOffset = 1024)) { dut =>
       // List of angles to test
-      val anglesToTest = Seq("h48c27395")
-      //0.1220703125 테스트
+      val anglesToTest = Seq("h3A000000",   //    2/4096 = 0.00048828125
+                            "h3F7A0000")    // 4000/4096 = 0.9765625
       // Iterate through each angle
       for (angle <- anglesToTest) {
         dut.io.angle.poke(angle.U)
