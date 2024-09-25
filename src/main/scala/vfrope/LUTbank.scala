@@ -512,6 +512,4 @@ class CosLUT() extends Module {
     io.cosOut := Mux(io.EN, cosLUT(io.cosIndex), 0.U(32.W)) 
     io.sinOut := Mux(io.EN, sinLUT(io.sinIndex), 0.U(32.W))
     io.ENout  := Mux(io.EN, io.EN, 0.B)
-
-    printf(p"EN: ${io.ENout}, cosOut: ${io.cosOut}, sinOut: ${io.sinOut}\n")
 }
