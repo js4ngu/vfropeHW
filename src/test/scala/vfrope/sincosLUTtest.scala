@@ -53,8 +53,11 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
       // Iterate through each angle
       for (angle <- anglesToTest) {
         dut.io.angle.poke(angle.U)
+        dut.io.EN.poke(1.B)
         dut.clock.step()
-        
+        dut.io.EN.poke(0.B)
+        dut.clock.step()
+
         // Capture the sine and cosine output
         val rad    = dut.io.angle.peek().litValue().toInt
         val sinOut = dut.io.sinOut.peek().litValue().toInt
