@@ -62,16 +62,16 @@ class CosLUT() extends Module {
     io.value := cosLUT(io.index)
 }
 
-class IndexCalculator(LutSize: Int, LutSizeHEX: Int, SinCosOffset : Int) extends Module {
+class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) extends Module {
     val io = IO(new Bundle {
         val angle = Input(UInt(32.W))
-        val cosIndex = Output(UInt(9.W))
-        val sinIndex = Output(UInt(9.W))
+        val cosIndex = Output(UInt(32.W))
+        val sinIndex = Output(UInt(32.W))
     })
 
     val FP32Mult = Module(new FP32Multiplier())
     FP32Mult.io.a := io.angle
-    FP32Mult.io.b := LutSizeHEX.U
+    FP32Mult.io.b := LutHalfSizeHEX.U
     val FP32Index = FP32Mult.io.result
 
     val FP32Truncate = Module(new FP32Truncate())
@@ -80,24 +80,23 @@ class IndexCalculator(LutSize: Int, LutSizeHEX: Int, SinCosOffset : Int) extends
 
     val FP32toINT32 = Module(new FP32toINT32())
     FP32toINT32.io.ieee754 := FP32TruncateIndex
-    val cosIndex = FP32toINT32.io.int32.asUInt
+    val cosIndex = FP32toINT32.io.int32.asUInt                 
     val sinIndex = (cosIndex + SinCosOffset.U)(LutSize - 1, 0) //비트 슬라이싱으로 범위제한 추가
 
     io.cosIndex := cosIndex
     io.sinIndex := sinIndex
 
-    //printf(p"Angle: ${io.angle}, LutSizeHEX: ${LutSizeHEX.U}, FP32Index: ${FP32Index}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${cosIndex}, sinIndex: ${sinIndex}\n")
-    printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${cosIndex}, sinIndex: ${sinIndex}\n")
+    printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
 }
 
-class SinCosLUT(LutSize: Int, LutSizeHEX: Int, SinCosOffset : Int) extends Module {
+class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) extends Module {
   val io = IO(new Bundle {
     val angle = Input(UInt(32.W))
     val sinOut = Output(SInt(32.W))
     val cosOut = Output(SInt(32.W))
   })
 
-  val indexCalculator = Module(new IndexCalculator(LutSize, LutSizeHEX, SinCosOffset))
+  val indexCalculator = Module(new IndexCalculator(LutSize, LutHalfSizeHEX, SinCosOffset))
   val cosLUT = Module(new CosLUT())
 
   indexCalculator.io.angle := io.angle
