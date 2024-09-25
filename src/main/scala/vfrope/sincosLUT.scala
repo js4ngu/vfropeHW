@@ -35,11 +35,13 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) ext
 
 class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
   val io = IO(new Bundle {
+    val x      = Input(Vec(2, UInt(32.W)))
     val EN     = Input(Bool())
     val angle  = Input(UInt(32.W))
     val sinOut = Output(UInt(32.W))
     val cosOut = Output(UInt(32.W))
-    val ENout    = Output(Bool())
+    val ENout  = Output(Bool())
+    val xFWD   = Output(Vec(2, UInt(32.W)))
   })
 
   val indexCalculator = Module(new IndexCalculator(LutSize, LutHalfSizeHEX, SinCosOffset))
@@ -51,6 +53,9 @@ class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Mo
   lutModule.io.cosIndex := indexCalculator.io.cosIndex
   lutModule.io.sinIndex := indexCalculator.io.sinIndex
   lutModule.io.EN := indexCalculator.io.ENout
+
+  io.xFWD(0) := Mux(lutModule.io.ENout, io.x(0), 0.U(32.W))
+  io.xFWD(1) := Mux(lutModule.io.ENout, io.x(1), 0.U(32.W))
 
   io.cosOut := Mux(lutModule.io.ENout, lutModule.io.cosOut, 0.U(32.W))
   io.sinOut := Mux(lutModule.io.ENout, lutModule.io.sinOut, 0.U(32.W))

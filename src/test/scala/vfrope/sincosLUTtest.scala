@@ -55,8 +55,13 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.angle.poke(angle.U)
         dut.io.EN.poke(1.B)
         dut.clock.step()
+        dut.io.x(0).poke(100.U)
+        dut.io.x(1).poke(100.U)
 
         // Capture the sine and cosine output
+        val xFWD0     = dut.io.xFWD(0).peek().litValue.toInt
+        val xFWD1     = dut.io.xFWD(1).peek().litValue.toInt
+
         val EN     = dut.io.ENout.peek().litValue.toInt
         val rad    = dut.io.angle.peek().litValue().toInt
         val sinOut = dut.io.sinOut.peek().litValue().toInt
@@ -67,12 +72,16 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
         val floatCosOut = Float.intBitsToFloat(cosOut)
   
         // Print out the results for the angle
+        println(s"[$EN] xFWD0 : $xFWD0 xFWD1 : $xFWD1")
         println(f"[$EN] rad: $floatrad%.6f, Cos: $floatCosOut%.6f, Sin: $floatSinOut%.6f")
         println(s"------------------------")
 
         dut.io.EN.poke(0.B)
         dut.clock.step()
         // Capture the sine and cosine output
+        val xFWD02     = dut.io.xFWD(0).peek().litValue.toInt
+        val xFWD12     = dut.io.xFWD(1).peek().litValue.toInt
+
         val EN2     = dut.io.ENout.peek().litValue.toInt
         val rad2    = dut.io.angle.peek().litValue().toInt
         val sinOut2 = dut.io.sinOut.peek().litValue().toInt
@@ -83,6 +92,7 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
         val floatCosOut2 = Float.intBitsToFloat(cosOut2)
   
         // Print out the results for the angle
+        println(s"[$EN2] xFWD0 : $xFWD02 xFWD1 : $xFWD12")
         println(f"[$EN2] rad: $floatrad2%.6f, Cos: $floatCosOut2%.6f, Sin: $floatSinOut2%.6f")
         println(s"**********************************")
 
