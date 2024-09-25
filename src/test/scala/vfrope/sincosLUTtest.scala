@@ -55,8 +55,6 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.angle.poke(angle.U)
         dut.io.EN.poke(1.B)
         dut.clock.step()
-        dut.io.EN.poke(0.B)
-        dut.clock.step()
 
         // Capture the sine and cosine output
         val rad    = dut.io.angle.peek().litValue().toInt
@@ -70,6 +68,10 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
         // Print out the results for the angle
         println(f"rad: $floatrad%.6f, Cos: $floatCosOut%.6f, Sin: $floatSinOut%.6f")
         println(s"------------------------")
+
+        dut.io.EN.poke(0.B)
+        dut.clock.step()
+
       }
     }
   }

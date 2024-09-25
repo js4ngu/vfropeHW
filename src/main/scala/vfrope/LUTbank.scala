@@ -49,10 +49,12 @@ class SinCosLUTINT(width:Int) extends Module {
 
 class CosLUT() extends Module {
     val io = IO(new Bundle {
+        val EN        = Input(Bool())
         val cosIndex  = Input(UInt(32.W))
         val sinIndex  = Input(UInt(32.W))
         val sinOut    = Output(UInt(32.W))
         val cosOut    = Output(UInt(32.W))
+        val ENout     = Output(Bool())
     })
     val cosLUTBank0 = VecInit(Seq(
             "h3f800000".U, "h3f7fffec".U, "h3f7fffb1".U, "h3f7fff4e".U, "h3f7ffec4".U, "h3f7ffe12".U, "h3f7ffd39".U, "h3f7ffc38".U, "h3f7ffb10".U, "h3f7ff9c0".U,
@@ -507,6 +509,9 @@ class CosLUT() extends Module {
                         cosLUTBank11 ++ cosLUTBank12 ++ cosLUTBank13 ++ cosLUTBank14 ++ cosLUTBank15)
     val sinLUT = cosLUT
 
-    io.cosOut := cosLUT(io.cosIndex)
-    io.sinOut := sinLUT(io.sinIndex)
+    io.cosOut := Mux(io.EN, cosLUT(io.cosIndex), 0.U(32.W)) 
+    io.sinOut := Mux(io.EN, sinLUT(io.sinIndex), 0.U(32.W))
+    io.ENout  := Mux(io.EN, io.EN, 0.B)
+
+    printf(p"EN: ${io.ENout}, cosOut: ${io.cosOut}, sinOut: ${io.sinOut}\n")
 }

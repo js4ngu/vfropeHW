@@ -46,10 +46,13 @@ class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Mo
 
   indexCalculator.io.EN := io.EN
   indexCalculator.io.angle := io.angle
+
   lutModule.io.cosIndex := indexCalculator.io.cosIndex
   lutModule.io.sinIndex := indexCalculator.io.sinIndex
-  val ENtemp = indexCalculator.io.ENout
-  printf("cos LUT EN : %d\n", ENtemp)
+  lutModule.io.EN := indexCalculator.io.ENout
+  
   io.cosOut := lutModule.io.cosOut
   io.sinOut := lutModule.io.sinOut
+  val ENtemp = lutModule.io.ENout
+  printf("cos LUT EN : %d\n", ENtemp)
 }
