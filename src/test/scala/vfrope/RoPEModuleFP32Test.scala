@@ -24,6 +24,9 @@ class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
 
       for ((theta, m, i, testName) <- testCases) {
         dut.io.theta.poke(BigInt(theta, 16).U)
+        dut.io.x(0).poke(100.U)
+        dut.io.x(1).poke(100.U)
+
         dut.io.m.poke(m.U)
         dut.io.i.poke(i.U)
         dut.io.EN.poke(1.B)
@@ -33,7 +36,17 @@ class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
 
         val result = dut.io.out.peek().litValue
         val floatResult = Float.intBitsToFloat(result.toInt)
-        println(f"$testName Result: $floatResult%.6f")
+        val xFWD0 = dut.io.xFWD(0).peek().litValue
+        val xFWD1 = dut.io.xFWD(1).peek().litValue
+        println(f"$testName Result: $floatResult%.6f xFWD0 : $xFWD0 xFWD1 : $xFWD1")
+
+        dut.clock.step(2)
+        val result2 = dut.io.out.peek().litValue
+        val floatResult2 = Float.intBitsToFloat(result.toInt)
+        val xFWD02 = dut.io.xFWD(0).peek().litValue
+        val xFWD12 = dut.io.xFWD(1).peek().litValue
+        println(f"$testName Result: $floatResult2%.6f xFWD0 : $xFWD02 xFWD1 : $xFWD12")
+        println(s"------------------------")
 
         // You can add assertions here to check if the result is correct
         // For example:

@@ -4,12 +4,14 @@ import chisel3.util._
 
 class FP32radianCaclulator(LutSize : Int, LutSizeHalfHEX : Int) extends Module {
     val io = IO(new Bundle {
+        val x       = Input(Vec(2, UInt(32.W)))
         val EN      = Input(Bool())
         val m       = Input(UInt(32.W))
         val i       = Input(UInt(32.W))
         val theta   = Input(UInt(32.W))
         val out     = Output(UInt(32.W))
         val ENout   = Output(Bool())
+        val xFWD    = Output(Vec(2, UInt(32.W)))
     })
     //printf(s"=== UPDATE CYCLE ===\n\n")
 
@@ -79,7 +81,9 @@ class FP32radianCaclulator(LutSize : Int, LutSizeHalfHEX : Int) extends Module {
     FP32Sub.io.b   := modVal
     io.out         := Mux(ENReg(5),FP32Sub.io.result,0.U(32.W))
     io.ENout       := Mux(ENReg(5),ENReg(5), 0.B)
-    //printf(s"(EN) m_theta_i - modVal = Output : (%b) %d - %d = %d\n",io.ENout, m_theta_i,  modVal, io.out)
+
+    io.xFWD(0) := Mux(ENReg(5), io.x(0), 0.U(32.W))
+    io.xFWD(1) := Mux(ENReg(5), io.x(1), 0.U(32.W))
 }
 
 class FP32RoPEcore() extends Module {
