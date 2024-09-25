@@ -50,8 +50,10 @@ class SinCosLUTINT(width:Int) extends Module {
 
 class CosLUT() extends Module {
     val io = IO(new Bundle {
-        val index  = Input(UInt(32.W))
-        val value = Output(SInt(32.W))
+        val cosIndex  = Input(UInt(32.W))
+        val sinIndex  = Input(UInt(32.W))
+        val sinOut    = Output(SInt(32.W))
+        val cosOut    = Output(SInt(32.W))
     })
     /*
     val cosLUT = VecInit(Seq(
@@ -59,7 +61,11 @@ class CosLUT() extends Module {
     ))
     */
     val cosLUT = VecInit((0 to 4095).map(_.S))
-    io.value := cosLUT(io.index)
+    val sinLUT = VecInit((0 to 4095).map(_.S))
+
+    io.cosOut := cosLUT(io.cosIndex)
+    io.sinOut := sinLUT(io.sinIndex)
+
 }
 
 class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) extends Module {
@@ -86,10 +92,10 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) ext
     io.cosIndex := cosIndex
     io.sinIndex := sinIndex
 
-    printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
+    //printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
 }
 
-class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) extends Module {
+class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
   val io = IO(new Bundle {
     val angle = Input(UInt(32.W))
     val sinOut = Output(SInt(32.W))
@@ -97,13 +103,13 @@ class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) extends M
   })
 
   val indexCalculator = Module(new IndexCalculator(LutSize, LutHalfSizeHEX, SinCosOffset))
-  val cosLUT = Module(new CosLUT())
+  val lutModule = Module(new CosLUT())
 
   indexCalculator.io.angle := io.angle
 
-  cosLUT.io.index := indexCalculator.io.cosIndex
-  io.cosOut := cosLUT.io.value
+  lutModule.io.cosIndex := indexCalculator.io.cosIndex
+  lutModule.io.sinIndex := indexCalculator.io.sinIndex
 
-  cosLUT.io.index := indexCalculator.io.sinIndex
-  io.sinOut := cosLUT.io.value
+  io.cosOut := lutModule.io.cosOut
+  io.sinOut := lutModule.io.sinOut
 }

@@ -54,9 +54,8 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
         val sinOut = dut.io.sinOut.peek().litValue()
         val cosOut = dut.io.cosOut.peek().litValue()
         // Print out the results for the angle
-        //println(s"Angle: $angle, Cos: $cosOut, Sin: $sinOut")
-        
-        //println(s"------------------------")
+        println(s"Angle: $angle, Cos: $cosOut, Sin: $sinOut")
+        println(s"------------------------")
       }
     }
   }
