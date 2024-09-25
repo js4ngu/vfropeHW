@@ -44,7 +44,7 @@ RoPECoreInnerTest:
 
 #FP32 RoPE 관련
 FP32angle:
-	sbt "testOnly vfrope.FP32angleCaclulatorTest"
+	sbt "testOnly vfrope.FP32radianCaclulatorTest"
 FP32core:
 	sbt "testOnly vfrope.FP32RoPEcoreTest"
 pyRoPE:

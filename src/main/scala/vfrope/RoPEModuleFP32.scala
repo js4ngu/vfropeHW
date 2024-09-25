@@ -2,7 +2,7 @@ package vfrope
 import chisel3._
 import chisel3.util._
 
-class FP32angleCaclulator(LutSize : Int) extends Module {
+class FP32radianCaclulator(LutSize : Int, LutSizeHalfHEX : Int) extends Module {
     val io = IO(new Bundle {
         val EN      = Input(Bool())
         val m       = Input(UInt(32.W))
@@ -58,21 +58,18 @@ class FP32angleCaclulator(LutSize : Int) extends Module {
     val quotient       = RegInit(0.U(32.W))
     val FP32DivPOW2    = Module(new FP32DivPOW2INT())
     FP32DivPOW2.io.a  := m_theta_i
-    FP32DivPOW2.io.x  := (LutSize - 1).U
+    FP32DivPOW2.io.x  := 1.U //(LutSize - 1).U
     quotient          := FP32DivPOW2.io.result
-    //printf(p"${m_theta_i} / (2^${LutSize}) = ${quotient}\n") //490
+    //printf(p"${m_theta_i} / 2 = ${quotient}\n") //490
 
-    // 추후 pre-compute 형식으로 바꾸는게 좋을듯
-    val Int32ToFP32           = Module(new Int32ToFP32())
     val lutFP32               = RegInit(0.U(32.W))
-    Int32ToFP32.io.inInt     := (((1.U << (LutSize - 1)) & ((1.U << 32) - 1.U))).asSInt
-    lutFP32                  := Int32ToFP32.io.outIEEE
+    lutFP32                  := LutSizeHalfHEX.U
     //printf(s"quotient, lutFP32 : %d %d\n", quotient, lutFP32) // 여기서 몫 490
 
     //Stage 5
     val modVal          = RegInit(0.U(32.W))
     FP32Mult(1).io.a   := quotient
-    FP32Mult(1).io.b   := lutFP32 // 2^LUT한걸 해야함
+    FP32Mult(1).io.b   := 0x40000000.U // 2^LUT한걸 해야함
     modVal             := FP32Mult(1).io.result
     //printf(s"quotient, lutFP32, modVal : %d %d %d\n", quotient, lutFP32, modVal) // modVal 5880
 

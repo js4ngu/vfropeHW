@@ -5,16 +5,21 @@ import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 import java.lang.Float
 
+/*
+Test 1 Result: 2.000000
+Test 2 Result: 480.000000
+Test 3 Result: 5.161133
+Test 4 Result: 0.000000
+*/
 
-
-class FP32angleCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
+class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
   "FP32angleCaclulatorTest" should "calculate angles correctly" in {
-    test(new FP32angleCaclulator(LutSize = 12)) { dut =>
+    test(new FP32radianCaclulator(LutSize = 12, LutSizeHalfHEX = 0x45000000)) { dut =>
       val testCases = Seq(
-        ("3F800000", 2, 1, "Test 1"),    // theta = 1.0, m = 2, i = 1
-        ("447A0000", 51, 100, "Test 2"), // theta = 1000.0, m = 51, i = 100
-        ("3A000000", 151, 70, "Test 3"),  // theta = 2/4096, m = 151, i = 70
-        ("3A000000", 4096, 4096, "Test 4")  // theta = 2/4096, m = 4096, i = 4096
+        ("3A000000",    1,   1, "Test 1"),  // theta = 2/4096, m = 1,    i = 1    => 0.00048828125
+        ("3A000000",  355, 153, "Test 2"),  // theta = 2/4096, m = 355,  i = 153  => 0.52099609375
+        ("3A000000", 4000,   3, "Test 3"),  // theta = 2/4096, m = 4000, i = 3    => 1.859375
+        ("3A000000", 4096,   1, "Test 4")   // theta = 2/4096, m = 4096, i = 4096 => 0
       )
 
       for ((theta, m, i, testName) <- testCases) {
