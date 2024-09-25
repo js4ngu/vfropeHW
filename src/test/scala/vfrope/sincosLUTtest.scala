@@ -4,6 +4,7 @@ import chisel3._
 import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
 import chisel3.experimental.FixedPoint
+import java.lang.Float
 
 class SinCosLUTINTTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "SinCosLUT"
@@ -40,9 +41,13 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
     test(new SinCosLUT(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024)) { dut =>
       // List of angles to test
       val anglesToTest = Seq("h00000000",   // 0
+                             "h3E800000",   //0.25
                              "h3F000000",   // 0.5
+                             "h3F400000",   // 0.75
                              "h3F800000",   // 1
+                             "h3FA00000",   // 1.25
                              "h3FC00000",   // 1.5
+                             "h3FE00000",   // 1.75
                              "h40000000",   // 2
                             )
       // Iterate through each angle
@@ -51,10 +56,16 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.clock.step()
         
         // Capture the sine and cosine output
-        val sinOut = dut.io.sinOut.peek().litValue()
-        val cosOut = dut.io.cosOut.peek().litValue()
+        val rad    = dut.io.angle.peek().litValue().toInt
+        val sinOut = dut.io.sinOut.peek().litValue().toInt
+        val cosOut = dut.io.cosOut.peek().litValue().toInt
+
+        val floatrad    = Float.intBitsToFloat(rad)
+        val floatSinOut = Float.intBitsToFloat(sinOut)
+        val floatCosOut = Float.intBitsToFloat(cosOut)
+  
         // Print out the results for the angle
-        println(s"Angle: $angle, Cos: $cosOut, Sin: $sinOut")
+        println(f"rad: $floatrad%.6f, Cos: $floatCosOut%.6f, Sin: $floatSinOut%.6f")
         println(s"------------------------")
       }
     }
