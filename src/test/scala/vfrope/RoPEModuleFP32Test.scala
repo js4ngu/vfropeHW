@@ -81,7 +81,9 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
         dut.clock.step(2)
-      
+  
+
+        val EN = dut.io.ENout.peek().litValue
         val X0 = dut.io.x(0).peek().litValue
         val X1 = dut.io.x(1).peek().litValue
         val floatX0 = Float.intBitsToFloat(X0.toInt)
@@ -98,7 +100,7 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
         val floatResult1 = Float.intBitsToFloat(result1.toInt)
         println(f"\n\nx1, x2 : $floatX0%.6f \t $floatX1%.6f")
         println(f"SIN,COS: $floatSIN%.6f \t $floatCOS%.6f")
-        println(f"Result : $floatResult0%.6f \t $floatResult1%.6f")
+        println(f"[$EN] Result : $floatResult0%.6f \t $floatResult1%.6f")
         println(f"----------------------------------------------")
       }
     }

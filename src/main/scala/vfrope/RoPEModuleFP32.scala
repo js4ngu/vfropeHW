@@ -93,6 +93,7 @@ class FP32RoPEcore() extends Module {
         val sin     = Input(UInt(32.W))
         val cos     = Input(UInt(32.W))
         val xhat    = Output(Vec(2, UInt(32.W)))
+        val ENout   = Output(Bool())
     })
     // setup pipe
     val ENReg    = RegInit(VecInit(Seq.fill(2)(0.B)))
@@ -139,6 +140,8 @@ class FP32RoPEcore() extends Module {
 
     io.xhat(0)  := Mux(ENReg(1),x1cos_x2sin, 0.U(32.W))
     io.xhat(1)  := Mux(ENReg(1),x2cos_x1sin, 0.U(32.W))
+    io.ENout    := Mux(ENReg(1),ENReg(1),    0.B)
+
     /*
     printf(s"\n=== UPDATE CYCLE ===\n\n")
 
@@ -151,3 +154,40 @@ class FP32RoPEcore() extends Module {
     printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
     */
 }
+/*
+class FP32RoPEmodule(LutSize : Int, LutHalfSizeHEX : Int, SinCosOffset: Int) extends Module {
+    val io = IO(new Bundle {
+        val x       = Input(Vec(2, UInt(32.W)))
+        val EN      = Input(Bool())
+        val m       = Input(UInt(32.W))
+        val i       = Input(UInt(32.W))
+        val theta   = Input(UInt(32.W))
+        val xhat    = Output(Vec(2, UInt(32.W)))
+    })
+    //필요한 모듈 선언   
+    val RadCacl   = Module(new FP32radianCaclulator(LutSize, LutHalfSizeHEX))
+    val SinCosLut = Module(new FP32RoPEcore(LutSize, LutHalfSizeHEX, SinCosOffset))
+    val RoPEcore  = Module(new FP32RoPEcore())
+
+    //stage1
+    RadCacl.io.EN       := io.EN
+    RadCacl.io.x(0)     := io.x(0)
+    RadCacl.io.x(1)     := io.x(1)
+    RadCacl.io.m        := io.m
+    RadCacl.io.i        := io.i
+    RadCacl.io.theta    := io.theta
+
+    //stage2
+    SinCosLUT.io.EN     := RadCacl.io.ENout
+    SinCosLUT.io.angle  := RadCacl.io.out
+    SinCosLUT.io.x(0)   := RadCacl.io.xFWD(0)
+    SinCosLUT.io.x(1)   := RadCacl.io.xFWD(1)
+
+    //stage3
+    RoPEcore.io.EN      := SinCosLUT.io.ENout
+    RoPEcore.io.x(0)    := SinCosLUT.io.xFWD(0)
+    RoPEcore.io.x(1)    := SinCosLUT.io.xFWD(1)
+    RoPEcore.io.sin     := SinCosLUT.io.sinOut
+    RoPEcore.io.cos     := SinCosLUT.io.cosOut    
+}
+*/
