@@ -154,7 +154,8 @@ class FP32RoPEcore() extends Module {
     printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
     */
 }
-/*
+
+
 class FP32RoPEmodule(LutSize : Int, LutHalfSizeHEX : Int, SinCosOffset: Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
@@ -166,7 +167,7 @@ class FP32RoPEmodule(LutSize : Int, LutHalfSizeHEX : Int, SinCosOffset: Int) ext
     })
     //필요한 모듈 선언   
     val RadCacl   = Module(new FP32radianCaclulator(LutSize, LutHalfSizeHEX))
-    val SinCosLut = Module(new FP32RoPEcore(LutSize, LutHalfSizeHEX, SinCosOffset))
+    val SinCosLut = Module(new SinCosLUT(LutSize, LutHalfSizeHEX, SinCosOffset))
     val RoPEcore  = Module(new FP32RoPEcore())
 
     //stage1
@@ -178,16 +179,15 @@ class FP32RoPEmodule(LutSize : Int, LutHalfSizeHEX : Int, SinCosOffset: Int) ext
     RadCacl.io.theta    := io.theta
 
     //stage2
-    SinCosLUT.io.EN     := RadCacl.io.ENout
-    SinCosLUT.io.angle  := RadCacl.io.out
-    SinCosLUT.io.x(0)   := RadCacl.io.xFWD(0)
-    SinCosLUT.io.x(1)   := RadCacl.io.xFWD(1)
+    SinCosLut.io.EN     := RadCacl.io.ENout
+    SinCosLut.io.angle  := RadCacl.io.out
+    SinCosLut.io.x(0)   := RadCacl.io.xFWD(0)
+    SinCosLut.io.x(1)   := RadCacl.io.xFWD(1)
 
     //stage3
-    RoPEcore.io.EN      := SinCosLUT.io.ENout
-    RoPEcore.io.x(0)    := SinCosLUT.io.xFWD(0)
-    RoPEcore.io.x(1)    := SinCosLUT.io.xFWD(1)
-    RoPEcore.io.sin     := SinCosLUT.io.sinOut
-    RoPEcore.io.cos     := SinCosLUT.io.cosOut    
+    RoPEcore.io.EN      := SinCosLut.io.ENout
+    RoPEcore.io.x(0)    := SinCosLut.io.xFWD(0)
+    RoPEcore.io.x(1)    := SinCosLut.io.xFWD(1)
+    RoPEcore.io.sin     := SinCosLut.io.sinOut
+    RoPEcore.io.cos     := SinCosLut.io.cosOut    
 }
-*/
