@@ -23,12 +23,12 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) ext
     val FP32toINT32 = Module(new FP32toINT32())
     FP32toINT32.io.ieee754 := FP32TruncateIndex
     val cosIndex = FP32toINT32.io.int32.asUInt                 
-    val sinIndex = (cosIndex + SinCosOffset.U)(LutSize - 1, 0) //비트 슬라이싱으로 범위제한 추가
+    val sinIndex = (cosIndex - SinCosOffset.U)(LutSize - 1, 0) //비트 슬라이싱으로 범위제한 추가
 
     io.cosIndex := cosIndex
     io.sinIndex := sinIndex
 
-    printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
+    //printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
 }
 
 class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
