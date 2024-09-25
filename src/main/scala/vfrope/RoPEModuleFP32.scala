@@ -2,7 +2,7 @@ package vfrope
 import chisel3._
 import chisel3.util._
 
-class FP32radianCaclulator(LutSize : Int, LutSizeHalfHEX : Int) extends Module {
+class FP32radianCaclulator(LutSize : Int, LutHalfSizeHEX : Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
         val EN      = Input(Bool())
@@ -65,7 +65,7 @@ class FP32radianCaclulator(LutSize : Int, LutSizeHalfHEX : Int) extends Module {
     //printf(p"${m_theta_i} / 2 = ${quotient}\n") //490
 
     val lutFP32               = RegInit(0.U(32.W))
-    lutFP32                  := LutSizeHalfHEX.U
+    lutFP32                  := LutHalfSizeHEX.U
     //printf(s"quotient, lutFP32 : %d %d\n", quotient, lutFP32) // 여기서 몫 490
 
     //Stage 5
