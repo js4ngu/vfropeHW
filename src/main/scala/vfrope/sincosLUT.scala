@@ -6,9 +6,11 @@ import chisel3.util.{log2Ceil, switch, is}
 
 class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) extends Module {
     val io = IO(new Bundle {
-        val angle = Input(UInt(32.W))
+        val EN       = Input(Bool())
+        val angle    = Input(UInt(32.W))
         val cosIndex = Output(UInt(32.W))
         val sinIndex = Output(UInt(32.W))
+        val ENout    = Output(Bool())
     })
 
     val FP32Mult = Module(new FP32Multiplier())
@@ -25,9 +27,9 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) ext
     val cosIndex = FP32toINT32.io.int32.asUInt                 
     val sinIndex = (cosIndex - SinCosOffset.U)(LutSize - 1, 0) //비트 슬라이싱으로 범위제한 추가
 
-    io.cosIndex := cosIndex
-    io.sinIndex := sinIndex
-
+    io.cosIndex := Mux(io.EN, cosIndex, 0.U(32.W))
+    io.sinIndex := Mux(io.EN, sinIndex, 0.U(32.W))
+    io.ENout    := Mux(io.EN, io.EN, 0.B)
     //printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
 }
 
@@ -41,11 +43,12 @@ class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Mo
   val indexCalculator = Module(new IndexCalculator(LutSize, LutHalfSizeHEX, SinCosOffset))
   val lutModule = Module(new CosLUT())
 
+  indexCalculator.io.EN := 1.B
   indexCalculator.io.angle := io.angle
-
   lutModule.io.cosIndex := indexCalculator.io.cosIndex
   lutModule.io.sinIndex := indexCalculator.io.sinIndex
-
+  val ENtemp = indexCalculator.io.ENout
+  printf("cos LUT EN : %d\n", ENtemp)
   io.cosOut := lutModule.io.cosOut
   io.sinOut := lutModule.io.sinOut
 }
