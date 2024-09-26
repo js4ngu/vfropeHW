@@ -67,8 +67,9 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
         //새로운 케이스
         ("4581C800", "45053000", "BE1CAC08", "3F0A92A3", "4520E0FE", "4401867c"),
         ("4581C800", "45053000", "3E1CAC08", "BF0A92A3", "c520e0fe", "c401867c"),
-        ("4581C800", "45053000", "BE1CAC08", "BF0A92A3", "c4f03f3b", "c4df9d6b")
-
+        ("4581C800", "45053000", "BE1CAC08", "BF0A92A3", "c4f03f3b", "c4df9d6b"),
+        //테스트 케이스 2
+        ("41200000", "3F800000", "3F800000", "b9c91c6c", "c4f03f3b", "c4df9d6b")
       )
 
       for ((x1, x2, sin, cos, x2hat, x1hat) <- testCases) {
@@ -80,7 +81,7 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(1.B)
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
-        dut.clock.step(2)
+        dut.clock.step(1)
   
 
         val EN = dut.io.ENout.peek().litValue
@@ -107,9 +108,14 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
+
 class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
-  "FP32RoPEmoduleTest" should "calculate angles correctly" in {
-    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024)) { dut =>
+  behavior of "FP32RoPEmodule"
+
+  it should "calculate angles correctly" in {
+    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024))
+      .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      // 여기에 테스트 로직을 작성
       val testCases = Seq(
         ("41200000", "3F800000", 64, 16, "3A000000", "Test 1")  // theta = 2/4096, m = 64, i = 16    => 0.5 , 10, 1
       )
@@ -120,16 +126,22 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.m.poke(m.U)
         dut.io.i.poke(i.U)
         dut.io.theta.poke(BigInt(theta, 16).U)
-        dut.io.EN.poke(1.B)
+        dut.io.EN.poke(true.B)
         dut.clock.step(1)
+        dut.io.EN.poke(false.B)
+        
+        // Wait for the pipeline to complete
+        var cycleCount = 0
+        while (!dut.io.valid.peek().litToBoolean && cycleCount < 30) {
+          dut.clock.step(1)
+          cycleCount += 1
+        }
 
-        dut.io.EN.poke(0.B)
-        dut.clock.step(15)
-        /*
+        val valid = dut.io.valid.peek().litToBoolean
         val xhat0 = dut.io.xhat(0).peek().litValue
         val xhat1 = dut.io.xhat(1).peek().litValue
-        println(s"$testName , xhat0 : $xhat0 , xhat1 : $xhat1")
-        */
+        println(s"$testName: Valid=$valid, xhat0=${Float.intBitsToFloat(xhat0.toInt)}, xhat1=${Float.intBitsToFloat(xhat1.toInt)}")
+        println(s"Cycles taken: $cycleCount")
       }
     }
   }

@@ -85,7 +85,7 @@ class FP32radianCaclulator(LutSize : Int, LutHalfSizeHEX : Int) extends Module {
     io.xFWD(0) := Mux(ENReg(5), io.x(0), 0.U(32.W))
     io.xFWD(1) := Mux(ENReg(5), io.x(1), 0.U(32.W))
 }
-
+/*
 class FP32RoPEcore() extends Module {
     val io = IO(new Bundle {
         val EN      = Input(Bool())
@@ -153,9 +153,71 @@ class FP32RoPEcore() extends Module {
     printf(s"[EN] x1cos-x2sin(xhat1) , x2cos+x1sin(xhat2) : [%b] %d, %d\n", ENReg(1), io.xhat(0), io.xhat(1))
     */
 }
+*/
+class FP32RoPEcore() extends Module {
+    val io = IO(new Bundle {
+        val EN      = Input(Bool())
+        val x       = Input(Vec(2, UInt(32.W)))
+        val sin     = Input(UInt(32.W))
+        val cos     = Input(UInt(32.W))
+        val xhat    = Output(Vec(2, UInt(32.W)))
+        val ENout   = Output(Bool())
+    })
+    
+    // 파이프라인 레지스터
+    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.sin, io.cos))
+    val stage2Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
+    val stage3Reg = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
+    val enReg = RegInit(VecInit(Seq.fill(4)(false.B)))
 
+    // EN 신호 전파
+    enReg(0) := io.EN
+    for (i <- 1 until 4) {
+        enReg(i) := enReg(i-1)
+    }
 
-class FP32RoPEmodule(LutSize : Int, LutHalfSizeHEX : Int, SinCosOffset: Int) extends Module {
+    // Stage 1: 곱셈
+    val FP32Mult0 = Module(new FP32Multiplier())
+    FP32Mult0.io.a := stage1Reg(0) // x(0)
+    FP32Mult0.io.b := stage1Reg(2) // sin
+
+    val FP32Mult1 = Module(new FP32Multiplier())
+    FP32Mult1.io.a := stage1Reg(1) // x(1)
+    FP32Mult1.io.b := stage1Reg(2) // sin
+
+    val FP32Mult2 = Module(new FP32Multiplier())
+    FP32Mult2.io.a := stage1Reg(0) // x(0)
+    FP32Mult2.io.b := stage1Reg(3) // cos
+
+    val FP32Mult3 = Module(new FP32Multiplier())
+    FP32Mult3.io.a := stage1Reg(1) // x(1)
+    FP32Mult3.io.b := stage1Reg(3) // cos
+
+    stage2Reg := VecInit(FP32Mult0.io.result, FP32Mult1.io.result, FP32Mult2.io.result, FP32Mult3.io.result)
+
+    // Stage 2: 덧셈과 뺄셈
+    val FP32Sub = Module(new FP32Sub())
+    FP32Sub.io.a := stage2Reg(2) // x1cos
+    FP32Sub.io.b := stage2Reg(1) // x2sin
+
+    val FP32add = Module(new FP32Adder())
+    FP32add.io.a := stage2Reg(3) // x2cos
+    FP32add.io.b := stage2Reg(0) // x1sin
+
+    stage3Reg := VecInit(FP32Sub.io.result, FP32add.io.result)
+
+    // 최종 출력
+    io.xhat(0) := Mux(enReg(3), stage3Reg(0), 0.U)
+    io.xhat(1) := Mux(enReg(3), stage3Reg(1), 0.U)
+    io.ENout := enReg(3)
+
+    // 디버그 출력
+    printf(p"Debug: EN=${io.EN}, stage1EN=${enReg(0)}, stage2EN=${enReg(1)}, stage3EN=${enReg(2)}, outEN=${enReg(3)}\n")
+    printf(p"Debug: x1=${io.x(0)}, x2=${io.x(1)}, sin=${io.sin}, cos=${io.cos}\n")
+    printf(p"Debug: xhat1=${io.xhat(0)}, xhat2=${io.xhat(1)}, ENout=${io.ENout}\n")
+}
+
+class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
         val EN      = Input(Bool())
@@ -163,44 +225,91 @@ class FP32RoPEmodule(LutSize : Int, LutHalfSizeHEX : Int, SinCosOffset: Int) ext
         val i       = Input(UInt(32.W))
         val theta   = Input(UInt(32.W))
         val xhat    = Output(Vec(2, UInt(32.W)))
+        val valid   = Output(Bool())
     })
-    //필요한 모듈 선언   
+    
+    // 필요한 모듈 선언   
     val RadCacl   = Module(new FP32radianCaclulator(LutSize, LutHalfSizeHEX))
     val SinCosLut = Module(new SinCosLUT(LutSize, LutHalfSizeHEX, SinCosOffset))
     val RoPEcore  = Module(new FP32RoPEcore())
 
-    //stage1
-    RadCacl.io.EN       := io.EN
-    RadCacl.io.x(0)     := io.x(0)
-    RadCacl.io.x(1)     := io.x(1)
-    RadCacl.io.m        := io.m
-    RadCacl.io.i        := io.i
-    RadCacl.io.theta    := io.theta
+    // 파이프라인 레지스터와 EN 신호
+    val stage1Reg = RegInit(VecInit(Seq.fill(6)(0.U(32.W))))
+    val stage1EN  = RegInit(false.B)
+    val stage2Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
+    val stage2EN  = RegInit(false.B)
+    val stage3Reg = RegInit(VecInit(Seq.fill(5)(0.U(32.W))))
+    val stage3EN  = RegInit(false.B)
 
-    //stage2
-    SinCosLut.io.EN     := RadCacl.io.ENout
-    SinCosLut.io.angle  := RadCacl.io.out
-    SinCosLut.io.x(0)   := RadCacl.io.xFWD(0)
-    SinCosLut.io.x(1)   := RadCacl.io.xFWD(1)
+    // stage1 입력
+    when(io.EN) {
+        stage1Reg(0) := io.x(0)
+        stage1Reg(1) := io.x(1)
+        stage1Reg(2) := io.m
+        stage1Reg(3) := io.i
+        stage1Reg(4) := io.theta
+        stage1EN     := true.B
+    }.otherwise {
+        stage1EN     := false.B
+    }
 
-    //stage3
-    RoPEcore.io.EN      := SinCosLut.io.ENout
-    RoPEcore.io.x(0)    := SinCosLut.io.xFWD(0)
-    RoPEcore.io.x(1)    := SinCosLut.io.xFWD(1)
-    RoPEcore.io.sin     := SinCosLut.io.sinOut
-    RoPEcore.io.cos     := SinCosLut.io.cosOut    
+    // stage1
+    RadCacl.io.EN       := stage1EN
+    RadCacl.io.x(0)     := stage1Reg(0)
+    RadCacl.io.x(1)     := stage1Reg(1)
+    RadCacl.io.m        := stage1Reg(2)
+    RadCacl.io.i        := stage1Reg(3)
+    RadCacl.io.theta    := stage1Reg(4)
 
-    io.xhat(0)  := Mux(RoPEcore.io.ENout, RoPEcore.io.xhat(0), 0.U(32.W))
-    io.xhat(1)  := Mux(RoPEcore.io.ENout, RoPEcore.io.xhat(1), 0.U(32.W))
+    // stage2 입력
+    stage2Reg(0) := RadCacl.io.xFWD(0)
+    stage2Reg(1) := RadCacl.io.xFWD(1)
+    stage2Reg(2) := RadCacl.io.out
+    stage2EN     := RadCacl.io.ENout
+
+    // stage2
+    SinCosLut.io.EN     := stage2EN
+    SinCosLut.io.angle  := stage2Reg(2)
+    SinCosLut.io.x(0)   := stage2Reg(0)
+    SinCosLut.io.x(1)   := stage2Reg(1)
+
+    // stage3 입력
+    stage3Reg(0) := SinCosLut.io.xFWD(0)
+    stage3Reg(1) := SinCosLut.io.xFWD(1)
+    stage3Reg(2) := SinCosLut.io.sinOut
+    stage3Reg(3) := SinCosLut.io.cosOut
+    stage3EN     := SinCosLut.io.ENout
+
+    // stage3
+    RoPEcore.io.EN      := stage3EN
+    RoPEcore.io.x(0)    := stage3Reg(0)
+    RoPEcore.io.x(1)    := stage3Reg(1)
+    RoPEcore.io.sin     := stage3Reg(2)
+    RoPEcore.io.cos     := stage3Reg(3)
+
+    // 출력
+    val outputReg = RegNext(VecInit(RoPEcore.io.xhat(0), RoPEcore.io.xhat(1)))
+    val validReg  = RegNext(RoPEcore.io.ENout)
+
+    io.xhat(0) := outputReg(0)
+    io.xhat(1) := outputReg(1)
+    io.valid   := validReg
+
+    // 디버그 출력 (파이프라인 단계별 출력)
+    printf(s"--------RadCacl (Stage 1 Output)---------\n")
+    printf(s"[EN] x0, x1, Rad             : [%b] %d, %d, %d\n", RadCacl.io.ENout, RadCacl.io.xFWD(0), RadCacl.io.xFWD(1), RadCacl.io.out)
     
-    printf(s"--------RadCacl---------\n")
-    printf(s"[EN] x0, x1, m, i, theta    : [%b] %d, %d, %d, %d, %d\n", io.EN, io.x(0), io.x(1), io.m, io.i, io.theta)
-    printf(s"[EN] Rad                    : [%b] %d\n", RadCacl.io.ENout, RadCacl.io.out)
-    printf(s"-------SinCosLut--------\n")
-    printf(s"[EN]    x0,    x1, Rad      : [%b] %d, %d, %d\n", SinCosLut.io.EN, RadCacl.io.x(0), RadCacl.io.x(1), RadCacl.io.out)
-    printf(s"[EN] xFWD0, xFWD1, Sin, Cos : [%b] %d, %d, %d, %d\n", SinCosLut.io.ENout, SinCosLut.io.xFWD(0), SinCosLut.io.xFWD(1), SinCosLut.io.sinOut, SinCosLut.io.cosOut)
-    printf(s"--------RoPEcore--------\n")
-    printf(s"[EN]    x0,    x1, Sin, Cos : [%b] %d, %d, %d, %d\n", RoPEcore.io.EN, RoPEcore.io.x(0), RoPEcore.io.x(1), RoPEcore.io.sin, RoPEcore.io.cos)
-    printf(s"[EN] xhat0, xhat1           : [%b] %d, %d\n", RoPEcore.io.ENout, io.xhat(0), io.xhat(1))
+    printf(s"-------SinCosLut (Stage 2 Output)--------\n")
+    printf(s"[EN] x0, x1, Sin, Cos        : [%b] %d, %d, %d, %d\n", SinCosLut.io.ENout, SinCosLut.io.xFWD(0), SinCosLut.io.xFWD(1), SinCosLut.io.sinOut, SinCosLut.io.cosOut)
+    
+    printf(s"--------RoPEcore (Stage 3 Output)--------\n")
+    printf(s"[EN] x0, x1, xhat0, xhat1    : [%b] %d, %d, %d, %d\n", RoPEcore.io.ENout, RoPEcore.io.x(0), RoPEcore.io.x(1), RoPEcore.io.xhat(0), RoPEcore.io.xhat(1))
+    
+    printf(s"--------Final Output--------\n")
+    printf(s"[Valid] xhat0, xhat1         : [%b] %d, %d\n", io.valid, io.xhat(0), io.xhat(1))
     printf(s"#############################\n")
+
+    // Additional debug output
+    printf(s"Debug: stage1EN = %b, stage2EN = %b, stage3EN = %b\n", stage1EN, stage2EN, stage3EN)
+    printf(s"Debug: RoPEcore.io.ENout = %b, validReg = %b\n", RoPEcore.io.ENout, validReg)
 }
