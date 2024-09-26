@@ -32,13 +32,13 @@ class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(1.B)
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
-        dut.clock.step(10)
+        dut.clock.step(6)
 
         val result = dut.io.out.peek().litValue
         val floatResult = Float.intBitsToFloat(result.toInt)
         val xFWD0 = dut.io.xFWD(0).peek().litValue
         val xFWD1 = dut.io.xFWD(1).peek().litValue
-        //println(f"$testName Result: $floatResult%.6f xFWD0 : $xFWD0 xFWD1 : $xFWD1")
+        println(f"$testName Result: $floatResult%.6f xFWD0 : $xFWD0 xFWD1 : $xFWD1")
 
         dut.clock.step(2)
         val result2 = dut.io.out.peek().litValue
@@ -155,6 +155,9 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         println(s"  Output: Valid=$valid, xhat0=${Float.intBitsToFloat(xhat0.toInt)}, xhat1=${Float.intBitsToFloat(xhat1.toInt)}")
         println(s"  Cycles taken: $cycleCount")
         println("----------------------------------------------")
+
+        dut.io.EN.poke(false.B)
+        dut.clock.step(12)
       }
     }
   }
