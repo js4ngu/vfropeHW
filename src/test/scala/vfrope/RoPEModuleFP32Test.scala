@@ -38,7 +38,7 @@ class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
         val floatResult = Float.intBitsToFloat(result.toInt)
         val xFWD0 = dut.io.xFWD(0).peek().litValue
         val xFWD1 = dut.io.xFWD(1).peek().litValue
-        println(f"$testName Result: $floatResult%.6f xFWD0 : $xFWD0 xFWD1 : $xFWD1")
+        //println(f"$testName Result: $floatResult%.6f xFWD0 : $xFWD0 xFWD1 : $xFWD1")
 
         dut.clock.step(2)
         val result2 = dut.io.out.peek().litValue
