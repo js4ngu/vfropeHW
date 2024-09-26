@@ -117,7 +117,16 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
       .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // 여기에 테스트 로직을 작성
       val testCases = Seq(
-        ("41200000", "3F800000", 64, 16, "3A000000", "Test 1")  // theta = 2/4096, m = 64, i = 16    => 0.5 , 10, 1
+        ("3F800000", "41200000", 64, 16, "3A000000", "Test #1"), //
+        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),
+        ("42C80000", "42C80000", 128, 32, "3A000000", "Test #3"),
+        ("40E00000", "40400000", 96, 24, "3A000000", "Test #4"),
+        ("00000000", "3F800000", 1, 1, "3A000000", "Test #5"),
+        ("447A0000", "447A0000", 1024, 256, "3A000000", "Test #6"),
+        ("41700000", "41A00000", 80, 20, "3A000000", "Test #7"),
+        ("40800000", "41000000", 16, 4, "3A000000", "Test #8"),
+        ("40400000", "41100000", 27, 9, "3A000000", "Test #9"),
+        ("41300000", "41500000", 17, 19, "3A000000", "Test #10")
       )
 
       for ((x0, x1, m, i, theta, testName) <- testCases) {
@@ -140,8 +149,12 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         val valid = dut.io.valid.peek().litToBoolean
         val xhat0 = dut.io.xhat(0).peek().litValue
         val xhat1 = dut.io.xhat(1).peek().litValue
-        println(s"$testName: Valid=$valid, xhat0=${Float.intBitsToFloat(xhat0.toInt)}, xhat1=${Float.intBitsToFloat(xhat1.toInt)}")
-        println(s"Cycles taken: $cycleCount")
+        
+        println(s"$testName:")
+        println(s"  Input:  x0=${Float.intBitsToFloat(BigInt(x0, 16).toInt)}, x1=${Float.intBitsToFloat(BigInt(x1, 16).toInt)}, m=$m, i=$i, theta=${Float.intBitsToFloat(BigInt(theta, 16).toInt)}")
+        println(s"  Output: Valid=$valid, xhat0=${Float.intBitsToFloat(xhat0.toInt)}, xhat1=${Float.intBitsToFloat(xhat1.toInt)}")
+        println(s"  Cycles taken: $cycleCount")
+        println("----------------------------------------------")
       }
     }
   }

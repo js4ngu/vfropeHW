@@ -51,8 +51,10 @@ FP32RoPE:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest"
 FP32RoPEVCD:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest -- -DwriteVcd=1"
-pyRoPE:
+pyRoPEcore:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPEcore.py
+pyRoPE:
+	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPE.py
 
 clean:
 	git clean -fd
