@@ -144,7 +144,6 @@ class FP32RoPEcore() extends Module {
 
     /*
     printf(s"\n=== UPDATE CYCLE ===\n\n")
-
     printf(s"x1, x2   : %d, %d\n", io.x(0), io.x(1))  //ok
     printf(s"sin, cos : %d, %d\n", io.sin, io.cos)  //ok
     printf(s"x1sin, x2sin, x1cos, x2cos : %d, %d,  %d, %d\n", x1sin, x2sin, x1cos, x2cos)  //ok
@@ -190,4 +189,18 @@ class FP32RoPEmodule(LutSize : Int, LutHalfSizeHEX : Int, SinCosOffset: Int) ext
     RoPEcore.io.x(1)    := SinCosLut.io.xFWD(1)
     RoPEcore.io.sin     := SinCosLut.io.sinOut
     RoPEcore.io.cos     := SinCosLut.io.cosOut    
+
+    io.xhat(0)  := Mux(RoPEcore.io.ENout, RoPEcore.io.xhat(0), 0.U(32.W))
+    io.xhat(1)  := Mux(RoPEcore.io.ENout, RoPEcore.io.xhat(1), 0.U(32.W))
+    
+    printf(s"--------RadCacl---------\n")
+    printf(s"[EN] x0, x1, m, i, theta    : [%b] %d, %d, %d, %d, %d\n", io.EN, io.x(0), io.x(1), io.m, io.i, io.theta)
+    printf(s"[EN] Rad                    : [%b] %d\n", RadCacl.io.ENout, RadCacl.io.out)
+    printf(s"-------SinCosLut--------\n")
+    printf(s"[EN]    x0,    x1, Rad      : [%b] %d, %d, %d\n", SinCosLut.io.EN, RadCacl.io.x(0), RadCacl.io.x(1), RadCacl.io.out)
+    printf(s"[EN] xFWD0, xFWD1, Sin, Cos : [%b] %d, %d, %d, %d\n", SinCosLut.io.ENout, SinCosLut.io.xFWD(0), SinCosLut.io.xFWD(1), SinCosLut.io.sinOut, SinCosLut.io.cosOut)
+    printf(s"--------RoPEcore--------\n")
+    printf(s"[EN]    x0,    x1, Sin, Cos : [%b] %d, %d, %d, %d\n", RoPEcore.io.EN, RoPEcore.io.x(0), RoPEcore.io.x(1), RoPEcore.io.sin, RoPEcore.io.cos)
+    printf(s"[EN] xhat0, xhat1           : [%b] %d, %d\n", RoPEcore.io.ENout, io.xhat(0), io.xhat(1))
+    printf(s"#############################\n")
 }

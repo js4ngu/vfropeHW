@@ -106,3 +106,31 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
+  "FP32RoPEmoduleTest" should "calculate angles correctly" in {
+    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024)) { dut =>
+      val testCases = Seq(
+        ("41200000", "3F800000", 64, 16, "3A000000", "Test 1")  // theta = 2/4096, m = 64, i = 16    => 0.5 , 10, 1
+      )
+
+      for ((x0, x1, m, i, theta, testName) <- testCases) {
+        dut.io.x(0).poke(BigInt(x0, 16).U)
+        dut.io.x(1).poke(BigInt(x1, 16).U)
+        dut.io.m.poke(m.U)
+        dut.io.i.poke(i.U)
+        dut.io.theta.poke(BigInt(theta, 16).U)
+        dut.io.EN.poke(1.B)
+        dut.clock.step(1)
+
+        dut.io.EN.poke(0.B)
+        dut.clock.step(15)
+        /*
+        val xhat0 = dut.io.xhat(0).peek().litValue
+        val xhat1 = dut.io.xhat(1).peek().litValue
+        println(s"$testName , xhat0 : $xhat0 , xhat1 : $xhat1")
+        */
+      }
+    }
+  }
+}

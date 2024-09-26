@@ -47,6 +47,9 @@ FP32angle:
 	sbt "testOnly vfrope.FP32radianCaclulatorTest"
 FP32core:
 	sbt "testOnly vfrope.FP32RoPEcoreTest"
+FP32RoPE:
+	sbt "testOnly vfrope.FP32RoPEmoduleTest"
+
 pyRoPE:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPEcore.py
 
