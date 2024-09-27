@@ -17,11 +17,11 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
 
     // 파이프라인 레지스터
     val stageRegs = Seq.fill(6)(RegInit(VecInit(Seq.fill(4)(0.U(32.W)))))
-    val enReg = RegInit(VecInit(Seq.fill(7)(false.B)))
+    val enReg = RegInit(VecInit(Seq.fill(6)(false.B)))
 
     // EN 신호 전파
     enReg(0) := io.EN
-    for (i <- 1 until 7) {
+    for (i <- 1 until 6) {
         enReg(i) := enReg(i-1)
     }
 
@@ -59,13 +59,13 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
     stageRegs(5) := VecInit(stageRegs(4)(0), stageRegs(4)(1), FP32Sub.io.result, 0.U)
 
     // 출력
-    io.out     := Mux(enReg(6), stageRegs(5)(2), 0.U)
-    io.xFWD(0) := Mux(enReg(6), stageRegs(5)(0), 0.U)
-    io.xFWD(1) := Mux(enReg(6), stageRegs(5)(1), 0.U)
-    io.ENout   := enReg(6)
+    io.out     := Mux(enReg(5), stageRegs(5)(2), 0.U)
+    io.xFWD(0) := Mux(enReg(5), stageRegs(5)(0), 0.U)
+    io.xFWD(1) := Mux(enReg(5), stageRegs(5)(1), 0.U)
+    io.ENout   := enReg(5)
 
     // 디버그 출력 (필요시 주석 해제)
-    // printf(p"Debug: EN=${io.EN}, stage1EN=${enReg(0)}, ..., stage6EN=${enReg(5)}, outEN=${enReg(6)}\n")
+    // printf(p"Debug: EN=${io.EN}, stage1EN=${enReg(0)}, ..., stage6EN=${enReg(5)}\n")
     // printf(p"Debug: x1=${io.x(0)}, x2=${io.x(1)}, theta=${io.theta}, m=${io.m}, i=${io.i}\n")
     // printf(p"Debug: out=${io.out}, xFWD1=${io.xFWD(0)}, xFWD2=${io.xFWD(1)}, ENout=${io.ENout}\n")
 }
