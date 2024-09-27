@@ -2,7 +2,6 @@ package vfrope
 import chisel3._
 import chisel3.util._
 
-
 class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
@@ -14,9 +13,14 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
         val ENout   = Output(Bool())
         val xFWD    = Output(Vec(2, UInt(32.W)))
     })
-
+    
     // 파이프라인 레지스터
-    val stageRegs = Seq.fill(6)(RegInit(VecInit(Seq.fill(4)(0.U(32.W)))))
+    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.theta, (io.m * io.i).asUInt))
+    val stage2Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
+    val stage3Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
+    val stage4Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
+    val stage5Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
+    val stage6Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
     val enReg = RegInit(VecInit(Seq.fill(6)(false.B)))
 
     // EN 신호 전파
@@ -25,49 +29,49 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
         enReg(i) := enReg(i-1)
     }
 
-    // Stage 1: mi 계산
-    val mi = (io.m * io.i).asSInt
-    stageRegs(0) := VecInit(io.x(0), io.x(1), io.theta, mi.asUInt)
+    // Stage 1: mi 계산 (이미 stage1Reg에서 수행됨)
 
     // Stage 2: Int64ToFP32 변환
     val Int64ToFP32 = Module(new Int64ToFP32())
-    Int64ToFP32.io.inInt := stageRegs(0)(3).asSInt
-    stageRegs(1) := VecInit(stageRegs(0)(0), stageRegs(0)(1), stageRegs(0)(2), Int64ToFP32.io.outIEEE)
+    Int64ToFP32.io.inInt := stage1Reg(3).asSInt
+    stage2Reg := VecInit(stage1Reg(0), stage1Reg(1), stage1Reg(2), Int64ToFP32.io.outIEEE)
 
     // Stage 3: m_theta_i 계산
     val FP32Mult0 = Module(new FP32Multiplier())
-    FP32Mult0.io.a := stageRegs(1)(3)  // miFP32
-    FP32Mult0.io.b := stageRegs(1)(2)  // theta
-    stageRegs(2) := VecInit(stageRegs(1)(0), stageRegs(1)(1), FP32Mult0.io.result, 0.U)
+    FP32Mult0.io.a := stage2Reg(3)  // miFP32
+    FP32Mult0.io.b := stage2Reg(2)  // theta
+    stage3Reg := VecInit(stage2Reg(0), stage2Reg(1), FP32Mult0.io.result)
 
     // Stage 4: 나눗셈
     val FP32DivPOW2 = Module(new FP32DivPOW2INT())
-    FP32DivPOW2.io.a := stageRegs(2)(2)  // m_theta_i
+    FP32DivPOW2.io.a := stage3Reg(2)  // m_theta_i
     FP32DivPOW2.io.x := 1.U
-    stageRegs(3) := VecInit(stageRegs(2)(0), stageRegs(2)(1), FP32DivPOW2.io.result, LutHalfSizeHEX.U)
+    stage4Reg := VecInit(stage3Reg(0), stage3Reg(1), FP32DivPOW2.io.result)
 
     // Stage 5: modVal 계산
     val FP32Mult1 = Module(new FP32Multiplier())
-    FP32Mult1.io.a := stageRegs(3)(2)  // quotient
+    FP32Mult1.io.a := stage4Reg(2)  // quotient
     FP32Mult1.io.b := 0x40000000.U  // 2^LUT
-    stageRegs(4) := VecInit(stageRegs(3)(0), stageRegs(3)(1), stageRegs(2)(2), FP32Mult1.io.result)
+    stage5Reg := VecInit(stage4Reg(0), stage4Reg(1), stage3Reg(2), FP32Mult1.io.result)
 
     // Stage 6: 최종 결과 계산
     val FP32Sub = Module(new FP32Sub())
-    FP32Sub.io.a := stageRegs(4)(2)  // m_theta_i
-    FP32Sub.io.b := stageRegs(4)(3)  // modVal
-    stageRegs(5) := VecInit(stageRegs(4)(0), stageRegs(4)(1), FP32Sub.io.result, 0.U)
+    FP32Sub.io.a := stage5Reg(2)  // m_theta_i
+    FP32Sub.io.b := stage5Reg(3)  // modVal
+    stage6Reg := VecInit(stage5Reg(0), stage5Reg(1), FP32Sub.io.result)
 
     // 출력
-    io.out     := Mux(enReg(5), stageRegs(5)(2), 0.U)
-    io.xFWD(0) := Mux(enReg(5), stageRegs(5)(0), 0.U)
-    io.xFWD(1) := Mux(enReg(5), stageRegs(5)(1), 0.U)
+    io.out     := Mux(enReg(5), stage6Reg(2), 0.U)
+    io.xFWD(0) := Mux(enReg(5), stage6Reg(0), 0.U)
+    io.xFWD(1) := Mux(enReg(5), stage6Reg(1), 0.U)
     io.ENout   := enReg(5)
 
     // 디버그 출력 (필요시 주석 해제)
-    // printf(p"Debug: EN=${io.EN}, stage1EN=${enReg(0)}, ..., stage6EN=${enReg(5)}\n")
-    // printf(p"Debug: x1=${io.x(0)}, x2=${io.x(1)}, theta=${io.theta}, m=${io.m}, i=${io.i}\n")
-    // printf(p"Debug: out=${io.out}, xFWD1=${io.xFWD(0)}, xFWD2=${io.xFWD(1)}, ENout=${io.ENout}\n")
+    /*
+    printf(p"Debug: EN=${io.EN}, stage1EN=${enReg(0)}, ..., stage6EN=${enReg(5)}\n")
+    printf(p"Debug: x1=${io.x(0)}, x2=${io.x(1)}, theta=${io.theta}, m=${io.m}, i=${io.i}\n")
+    printf(p"Debug: out=${io.out}, xFWD1=${io.xFWD(0)}, xFWD2=${io.xFWD(1)}, ENout=${io.ENout}\n")
+    */
 }
 
 class FP32RoPEcore() extends Module {
