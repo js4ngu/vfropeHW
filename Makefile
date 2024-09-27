@@ -56,6 +56,9 @@ pyRoPEcore:
 pyRoPE:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPE.py
 
+FP32RoPEThroughputVCD:
+	sbt "testOnly vfrope.FP32RoPEmoduleThroughputTest -- -DwriteVcd=1"
+
 clean:
 	git clean -fd
 

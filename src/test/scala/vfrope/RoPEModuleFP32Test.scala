@@ -162,3 +162,83 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+
+class FP32RoPEmoduleThroughputTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32RoPEmodule Throughput"
+  it should "process data sequentially and measure throughput" in {
+    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024))
+      .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      
+      val testCases = Seq(
+        ("3F800000", "41200000", 64, 16, "3A000000"),
+        ("40000000", "40A00000", 32, 8, "3A000000"),
+        ("42C80000", "42C80000", 128, 32, "3A000000"),
+        ("40E00000", "40400000", 96, 24, "3A000000"),
+        ("00000000", "3F800000", 1, 1, "3A000000"),
+        ("447A0000", "447A0000", 1024, 256, "3A000000"),
+        ("41700000", "41A00000", 80, 20, "3A000000"),
+        ("40800000", "41000000", 16, 4, "3A000000"),
+        ("40400000", "41100000", 27, 9, "3A000000"),
+        ("41300000", "41500000", 17, 19, "3A000000")
+      )
+
+      var totalCycles = 0
+      var validOutputs = 0
+      val outputBuffer = scala.collection.mutable.Queue[(Float, Float)]()
+
+      // 모든 테스트 케이스를 연속적으로 입력
+      for ((x0, x1, m, i, theta) <- testCases) {
+        dut.io.x(0).poke(BigInt(x0, 16).U)
+        dut.io.x(1).poke(BigInt(x1, 16).U)
+        dut.io.m.poke(m.U)
+        dut.io.i.poke(i.U)
+        dut.io.theta.poke(BigInt(theta, 16).U)
+        dut.io.EN.poke(true.B)
+        dut.clock.step(1)
+        totalCycles += 1
+
+        // 매 사이클마다 출력 체크
+        if (dut.io.valid.peek().litToBoolean) {
+          val xhat0 = Float.intBitsToFloat(dut.io.xhat(0).peek().litValue.toInt)
+          val xhat1 = Float.intBitsToFloat(dut.io.xhat(1).peek().litValue.toInt)
+          outputBuffer.enqueue((xhat0, xhat1))
+          validOutputs += 1
+        }
+      }
+
+      // 파이프라인 플러시를 위한 추가 사이클
+      val extraCycles = 50  // 충분한 추가 사이클
+      for (_ <- 0 until extraCycles) {
+        dut.io.EN.poke(false.B)
+        dut.clock.step(1)
+        totalCycles += 1
+
+        if (dut.io.valid.peek().litToBoolean) {
+          val xhat0 = Float.intBitsToFloat(dut.io.xhat(0).peek().litValue.toInt)
+          val xhat1 = Float.intBitsToFloat(dut.io.xhat(1).peek().litValue.toInt)
+          outputBuffer.enqueue((xhat0, xhat1))
+          validOutputs += 1
+        }
+
+        // 모든 출력을 받았으면 조기 종료
+        if (validOutputs == testCases.length) {
+          println(s"All outputs received after ${totalCycles} cycles")
+          scala.util.control.Breaks.break()
+        }
+      }
+
+      // 결과 출력
+      println("Outputs:")
+      outputBuffer.zipWithIndex.foreach { case ((xhat0, xhat1), index) =>
+        println(f"Output $index: xhat0=$xhat0%.6f, xhat1=$xhat1%.6f")
+      }
+      println(s"Total cycles: $totalCycles")
+      println(s"Valid outputs: $validOutputs")
+      println(f"Throughput: ${validOutputs.toFloat / totalCycles}%.4f outputs per cycle")
+
+      // 모든 입력에 대한 출력이 생성되었는지 확인
+      assert(validOutputs == testCases.length, s"Expected ${testCases.length} outputs, but got $validOutputs")
+    }
+  }
+}
