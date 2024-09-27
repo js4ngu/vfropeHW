@@ -82,12 +82,14 @@ class FP32RoPEcore() extends Module {
     
     // 파이프라인 레지스터
     val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.sin, io.cos))
-    val stage2Reg = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
-    val enReg = RegInit(VecInit(Seq.fill(2)(false.B)))
+    val stage2Reg = RegNext(VecInit(Seq.fill(4)(0.U(32.W))))
+    val stage3Reg = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
+    val enReg = RegInit(VecInit(Seq.fill(3)(false.B)))
 
     // EN 신호 전파
     enReg(0) := io.EN
     enReg(1) := enReg(0)
+    enReg(2) := enReg(1)
 
     // Stage 1: 곱셈
     val FP32Mult0 = Module(new FP32Multiplier())
@@ -106,30 +108,37 @@ class FP32RoPEcore() extends Module {
     FP32Mult3.io.a := stage1Reg(1) // x(1)
     FP32Mult3.io.b := stage1Reg(3) // cos
 
-    // Stage 2: 덧셈과 뺄셈
+    // Stage 2: 곱셈 결과 저장
+    stage2Reg := VecInit(
+        FP32Mult0.io.result, // x1sin
+        FP32Mult1.io.result, // x2sin
+        FP32Mult2.io.result, // x1cos
+        FP32Mult3.io.result  // x2cos
+    )
+
+    // Stage 3: 덧셈과 뺄셈
     val FP32Sub = Module(new FP32Sub())
-    FP32Sub.io.a := FP32Mult2.io.result // x1cos
-    FP32Sub.io.b := FP32Mult1.io.result // x2sin
+    FP32Sub.io.a := stage2Reg(2) // x1cos
+    FP32Sub.io.b := stage2Reg(1) // x2sin
 
     val FP32add = Module(new FP32Adder())
-    FP32add.io.a := FP32Mult3.io.result // x2cos
-    FP32add.io.b := FP32Mult0.io.result // x1sin
+    FP32add.io.a := stage2Reg(3) // x2cos
+    FP32add.io.b := stage2Reg(0) // x1sin
 
-    stage2Reg := VecInit(FP32Sub.io.result, FP32add.io.result)
+    stage3Reg := VecInit(FP32Sub.io.result, FP32add.io.result)
 
     // 최종 출력
-    io.xhat(0) := Mux(enReg(1), stage2Reg(0), 0.U)
-    io.xhat(1) := Mux(enReg(1), stage2Reg(1), 0.U)
-    io.ENout := enReg(1)
+    io.xhat(0) := Mux(enReg(2), stage3Reg(0), 0.U)
+    io.xhat(1) := Mux(enReg(2), stage3Reg(1), 0.U)
+    io.ENout := enReg(2)
 
-    // 디버그 출력
+    // 디버그 출력 (필요시 주석 해제)
     /*
-    printf(p"Debug: EN=${io.EN}, stage1EN=${enReg(0)}, stage2EN=${enReg(1)}\n")
+    printf(p"Debug: EN=${io.EN}, stage1EN=${enReg(0)}, stage2EN=${enReg(1)}, stage3EN=${enReg(2)}\n")
     printf(p"Debug: x1=${io.x(0)}, x2=${io.x(1)}, sin=${io.sin}, cos=${io.cos}\n")
     printf(p"Debug: xhat1=${io.xhat(0)}, xhat2=${io.xhat(1)}, ENout=${io.ENout}\n")
     */
 }
-
 
 class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
     val io = IO(new Bundle {

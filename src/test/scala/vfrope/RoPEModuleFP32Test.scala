@@ -81,7 +81,7 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(1.B)
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
-        dut.clock.step(1)
+        dut.clock.step(2)
   
 
         val EN = dut.io.ENout.peek().litValue
@@ -157,7 +157,7 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         println("----------------------------------------------")
 
         dut.io.EN.poke(false.B)
-        dut.clock.step(12)
+        //dut.clock.step(12)
       }
     }
   }
