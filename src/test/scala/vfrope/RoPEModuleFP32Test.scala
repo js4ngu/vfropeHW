@@ -14,7 +14,8 @@ Test 4 Result: 0.000000
 
 class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
   "FP32angleCaclulatorTest" should "calculate angles correctly" in {
-    test(new FP32radianCaclulator(LutSize = 12, LutHalfSizeHEX = 0x45000000)) { dut =>
+    test(new FP32radianCaclulator(LutSize = 12, LutHalfSizeHEX = 0x45000000))
+    .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val testCases = Seq(
         ("3A000000",    1,   1, "Test 1"),  // theta = 2/4096, m = 1,    i = 1    => 0.00048828125
         ("3A000000",  355, 153, "Test 2"),  // theta = 2/4096, m = 355,  i = 153  => 0.52099609375
@@ -32,7 +33,7 @@ class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(1.B)
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
-        dut.clock.step(6)
+        dut.clock.step(5)
 
         val result = dut.io.out.peek().litValue
         val floatResult = Float.intBitsToFloat(result.toInt)

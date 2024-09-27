@@ -45,6 +45,8 @@ RoPECoreInnerTest:
 #FP32 RoPE 관련
 FP32angle:
 	sbt "testOnly vfrope.FP32radianCaclulatorTest"
+FP32angleVCD:
+	sbt "testOnly vfrope.FP32radianCaclulatorTest -- -DwriteVcd=1"
 FP32core:
 	sbt "testOnly vfrope.FP32RoPEcoreTest"
 FP32RoPE:

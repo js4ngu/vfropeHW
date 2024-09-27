@@ -2,7 +2,7 @@ package vfrope
 import chisel3._
 import chisel3.util._
 
-class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
+class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module { // index 인포메이션
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
         val EN      = Input(Bool())
@@ -15,7 +15,7 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
     })
     
     // 파이프라인 레지스터
-    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.theta, (io.m * io.i).asUInt))
+    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.theta, (io.m * io.i).asUInt)) // 추후에 m * (i+n) 으로 수정
     val stage2Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
     val stage3Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
     val stage4Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
@@ -29,6 +29,7 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
         enReg(i) := enReg(i-1)
     }
 
+    // sclae value theta(2/d) / theta(2/4096) = d / 4096 = scale
     // Stage 1: mi 계산 (이미 stage1Reg에서 수행됨)
 
     // Stage 2: Int64ToFP32 변환
@@ -41,7 +42,7 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
     FP32Mult0.io.a := stage2Reg(3)  // miFP32
     FP32Mult0.io.b := stage2Reg(2)  // theta
     stage3Reg := VecInit(stage2Reg(0), stage2Reg(1), FP32Mult0.io.result)
-
+    // stage 3~4 : 여기에서 m_theta_i 에 Scale 곱해야할 거 같음
     // Stage 4: 나눗셈
     val FP32DivPOW2 = Module(new FP32DivPOW2INT())
     FP32DivPOW2.io.a := stage3Reg(2)  // m_theta_i
@@ -51,7 +52,7 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
     // Stage 5: modVal 계산
     val FP32Mult1 = Module(new FP32Multiplier())
     FP32Mult1.io.a := stage4Reg(2)  // quotient
-    FP32Mult1.io.b := 0x40000000.U  // 2^LUT
+    FP32Mult1.io.b := 0x40000000.U  // 2
     stage5Reg := VecInit(stage4Reg(0), stage4Reg(1), stage3Reg(2), FP32Mult1.io.result)
 
     // Stage 6: 최종 결과 계산
