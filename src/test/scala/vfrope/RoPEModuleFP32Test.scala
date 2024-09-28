@@ -210,3 +210,92 @@ class RoPEresolitionTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+//Radcalc 시퀀셜 인풋 테스트코드
+class FP32radCaclSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
+  "FP32angleCaclulatorTest" should "Seq Input : Test throughput" in {
+    test(new FP32radianCaclulator(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0 ))
+    .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      //global Index = 0
+      val delay = 1
+
+      // theta = 2/4096, m = 1,    baseIndex = 1    => 0.00048828125
+      dut.io.TwoDivD.poke(BigInt("3A000000", 16).U)
+      dut.io.x(0).poke(100.U)
+      dut.io.x(1).poke(100.U)
+      dut.io.m.poke(1.U)
+      dut.io.baseIndex.poke(1.U)
+      dut.io.EN.poke(1.B)
+      dut.clock.step(1)
+      dut.io.EN.poke(0.B)
+      dut.clock.step(delay)
+
+      // theta = 2/4096, m = 355,  baseIndex = 153  => 0.52099609375
+      dut.io.TwoDivD.poke(BigInt("3A000000", 16).U)
+      dut.io.x(0).poke(100.U)
+      dut.io.x(1).poke(100.U)
+      dut.io.m.poke(355.U)
+      dut.io.baseIndex.poke(153.U)
+      dut.io.EN.poke(1.B)
+      dut.clock.step(1)
+      dut.io.EN.poke(0.B)
+      dut.clock.step(delay)
+
+      // theta = 2/4096, m = 4000, baseIndex = 3    => 1.859375
+      dut.io.TwoDivD.poke(BigInt("3A000000", 16).U)
+      dut.io.x(0).poke(100.U)
+      dut.io.x(1).poke(100.U)
+      dut.io.m.poke(4000.U)
+      dut.io.baseIndex.poke(3.U)
+      dut.io.EN.poke(1.B)
+      dut.clock.step(1)
+      dut.io.EN.poke(0.B)
+      dut.clock.step(delay)
+
+      // theta = 2/4096, m = 4096, baseIndex = 4096 => 0
+      dut.io.TwoDivD.poke(BigInt("3A000000", 16).U)
+      dut.io.x(0).poke(100.U)
+      dut.io.x(1).poke(100.U)
+      dut.io.m.poke(4096.U)
+      dut.io.baseIndex.poke(4096.U)
+      dut.io.EN.poke(1.B)
+      dut.clock.step(1)
+      dut.io.EN.poke(0.B)
+
+      dut.clock.step(5)
+      dut.io.EN.poke(1.B)
+      dut.clock.step(1)
+
+    }
+  }
+}
+
+//RoPE Core 시퀀셜 인풋 테스트코드
+class FP32RoPEcoreSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
+  "FP32RoPEcoreSeqInputTest" should "Seq Input : Test throughput" in {
+    test(new FP32RoPEcore())
+    .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val testCases = Seq(
+        ("3F800000", "3F800000", "3F800000", "3F800000", "00000000", "40000000"), //2,0
+        ("40000000", "40000000", "40000000", "40000000", "00000000", "41000000"), //8,0
+        ("431b0000", "43be8000", "3f4ac083", "3EAF1AA0", "c378bdf4", "437d0fdf")  //253,-248
+      )
+      val delay = 0
+
+      for ((x1, x2, sin, cos, x2hat, x1hat) <- testCases) {
+        dut.io.x(0).poke(BigInt(x1, 16).U)
+        dut.io.x(1).poke(BigInt(x2, 16).U)
+
+        dut.io.sin.poke(BigInt(sin, 16).U)
+        dut.io.cos.poke(BigInt(cos, 16).U)
+        dut.io.EN.poke(1.B)
+        dut.clock.step()
+        dut.io.EN.poke(0.B)
+        dut.clock.step(delay)
+      }
+        dut.clock.step(10)
+    }
+  }
+}
+
+//RoPEmodule 시퀀셜 인풋 테스트코드
