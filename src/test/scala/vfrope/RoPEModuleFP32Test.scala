@@ -24,7 +24,7 @@ class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
       )
 
       for ((theta, m, baseIndex, testName) <- testCases) {
-        dut.io.theta.poke(BigInt(theta, 16).U)
+        dut.io.TwoDivD.poke(BigInt(theta, 16).U)
         dut.io.x(0).poke(100.U)
         dut.io.x(1).poke(100.U)
 
@@ -135,7 +135,7 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.x(1).poke(BigInt(x1, 16).U)
         dut.io.m.poke(m.U)
         dut.io.baseIndex.poke(baseIndex.U)
-        dut.io.theta.poke(BigInt(theta, 16).U)
+        dut.io.TwoDivD.poke(BigInt(theta, 16).U)
         dut.io.EN.poke(true.B)
         dut.clock.step(1)
         dut.io.EN.poke(false.B)
@@ -194,7 +194,7 @@ class FP32RoPEmoduleThroughputTest extends AnyFlatSpec with ChiselScalatestTeste
         dut.io.x(1).poke(BigInt(x1, 16).U)
         dut.io.m.poke(m.U)
         dut.io.baseIndex.poke(baseIndex.U)
-        dut.io.theta.poke(BigInt(theta, 16).U)
+        dut.io.TwoDivD.poke(BigInt(theta, 16).U)
         dut.io.EN.poke(true.B)
         dut.clock.step(1)
         totalCycles += 1
