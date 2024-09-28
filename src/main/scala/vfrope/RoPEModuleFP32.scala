@@ -1,7 +1,7 @@
 package vfrope
 import chisel3._
 import chisel3.util._
-class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module { // index 인포메이션
+class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extends Module { // index 인포메이션
     val io = IO(new Bundle {
         val x           = Input(Vec(2, UInt(32.W)))
         val EN          = Input(Bool())
@@ -14,7 +14,7 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module { /
     })
     
     // 파이프라인 레지스터
-    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.TwoDivD, (io.m * io.baseIndex).asUInt)) // 추후에 m * (i+n) 으로 수정
+    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.TwoDivD, (io.m * (io.baseIndex + Index.U)).asUInt)) // 추후에 m * (i+n) 으로 수정
 
     val stage2Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
     val stage3Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
@@ -145,7 +145,7 @@ class FP32RoPEcore() extends Module {
     */
 }
 
-class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
+class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int, Index : Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
         val EN      = Input(Bool())
@@ -157,7 +157,7 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) exten
     })
     
     // 필요한 모듈 선언   
-    val RadCacl   = Module(new FP32radianCaclulator(LutSize, LutHalfSizeHEX))
+    val RadCacl   = Module(new FP32radianCaclulator(LutSize, LutHalfSizeHEX, Index))
     val SinCosLut = Module(new SinCosLUT(LutSize, LutHalfSizeHEX, SinCosOffset))
     val RoPEcore  = Module(new FP32RoPEcore())
 
