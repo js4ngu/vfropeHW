@@ -61,6 +61,10 @@ FP32RoPE:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest"
 FP32RoPEVCD:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest -- -DwriteVcd=1"
+FP32RoPESeq:
+	sbt "testOnly vfrope.FP32RoPEmoduleSeqInputTest -- -DwriteVcd=1"
+
+
 pyRoPEcore:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPEcore.py
 pyRoPE:

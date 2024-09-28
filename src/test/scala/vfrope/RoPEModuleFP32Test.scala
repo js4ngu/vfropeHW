@@ -226,7 +226,7 @@ class FP32radCaclSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.m.poke(1.U)
       dut.io.baseIndex.poke(1.U)
       dut.io.EN.poke(1.B)
-      dut.clock.step(1)
+      dut.clock.step()
       dut.io.EN.poke(0.B)
       dut.clock.step(delay)
 
@@ -237,7 +237,7 @@ class FP32radCaclSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.m.poke(355.U)
       dut.io.baseIndex.poke(153.U)
       dut.io.EN.poke(1.B)
-      dut.clock.step(1)
+      dut.clock.step()
       dut.io.EN.poke(0.B)
       dut.clock.step(delay)
 
@@ -248,7 +248,7 @@ class FP32radCaclSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.m.poke(4000.U)
       dut.io.baseIndex.poke(3.U)
       dut.io.EN.poke(1.B)
-      dut.clock.step(1)
+      dut.clock.step()
       dut.io.EN.poke(0.B)
       dut.clock.step(delay)
 
@@ -259,13 +259,11 @@ class FP32radCaclSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.m.poke(4096.U)
       dut.io.baseIndex.poke(4096.U)
       dut.io.EN.poke(1.B)
-      dut.clock.step(1)
+      dut.clock.step()
       dut.io.EN.poke(0.B)
 
-      dut.clock.step(5)
-      dut.io.EN.poke(1.B)
-      dut.clock.step(1)
 
+      dut.clock.step(10)
     }
   }
 }
@@ -299,3 +297,32 @@ class FP32RoPEcoreSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
 }
 
 //RoPEmodule 시퀀셜 인풋 테스트코드
+class FP32RoPEmoduleSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32RoPEmoduleSeqInputTest"
+  it should "Seq Input : Test throughput" in {
+    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024 , Index = 0  ))
+      .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      // 여기에 테스트 로직을 작성
+      val testCases = Seq(
+        ("3F800000", "41200000", 64, 16, "3A000000", "Test #1"), // -10.00,   0.996
+        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),  //   0.07,   5.386
+        ("42C80000", "42C80000", 128, 32, "3A000000", "Test #3") //  99.88, 100.115
+      )
+      val delay = 1
+
+      for ((x0, x1, m, baseIndex, theta, testName) <- testCases) {
+        println(s"$testName ,,,")
+        dut.io.x(0).poke(BigInt(x0, 16).U)
+        dut.io.x(1).poke(BigInt(x1, 16).U)
+        dut.io.m.poke(m.U)
+        dut.io.baseIndex.poke(baseIndex.U)
+        dut.io.TwoDivD.poke(BigInt(theta, 16).U)
+        dut.io.EN.poke(true.B)
+        dut.clock.step(1)
+        dut.io.EN.poke(false.B)
+        dut.clock.step(delay)
+      }
+        dut.clock.step(20)
+    }
+  }
+}
