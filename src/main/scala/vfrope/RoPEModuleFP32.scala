@@ -1,21 +1,21 @@
 package vfrope
 import chisel3._
 import chisel3.util._
-
 class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module { // index 인포메이션
     val io = IO(new Bundle {
-        val x       = Input(Vec(2, UInt(32.W)))
-        val EN      = Input(Bool())
-        val m       = Input(UInt(32.W))
-        val i       = Input(UInt(32.W))
-        val theta   = Input(UInt(32.W))
-        val out     = Output(UInt(32.W))
-        val ENout   = Output(Bool())
-        val xFWD    = Output(Vec(2, UInt(32.W)))
+        val x           = Input(Vec(2, UInt(32.W)))
+        val EN          = Input(Bool())
+        val m           = Input(UInt(32.W))
+        val baseIndex   = Input(UInt(32.W))  // Changed from 'i' to 'baseIndex'        
+        val theta       = Input(UInt(32.W))
+        val out         = Output(UInt(32.W))
+        val ENout       = Output(Bool())
+        val xFWD        = Output(Vec(2, UInt(32.W)))
     })
     
     // 파이프라인 레지스터
-    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.theta, (io.m * io.i).asUInt)) // 추후에 m * (i+n) 으로 수정
+    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), io.theta, (io.m * io.baseIndex).asUInt)) // 추후에 m * (i+n) 으로 수정
+
     val stage2Reg = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
     val stage3Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
     val stage4Reg = RegInit(VecInit(Seq.fill(3)(0.U(32.W))))
@@ -42,7 +42,7 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int) extends Module { /
     FP32Mult0.io.a := stage2Reg(3)  // miFP32
     FP32Mult0.io.b := stage2Reg(2)  // theta
     stage3Reg := VecInit(stage2Reg(0), stage2Reg(1), FP32Mult0.io.result)
-    // stage 3~4 : 여기에서 m_theta_i 에 Scale 곱해야할 거 같음
+
     // Stage 4: 나눗셈
     val FP32DivPOW2 = Module(new FP32DivPOW2INT())
     FP32DivPOW2.io.a := stage3Reg(2)  // m_theta_i
@@ -150,7 +150,7 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) exten
         val x       = Input(Vec(2, UInt(32.W)))
         val EN      = Input(Bool())
         val m       = Input(UInt(32.W))
-        val i       = Input(UInt(32.W))
+        val baseIndex   = Input(UInt(32.W))  // Changed from 'i' to 'baseIndex'
         val theta   = Input(UInt(32.W))
         val xhat    = Output(Vec(2, UInt(32.W)))
         val valid   = Output(Bool())
@@ -174,7 +174,7 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) exten
         stage1Reg(0) := io.x(0)
         stage1Reg(1) := io.x(1)
         stage1Reg(2) := io.m
-        stage1Reg(3) := io.i
+        stage1Reg(3) := io.baseIndex  // Changed from 'io.i' to 'io.baseIndex'
         stage1Reg(4) := io.theta
         stage1EN     := true.B
     }.otherwise {
@@ -182,12 +182,12 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) exten
     }
 
     // stage1
-    RadCacl.io.EN       := stage1EN
-    RadCacl.io.x(0)     := stage1Reg(0)
-    RadCacl.io.x(1)     := stage1Reg(1)
-    RadCacl.io.m        := stage1Reg(2)
-    RadCacl.io.i        := stage1Reg(3)
-    RadCacl.io.theta    := stage1Reg(4)
+    RadCacl.io.EN           := stage1EN
+    RadCacl.io.x(0)         := stage1Reg(0)
+    RadCacl.io.x(1)         := stage1Reg(1)
+    RadCacl.io.m            := stage1Reg(2)
+    RadCacl.io.baseIndex    := stage1Reg(3)
+    RadCacl.io.theta        := stage1Reg(4)
 
     // stage2 입력
     stage2Reg(0) := RadCacl.io.xFWD(0)

@@ -23,13 +23,13 @@ class FP32radianCaclulatorTest extends AnyFlatSpec with ChiselScalatestTester {
         ("3A000000", 4096,   1, "Test 4")   // theta = 2/4096, m = 4096, i = 4096 => 0
       )
 
-      for ((theta, m, i, testName) <- testCases) {
+      for ((theta, m, baseIndex, testName) <- testCases) {
         dut.io.theta.poke(BigInt(theta, 16).U)
         dut.io.x(0).poke(100.U)
         dut.io.x(1).poke(100.U)
 
         dut.io.m.poke(m.U)
-        dut.io.i.poke(i.U)
+        dut.io.baseIndex.poke(baseIndex.U)
         dut.io.EN.poke(1.B)
         dut.clock.step(1)
         dut.io.EN.poke(0.B)
@@ -130,11 +130,11 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         ("41300000", "41500000", 17, 19, "3A000000", "Test #10")
       )
 
-      for ((x0, x1, m, i, theta, testName) <- testCases) {
+      for ((x0, x1, m, baseIndex, theta, testName) <- testCases) {
         dut.io.x(0).poke(BigInt(x0, 16).U)
         dut.io.x(1).poke(BigInt(x1, 16).U)
         dut.io.m.poke(m.U)
-        dut.io.i.poke(i.U)
+        dut.io.baseIndex.poke(baseIndex.U)
         dut.io.theta.poke(BigInt(theta, 16).U)
         dut.io.EN.poke(true.B)
         dut.clock.step(1)
@@ -152,7 +152,7 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         val xhat1 = dut.io.xhat(1).peek().litValue
         
         println(s"$testName:")
-        println(s"  Input:  x0=${Float.intBitsToFloat(BigInt(x0, 16).toInt)}, x1=${Float.intBitsToFloat(BigInt(x1, 16).toInt)}, m=$m, i=$i, theta=${Float.intBitsToFloat(BigInt(theta, 16).toInt)}")
+        println(s"  Input:  x0=${Float.intBitsToFloat(BigInt(x0, 16).toInt)}, x1=${Float.intBitsToFloat(BigInt(x1, 16).toInt)}, m=$m, baseIndex=$baseIndex, theta=${Float.intBitsToFloat(BigInt(theta, 16).toInt)}")
         println(s"  Output: Valid=$valid, xhat0=${Float.intBitsToFloat(xhat0.toInt)}, xhat1=${Float.intBitsToFloat(xhat1.toInt)}")
         println(s"  Cycles taken: $cycleCount")
         println("----------------------------------------------")
@@ -189,11 +189,11 @@ class FP32RoPEmoduleThroughputTest extends AnyFlatSpec with ChiselScalatestTeste
       val outputBuffer = scala.collection.mutable.Queue[(Float, Float)]()
 
       // 모든 테스트 케이스를 연속적으로 입력
-      for ((x0, x1, m, i, theta) <- testCases) {
+      for ((x0, x1, m, baseIndex, theta) <- testCases) {
         dut.io.x(0).poke(BigInt(x0, 16).U)
         dut.io.x(1).poke(BigInt(x1, 16).U)
         dut.io.m.poke(m.U)
-        dut.io.i.poke(i.U)
+        dut.io.baseIndex.poke(baseIndex.U)
         dut.io.theta.poke(BigInt(theta, 16).U)
         dut.io.EN.poke(true.B)
         dut.clock.step(1)
