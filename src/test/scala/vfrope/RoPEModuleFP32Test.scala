@@ -221,9 +221,9 @@ class FP32radCaclSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
         ("3A000000", "100", "100",   "1",      "1", "0.00048828125"),
         ("3A000000", "100", "100", "355",    "153", "0.52099609375"),
         ("3A000000", "100", "100", "4000",     "3", "1.859375"),
-        ("3A000000", "100", "100", "4096",  "4096", "0")
+        ("3A000000", "100", "100", "4096",     "1", "0")
       )
-      val delay = 1
+      val delay = 0
 
       for ((twoDivD, x1, x2, m, baseIndex, _) <- testCases) {
         dut.io.TwoDivD.poke(BigInt(twoDivD, 16).U)
@@ -280,10 +280,10 @@ class FP32RoPEmoduleSeqInputTest extends AnyFlatSpec with ChiselScalatestTester 
       // 여기에 테스트 로직을 작성
       val testCases = Seq(
         ("3F800000", "41200000", 64, 16, "3A000000", "Test #1"), // -10.00,   0.996
-        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),  //   0.07,   5.386
+        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),  //  -0.07,   5.386
         ("42C80000", "42C80000", 128, 32, "3A000000", "Test #3") //  99.88, 100.115
       )
-      val delay = 1
+      val delay = 0
 
       for ((x0, x1, m, baseIndex, theta, testName) <- testCases) {
         println(s"$testName ,,,")

@@ -42,10 +42,11 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) exten
     FP32Mult0.io.a := stage2Reg(3)  // miFP32
     FP32Mult0.io.b := stage2Reg(2)  // TwoDivD
     stage3Reg := VecInit(stage2Reg(0), stage2Reg(1), FP32Mult0.io.result)
-
+    
     // Stage 4: 나눗셈
     val FP32DivPOW2 = Module(new FP32DivPOW2INT())
     FP32DivPOW2.io.a := stage3Reg(2)  // m_theta_i
+    //FP32DivPOW2.io.a := Mux(enReg(2), stage3Reg(2), 0.U)  // m_theta_i
     FP32DivPOW2.io.x := 1.U
     stage4Reg := VecInit(stage3Reg(0), stage3Reg(1), FP32DivPOW2.io.result)
 
@@ -55,9 +56,14 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) exten
     FP32Mult1.io.b := 0x40000000.U  // 2
     stage5Reg := VecInit(stage4Reg(0), stage4Reg(1), stage3Reg(2), FP32Mult1.io.result)
 
+    // Add a new register to delay m_theta_i
+    val delayedMThetaI = RegInit(0.U(32.W))
+    delayedMThetaI := stage5Reg(2)
+
     // Stage 6: 최종 결과 계산
     val FP32Sub = Module(new FP32Sub())
-    FP32Sub.io.a := stage5Reg(2)  // m_theta_i
+    //FP32Sub.io.a := stage5Reg(2)  // m_theta_i
+    FP32Sub.io.a := delayedMThetaI  // Use the delayed m_theta_i
     FP32Sub.io.b := stage5Reg(3)  // modVal
     stage6Reg := VecInit(stage5Reg(0), stage5Reg(1), FP32Sub.io.result)
 
