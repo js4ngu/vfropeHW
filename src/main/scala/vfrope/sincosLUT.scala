@@ -31,12 +31,12 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) exte
 
     // 상수들 정의
     val doublePi     = Wire(UInt(32.W))
-    val OneAngHalfPi = Wire(UInt(32.W))
+    val OneAndHalfPi = Wire(UInt(32.W))
     val Pi           = Wire(UInt(32.W))
     val halfPi       = Wire(UInt(32.W))
 
     doublePi     := 4096.U
-    OneAngHalfPi := 3072.U
+    OneAndHalfPi := 3072.U
     Pi           := 2048.U
     halfPi       := 1024.U
 
@@ -46,24 +46,24 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) exte
     val sinSignWire  = Wire(Bool())  // 주석 처리됨
 
     // 조건에 따른 인덱스 계산
-    when(index < halfPi) {
+    when(index <= halfPi) {
         cosIndexWire := index
         sinIndexWire := index
         cosSignWire  := 0.B      
         sinSignWire  := 0.B      
-    }.elsewhen(index < Pi) {
+    }.elsewhen(index <= Pi) {
         cosIndexWire := Pi - index
-        sinIndexWire := Pi - index
+        sinIndexWire := Pi - index  // 수정됨
         cosSignWire  := 1.B   
         sinSignWire  := 0.B    
-    }.elsewhen(index < OneAngHalfPi) {
+    }.elsewhen(index <= OneAndHalfPi) {
         cosIndexWire := index - Pi
-        sinIndexWire := index - Pi
+        sinIndexWire := index - Pi  // 수정됨
         cosSignWire  := 1.B  
         sinSignWire  := 1.B  
     }.otherwise {
         cosIndexWire := doublePi - index
-        sinIndexWire := doublePi - index
+        sinIndexWire := doublePi - index  // 수정됨
         cosSignWire  := 0.B  
         sinSignWire  := 1.B 
     }

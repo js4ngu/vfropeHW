@@ -58,7 +58,7 @@ class FP32Sub extends Module {
     // Convert result back to IEEE 754 format
     io.result := fNFromRecFN(expWidth, sigWidth, adder.io.out)
 }
-
+/*
 class FP32Multiplier extends Module {
     val io = IO(new Bundle {
         val a = Input(UInt(32.W))
@@ -76,6 +76,29 @@ class FP32Multiplier extends Module {
     mulAddRecFN.io.detectTininess := 1.U // Tininess detected after rounding
 
     io.result := fNFromRecFN(8, 24, mulAddRecFN.io.out)
+}
+*/
+class FP32Multiplier extends Module {
+    val io = IO(new Bundle {
+        val a = Input(UInt(32.W))
+        val b = Input(UInt(32.W))
+        val result = Output(UInt(32.W))
+    })
+
+    val mulRecFN = Module(new MulRecFN(8, 24))  // For FP32, expWidth = 8, sigWidth = 24
+
+    // Convert IEEE 754 to recoded format
+    val a_recoded = recFNFromFN(8, 24, io.a)
+    val b_recoded = recFNFromFN(8, 24, io.b)
+
+    // Connect inputs to multiplier
+    mulRecFN.io.a := a_recoded
+    mulRecFN.io.b := b_recoded
+    mulRecFN.io.roundingMode := consts.round_near_even
+    mulRecFN.io.detectTininess := consts.tininess_afterRounding
+
+    // Convert result back to IEEE 754 format
+    io.result := fNFromRecFN(8, 24, mulRecFN.io.out)
 }
 
 class Int32ToFP32 extends Module {
