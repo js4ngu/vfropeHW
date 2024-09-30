@@ -38,7 +38,7 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "SinCosLUT"
 
   it should "output correct sine and cosine values for a specific angle" in {
-    test(new SinCosLUT(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024)) { dut =>
+    test(new SinCosLUT(LutSize = 12, LutHalfSizeHEX = 0x45000000)) { dut =>
       // List of angles to test
       val anglesToTest = Seq(//"h00000000",   // 0
                              //"h3E800000",   //0.25
@@ -84,7 +84,7 @@ class SinCosLUTTest extends AnyFlatSpec with ChiselScalatestTester {
 //SinCos LUT 시퀀셜 인풋 테스트코드
 class FP32rSinCosSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
   "FP32rSinCosSeqInputTest" should "Seq Input : Test throughput" in {
-    test(new SinCosLUT(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024))
+    test(new SinCosLUT(LutSize = 12, LutHalfSizeHEX = 0x45000000))
     .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val anglesToTest = Seq("h00000000",   //0     -> (Cos,Sin) : 1.0, 0.0
                              "h3E800000",   //0.25  -> (Cos,Sin) : 0.7, 0.7

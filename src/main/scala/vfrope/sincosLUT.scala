@@ -3,7 +3,7 @@ package vfrope
 import chisel3._
 import chisel3.util._
 
-class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
+class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
     val io = IO(new Bundle {
         val EN       = Input(Bool())
         val angle    = Input(UInt(32.W))
@@ -78,7 +78,7 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) exte
 
 
 
-class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
+class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
   val io = IO(new Bundle {
     val x      = Input(Vec(2, UInt(32.W)))
     val EN     = Input(Bool())
@@ -89,7 +89,7 @@ class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Mo
     val xFWD   = Output(Vec(2, UInt(32.W)))
   })
 
-  val indexCalculator = Module(new IndexCalculator(LutSize, LutHalfSizeHEX, SinCosOffset))
+  val indexCalculator = Module(new IndexCalculator(LutSize, LutHalfSizeHEX))
   val lutModule = Module(new CosLUT())
 
   indexCalculator.io.EN := io.EN

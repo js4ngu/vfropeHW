@@ -113,7 +113,7 @@ class FP32RoPEcoreTest extends AnyFlatSpec with ChiselScalatestTester {
 class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32RoPEmodule"
   it should "calculate angles correctly" in {
-    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024 , Index = 0  ))
+    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0  ))
       .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // 여기에 테스트 로직을 작성
       val testCases = Seq(
@@ -167,7 +167,7 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
 class RoPEresolitionTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32RoPEmodule"
   it should "When using 2/D below the maximum resolution supported by the hardware" in {
-    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024 , Index = 0  ))
+    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0  ))
       .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // 여기에 테스트 로직을 작성
       val testCases = Seq(
@@ -275,7 +275,7 @@ class FP32RoPEcoreSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
 class FP32RoPEmoduleSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32RoPEmoduleSeqInputTest"
   it should "Seq Input : Test throughput" in {
-    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, SinCosOffset = 1024 , Index = 0  ))
+    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0  ))
       .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // 여기에 테스트 로직을 작성
       val testCases = Seq(

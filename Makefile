@@ -64,7 +64,11 @@ FP32RoPEVCD:
 FP32RoPESeq:
 	sbt "testOnly vfrope.FP32RoPEmoduleSeqInputTest -- -DwriteVcd=1"
 
+# 베릴로그 변환
+runFP32RoPE:
+	sbt "runMain <your_main_class>"
 
+# 파이썬
 pyRoPEcore:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPEcore.py
 pyRoPE:

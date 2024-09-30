@@ -151,7 +151,7 @@ class FP32RoPEcore() extends Module {
     */
 }
 
-class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int, Index : Int) extends Module {
+class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
         val EN      = Input(Bool())
@@ -164,7 +164,7 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int, Index
     
     // 필요한 모듈 선언   
     val RadCacl   = Module(new FP32radianCaclulator(LutSize, LutHalfSizeHEX, Index))
-    val SinCosLut = Module(new SinCosLUT(LutSize, LutHalfSizeHEX, SinCosOffset))
+    val SinCosLut = Module(new SinCosLUT(LutSize, LutHalfSizeHEX))
     val RoPEcore  = Module(new FP32RoPEcore())
 
     // 파이프라인 레지스터와 EN 신호
