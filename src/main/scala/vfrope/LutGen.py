@@ -2,8 +2,8 @@ import numpy as np
 import struct
 
 PRINT_LOG = 0
-LUT_SIN_OUT = 0
-LUT_COS_OUT = 1
+LUT_SIN_OUT = 1
+LUT_COS_OUT = 0
 SIN_COS_THETA_INFO = 0
 
 BITS = 12

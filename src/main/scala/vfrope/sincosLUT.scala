@@ -28,7 +28,9 @@ class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) ext
     val sinIndex = (cosIndex - SinCosOffset.U)(LutSize - 1, 0) //비트 슬라이싱으로 범위제한 추가
 
     io.cosIndex := Mux(io.EN, cosIndex, 0.U(32.W))
-    io.sinIndex := Mux(io.EN, sinIndex, 0.U(32.W))
+    //io.sinIndex := Mux(io.EN, sinIndex, 0.U(32.W))
+    io.sinIndex := Mux(io.EN, cosIndex, 0.U(32.W))
+
     io.ENout    := Mux(io.EN, io.EN, 0.B)
     //printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
 }
