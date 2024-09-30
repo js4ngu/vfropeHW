@@ -1,39 +1,82 @@
 package vfrope
 
 import chisel3._
-import chisel3.experimental.FixedPoint
-import chisel3.util.{log2Ceil, switch, is}
+import chisel3.util._
 
-class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset : Int) extends Module {
+class IndexCalculator(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
     val io = IO(new Bundle {
         val EN       = Input(Bool())
         val angle    = Input(UInt(32.W))
         val cosIndex = Output(UInt(32.W))
         val sinIndex = Output(UInt(32.W))
+        val cosSign  = Output(Bool())  // 주석 처리됨
+        val sinSign  = Output(Bool())  // 주석 처리됨
         val ENout    = Output(Bool())
     })
 
-    val FP32Mult = Module(new FP32Multiplier())
+    // 필요한 모듈들 (정의되어 있다고 가정)
+    val FP32Mult       = Module(new FP32Multiplier())
+    val FP32Truncate   = Module(new FP32Truncate())
+    val FP32toINT32    = Module(new FP32toINT32())
+
     FP32Mult.io.a := io.angle
     FP32Mult.io.b := LutHalfSizeHEX.U
     val FP32Index = FP32Mult.io.result
 
-    val FP32Truncate = Module(new FP32Truncate())
     FP32Truncate.io.in := FP32Index
     val FP32TruncateIndex = FP32Truncate.io.out
 
-    val FP32toINT32 = Module(new FP32toINT32())
     FP32toINT32.io.ieee754 := FP32TruncateIndex
-    val cosIndex = FP32toINT32.io.int32.asUInt                 
-    val sinIndex = (cosIndex - SinCosOffset.U)(LutSize - 1, 0) //비트 슬라이싱으로 범위제한 추가
+    val index = FP32toINT32.io.int32.asUInt
 
-    io.cosIndex := Mux(io.EN, cosIndex, 0.U(32.W))
-    //io.sinIndex := Mux(io.EN, sinIndex, 0.U(32.W))
-    io.sinIndex := Mux(io.EN, cosIndex, 0.U(32.W))
+    // 상수들 정의
+    val doublePi     = Wire(UInt(32.W))
+    val OneAngHalfPi = Wire(UInt(32.W))
+    val Pi           = Wire(UInt(32.W))
+    val halfPi       = Wire(UInt(32.W))
 
-    io.ENout    := Mux(io.EN, io.EN, 0.B)
-    //printf(p"Angle: ${io.angle}, FP32TruncateIndex: ${FP32TruncateIndex}, cosIndex: ${io.cosIndex}, sinIndex: ${io.sinIndex}\n")
+    doublePi     := 4096.U
+    OneAngHalfPi := 3072.U
+    Pi           := 2048.U
+    halfPi       := 1024.U
+
+    val cosIndexWire = Wire(UInt(32.W))
+    val sinIndexWire = Wire(UInt(32.W))
+    val cosSignWire  = Wire(Bool())  // 주석 처리됨
+    val sinSignWire  = Wire(Bool())  // 주석 처리됨
+
+    // 조건에 따른 인덱스 계산
+    when(index < halfPi) {
+        cosIndexWire := index
+        sinIndexWire := index
+        cosSignWire  := 0.B      
+        sinSignWire  := 0.B      
+    }.elsewhen(index < Pi) {
+        cosIndexWire := Pi - index
+        sinIndexWire := Pi - index
+        cosSignWire  := 1.B   
+        sinSignWire  := 0.B    
+    }.elsewhen(index < OneAngHalfPi) {
+        cosIndexWire := index - Pi
+        sinIndexWire := index - Pi
+        cosSignWire  := 1.B  
+        sinSignWire  := 1.B  
+    }.otherwise {
+        cosIndexWire := doublePi - index
+        sinIndexWire := doublePi - index
+        cosSignWire  := 0.B  
+        sinSignWire  := 1.B 
+    }
+
+    // EN 신호에 따라 출력 설정
+    io.cosIndex := Mux(io.EN, cosIndexWire, 0.U)
+    io.sinIndex := Mux(io.EN, sinIndexWire, 0.U)
+    io.cosSign  := Mux(io.EN, cosSignWire, 0.B) 
+    io.sinSign  := Mux(io.EN, sinSignWire, 0.B) 
+    io.ENout    := io.EN
 }
+
+
 
 class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Module {
   val io = IO(new Bundle {
@@ -59,7 +102,7 @@ class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, SinCosOffset: Int) extends Mo
   io.xFWD(0) := Mux(lutModule.io.ENout, io.x(0), 0.U(32.W))
   io.xFWD(1) := Mux(lutModule.io.ENout, io.x(1), 0.U(32.W))
 
-  io.cosOut := Mux(lutModule.io.ENout, lutModule.io.cosOut, 0.U(32.W))
-  io.sinOut := Mux(lutModule.io.ENout, lutModule.io.sinOut, 0.U(32.W))
+  io.cosOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.cosSign, lutModule.io.cosOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
+  io.sinOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.sinSign, lutModule.io.sinOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
   io.ENout  := Mux(lutModule.io.ENout, lutModule.io.ENout, 0.B)
 }

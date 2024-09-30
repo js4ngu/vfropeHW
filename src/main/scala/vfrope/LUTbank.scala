@@ -168,6 +168,7 @@ class CosLUT() extends Module {
             "h3cc5f30c".U, "h3cb96227".U, "h3cacd125".U, "h3ca04008".U, "h3c93aed3".U, "h3c871d87".U, "h3c75184d".U, "h3c5bf566".U, "h3c42d25c".U, "h3c29af35".U,
             "h3c108bf3".U, "h3beed136".U, "h3bbc8a61".U, "h3b8a4370".U, "h3b2ff8d1".U, "h3a96d54f".U
     ))
+/*
     val cosLUTBank4 = VecInit(Seq(
             "hb9c91c6c".U, "hbafb637d".U, "hbb623fdd".U, "hbba366ec".U, "hbbd5add0".U, "hbc03fa4a".U, "hbc1d1d97".U, "hbc3640cc".U, "hbc4f63e5".U, "hbc6886de".U,
             "hbc80d4d9".U, "hbc8d6630".U, "hbc99f771".U, "hbca6889a".U, "hbcb319a9".U, "hbcbfaa9d".U, "hbccc3b73".U, "hbcd8cc2a".U, "hbce55cbf".U, "hbcf1ed31".U,
@@ -504,7 +505,7 @@ class CosLUT() extends Module {
             "h3f7feea5".U, "h3f7ff0e1".U, "h3f7ff2f7".U, "h3f7ff4e4".U, "h3f7ff6aa".U, "h3f7ff849".U, "h3f7ff9c0".U, "h3f7ffb10".U, "h3f7ffc38".U, "h3f7ffd39".U,
             "h3f7ffe12".U, "h3f7ffec4".U, "h3f7fff4e".U, "h3f7fffb1".U, "h3f7fffec".U, "h3f800000".U
     ))
-
+*/
     val sinLUTBank0 = VecInit(Seq(
         "h00000000".U, "h3ac91c67".U, "h3b491c58".U, "h3b96d52e".U, "h3bc91c1a".U, "h3bfb62e6".U, "h3c16d4c6".U, "h3c2ff801".U, "h3c491b21".U, "h3c623e23".U,
         "h3c7b6101".U, "h3c8a41dc".U, "h3c96d323".U, "h3ca36452".U, "h3caff568".U, "h3cbc8663".U, "h3cc91741".U, "h3cd5a7ff".U, "h3ce2389d".U, "h3ceec918".U,
@@ -617,6 +618,7 @@ class CosLUT() extends Module {
         "h3f7fecdd".U, "h3f7fef38".U, "h3f7ff16a".U, "h3f7ff376".U, "h3f7ff559".U, "h3f7ff716".U, "h3f7ff8ab".U, "h3f7ffa18".U, "h3f7ffb5e".U, "h3f7ffc7c".U,
         "h3f7ffd73".U, "h3f7ffe42".U, "h3f7ffeea".U, "h3f7fff6b".U, "h3f7fffc4".U, "h3f7ffff5".U
     ))
+/*
     val sinLUTBank4 = VecInit(Seq(
         "h3f7fffff".U, "h3f7fffe1".U, "h3f7fff9c".U, "h3f7fff2f".U, "h3f7ffe9b".U, "h3f7ffde0".U, "h3f7ffcfd".U, "h3f7ffbf2".U, "h3f7ffac0".U, "h3f7ff966".U,
         "h3f7ff7e5".U, "h3f7ff63d".U, "h3f7ff46d".U, "h3f7ff275".U, "h3f7ff056".U, "h3f7fee0f".U, "h3f7feba1".U, "h3f7fe90c".U, "h3f7fe64f".U, "h3f7fe36a".U,
@@ -953,15 +955,18 @@ class CosLUT() extends Module {
         "hbcbc8663".U, "hbcaff568".U, "hbca36452".U, "hbc96d323".U, "hbc8a41dc".U, "hbc7b6101".U, "hbc623e23".U, "hbc491b21".U, "hbc2ff801".U, "hbc16d4c6".U,
         "hbbfb62e6".U, "hbbc91c1a".U, "hbb96d52e".U, "hbb491c58".U, "hbac91c67".U, "ha58d3132".U
     ))
+*/
 
-
-    val cosLUT = VecInit(cosLUTBank0 ++ cosLUTBank1 ++ cosLUTBank2 ++ cosLUTBank3 ++ cosLUTBank4 ++
+    val cosLUT = VecInit(cosLUTBank0 ++ cosLUTBank1 ++ cosLUTBank2 ++ cosLUTBank3)
+                        /*
+                         ++ cosLUTBank4 ++
                          cosLUTBank5 ++ cosLUTBank6 ++ cosLUTBank7 ++ cosLUTBank8 ++ cosLUTBank9 ++ cosLUTBank10 ++
-                         cosLUTBank11 ++ cosLUTBank12 ++ cosLUTBank13 ++ cosLUTBank14 ++ cosLUTBank15)
-    val sinLUT = VecInit(sinLUTBank0 ++ sinLUTBank1 ++ sinLUTBank2 ++ sinLUTBank3 ++ sinLUTBank4 ++
+                         cosLUTBank11 ++ cosLUTBank12 ++ cosLUTBank13 ++ cosLUTBank14 ++ cosLUTBank15)*/
+    val sinLUT = VecInit(sinLUTBank0 ++ sinLUTBank1 ++ sinLUTBank2 ++ sinLUTBank3)
+                        /*
+                         ++ sinLUTBank4 ++
                          sinLUTBank5 ++ sinLUTBank6 ++ sinLUTBank7 ++ sinLUTBank8 ++ sinLUTBank9 ++ sinLUTBank10 ++
-                         sinLUTBank11 ++ sinLUTBank12 ++ sinLUTBank13 ++ sinLUTBank14 ++ sinLUTBank15)
-
+                         sinLUTBank11 ++ sinLUTBank12 ++ sinLUTBank13 ++ sinLUTBank14 ++ sinLUTBank15)*/
 
     io.cosOut := Mux(io.EN, cosLUT(io.cosIndex), 0.U(32.W)) 
     io.sinOut := Mux(io.EN, sinLUT(io.sinIndex), 0.U(32.W))
