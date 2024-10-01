@@ -9,6 +9,9 @@ test:
 # 삼각함수 관련
 SinCosLUT:
 	sbt "testOnly vfrope.SinCosLUTTest"
+SinCosLUT2:
+	sbt "testOnly vfrope.SinCosLUT2Test -- -DwriteVcd=1"
+
 SinCosLUTseq:
 	sbt "testOnly vfrope.FP32rSinCosSeqInputTest -- -DwriteVcd=1"
 
