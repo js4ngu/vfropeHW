@@ -9,7 +9,7 @@ test:
 # 삼각함수 관련
 SinCosLUT:
 	sbt "testOnly vfrope.SinCosLUTTest"
-SinCosLUT2:
+SinCosLUTsmall:
 	sbt "testOnly vfrope.SinCosLUT2Test -- -DwriteVcd=1"
 
 SinCosLUTseq:
@@ -66,6 +66,10 @@ FP32RoPEVCD:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest -- -DwriteVcd=1"
 FP32RoPESeq:
 	sbt "testOnly vfrope.FP32RoPEmoduleSeqInputTest -- -DwriteVcd=1"
+
+
+FP32smallRoPE:
+	sbt "testOnly vfrope.FP32smallRoPEmoduleTest -- -DwriteVcd=1"
 
 # 베릴로그 변환
 runFP32RoPEsingle:

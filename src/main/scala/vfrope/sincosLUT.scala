@@ -143,17 +143,24 @@ class smallIndexCalculator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
         sinSignWire  := 0.B    
     }.elsewhen(sinIndex <= OneAndHalfPi) {
         sinIndexWire := sinIndex - Pi  // 수정됨
-        sinSignWire  := 1.B  
+        sinSignWire  := 1.B            
     }.otherwise {
         sinIndexWire := doublePi - sinIndex  // 수정됨
         sinSignWire  := 1.B 
     }
+    val cosSignReg  = RegNext(cosSignWire)
+    val sinSignReg  = RegNext(sinSignWire)
+    val cosIndexReg = RegNext(cosIndexWire)
+    val sinIndexReg = RegNext(sinIndexWire)
 
     // EN 신호에 따라 출력 설정
     io.cosIndex := Mux(io.EN, cosIndexWire, 0.U)
     io.sinIndex := Mux(io.EN, sinIndexWire, 0.U)
-    io.cosSign  := Mux(io.EN, cosSignWire, 0.B) 
-    io.sinSign  := Mux(io.EN, sinSignWire, 0.B) 
+    //io.cosSign  := Mux(io.EN, cosSignWire, 0.B)
+    io.cosSign  := cosSignWire
+    //io.sinSign  := Mux(io.EN, sinSignWire, 0.B) 
+    io.sinSign  := sinSignWire
+
     io.ENout    := io.EN
 }
 
@@ -178,7 +185,7 @@ class SinCosLUT(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
 
   lutModule.io.cosIndex := indexCalculator.io.cosIndex
   lutModule.io.sinIndex := indexCalculator.io.sinIndex
-  lutModule.io.EN := indexCalculator.io.ENout
+  lutModule.io.EN       := indexCalculator.io.ENout
 
   io.xFWD(0) := Mux(lutModule.io.ENout, io.x(0), 0.U(32.W))
   io.xFWD(1) := Mux(lutModule.io.ENout, io.x(1), 0.U(32.W))
@@ -205,12 +212,14 @@ class smallSinCosLUT(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
   indexCalculator.io.EN := io.EN
   indexCalculator.io.angle := io.angle
 
+  lutModule.io.x(0)     := io.x(0)
+  lutModule.io.x(1)     := io.x(1)
   lutModule.io.cosIndex := indexCalculator.io.cosIndex
   lutModule.io.sinIndex := indexCalculator.io.sinIndex
   lutModule.io.EN := indexCalculator.io.ENout
 
-  io.xFWD(0) := Mux(lutModule.io.ENout, io.x(0), 0.U(32.W))
-  io.xFWD(1) := Mux(lutModule.io.ENout, io.x(1), 0.U(32.W))
+  io.xFWD(0) := Mux(lutModule.io.ENout, lutModule.io.xFWD(0), 0.U(32.W))
+  io.xFWD(1) := Mux(lutModule.io.ENout, lutModule.io.xFWD(1), 0.U(32.W))
 
   io.cosOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.cosSign, lutModule.io.cosOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
   io.sinOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.sinSign, lutModule.io.sinOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영

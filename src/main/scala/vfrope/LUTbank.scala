@@ -298,11 +298,13 @@ val cosLUTBank3 = VecInit(Seq(
 class CosLUTbank() extends Module {
     val io = IO(new Bundle {
         val EN        = Input(Bool())
+        val x         = Input(Vec(2, UInt(32.W)))
         val cosIndex  = Input(UInt(32.W))
         val sinIndex  = Input(UInt(32.W))
         val sinOut    = Output(UInt(32.W))
         val cosOut    = Output(UInt(32.W))
         val ENout     = Output(Bool())
+        val xFWD      = Output(Vec(2, UInt(32.W)))
     })
 
 val cosLUTBank0 = VecInit(Seq(
@@ -424,12 +426,17 @@ val cosLUTBank3 = VecInit(Seq(
     val ENReg = RegNext(io.EN)
 
     // Pipeline registers
+    val xFWD0Reg    = RegNext(io.x(0))
+    val xFWD1Reg    = RegNext(io.x(1))
+
     val sinIndexReg = RegNext(io.sinIndex)
     val sinOutReg   = cosLUT(sinIndexReg)
     val cosValueReg = cosLUT(io.cosIndex)
     val cosOutReg   = RegNext(cosValueReg)
 
-    io.cosOut := Mux(ENReg, cosOutReg, 0.U(32.W)) 
-    io.sinOut := Mux(ENReg, sinOutReg, 0.U(32.W)) 
+    io.cosOut  := Mux(ENReg, cosOutReg, 0.U(32.W)) 
+    io.sinOut  := Mux(ENReg, sinOutReg, 0.U(32.W))
+    io.xFWD(0) := Mux(ENReg, xFWD0Reg, 0.U(32.W)) 
+    io.xFWD(1) := Mux(ENReg, xFWD1Reg, 0.U(32.W))
     io.ENout  := ENReg
 }

@@ -164,6 +164,61 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
 }
 
 
+class FP32smallRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32smallRoPEmodule"
+  it should "calculate angles correctly" in {
+    test(new FP32smallRoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0  ))
+      .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      // 여기에 테스트 로직을 작성
+      val testCases = Seq(
+        ("3F800000", "41200000", 64, 16, "3A000000", "Test #1"), //
+        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),
+        ("42C80000", "42C80000", 128, 32, "3A000000", "Test #3"),
+        ("40E00000", "40400000", 96, 24, "3A000000", "Test #4"),
+        ("00000000", "3F800000", 1, 1, "3A000000", "Test #5"),
+        ("447A0000", "447A0000", 1024, 256, "3A000000", "Test #6"),
+        ("41700000", "41A00000", 80, 20, "3A000000", "Test #7"),
+        ("40800000", "41000000", 16, 4, "3A000000", "Test #8"),
+        ("40400000", "41100000", 27, 9, "3A000000", "Test #9"),
+        ("41300000", "41500000", 17, 19, "3A000000", "Test #10")
+      )
+
+      for ((x0, x1, m, baseIndex, theta, testName) <- testCases) {
+        dut.io.x(0).poke(BigInt(x0, 16).U)
+        dut.io.x(1).poke(BigInt(x1, 16).U)
+        dut.io.m.poke(m.U)
+        dut.io.baseIndex.poke(baseIndex.U)
+        dut.io.TwoDivD.poke(BigInt(theta, 16).U)
+        dut.io.EN.poke(true.B)
+        dut.clock.step(1)
+        dut.io.EN.poke(false.B)
+        
+        // Wait for the pipeline to complete
+        var cycleCount = 0
+        while (!dut.io.valid.peek().litToBoolean && cycleCount < 30) {
+          dut.clock.step(1)
+          cycleCount += 1
+        }
+
+        val valid = dut.io.valid.peek().litToBoolean
+        val xhat0 = dut.io.xhat(0).peek().litValue
+        val xhat1 = dut.io.xhat(1).peek().litValue
+        
+        println(s"$testName:")
+        println(s"  Input:  x0=${Float.intBitsToFloat(BigInt(x0, 16).toInt)}, x1=${Float.intBitsToFloat(BigInt(x1, 16).toInt)}, m=$m, baseIndex=$baseIndex, theta=${Float.intBitsToFloat(BigInt(theta, 16).toInt)}")
+        println(s"  Output: Valid=$valid, xhat0=${Float.intBitsToFloat(xhat0.toInt)}, xhat1=${Float.intBitsToFloat(xhat1.toInt)}")
+        println(s"  Cycles taken: $cycleCount")
+        println("----------------------------------------------")
+
+        dut.io.EN.poke(false.B)
+        //dut.clock.step(12)
+      }
+
+    }
+  }
+}
+
+
 class RoPEresolitionTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32RoPEmodule"
   it should "When using 2/D below the maximum resolution supported by the hardware" in {
@@ -301,3 +356,4 @@ class FP32RoPEmoduleSeqInputTest extends AnyFlatSpec with ChiselScalatestTester 
     }
   }
 }
+
