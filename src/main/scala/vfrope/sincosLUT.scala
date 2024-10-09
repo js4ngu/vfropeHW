@@ -137,13 +137,13 @@ class smallIndexCalculator(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
     //sin
     when(sinIndex <= halfPi) {
         sinIndexWire := sinIndex
-        sinSignWire  := 0.B      
+        sinSignWire  := 1.B      
     }.elsewhen(sinIndex <= Pi) {
         sinIndexWire := Pi - sinIndex  // 수정됨
         sinSignWire  := 0.B    
     }.elsewhen(sinIndex <= OneAndHalfPi) {
         sinIndexWire := sinIndex - Pi  // 수정됨
-        sinSignWire  := 1.B            
+        sinSignWire  := 0.B            
     }.otherwise {
         sinIndexWire := doublePi - sinIndex  // 수정됨
         sinSignWire  := 1.B 
@@ -221,7 +221,11 @@ class smallSinCosLUT(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
   io.xFWD(0) := Mux(lutModule.io.ENout, lutModule.io.xFWD(0), 0.U(32.W))
   io.xFWD(1) := Mux(lutModule.io.ENout, lutModule.io.xFWD(1), 0.U(32.W))
 
-  io.cosOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.cosSign, lutModule.io.cosOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
-  io.sinOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.sinSign, lutModule.io.sinOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
+  printf(p"Angle: 0x${Hexadecimal(io.angle)}, cosSign: ${indexCalculator.io.cosSign} : ${lutModule.io.cosOut(31)}, sinSign: ${indexCalculator.io.sinSign} : ${lutModule.io.sinOut(31)}\t")
+  printf(p"cosOut: 0x${Hexadecimal(io.cosOut)}, sinOut: 0x${Hexadecimal(io.sinOut)}\n")
+  
+  io.cosOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.cosSign ^ lutModule.io.cosOut(31), lutModule.io.cosOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
+  io.sinOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.sinSign ^ lutModule.io.sinOut(31), lutModule.io.sinOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
+
   io.ENout  := Mux(lutModule.io.ENout, lutModule.io.ENout, 0.B)
 }
