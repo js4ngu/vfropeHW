@@ -133,8 +133,8 @@ class encoder() extends Module {
   io.sinOut := Cat(io.sinSign ^ io.sinIn(31)   , io.sinIn(30, 0)) // 여기서 cos,sin sign 비트 CAT해서 반영
 }
 
-/*
-class smallSinCosLUT2(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAndHalfPi : Int, Pi : Int, halfPi : Int) extends Module {
+
+class dualPortSinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAndHalfPi : Int, Pi : Int, halfPi : Int) extends Module {
     val io = IO(new Bundle {
         val x      = Input(Vec(2, UInt(32.W)))
         val EN     = Input(Bool())
@@ -145,54 +145,57 @@ class smallSinCosLUT2(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAndHa
         val ENout  = Output(Bool())
         val xFWD   = Output(Vec(2, UInt(32.W)))
     })
-    //파이프라이닝
-    val stage2Reg      = RegInit(VecInit(Seq.fill(6)(0.U(32.W))))
-    val stage3Reg      = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
-    val ENReg          = RegInit(VecInit(Seq.fill(2)(false.B)))
+    // 먼저 모든 모듈을 초기화합니다
+    val indexCalculator = Module(new smallIndexCalculator2(LutSize, LutHalfSizeHEX, doublePi, OneAndHalfPi, Pi, halfPi))
+    val lutModule       = Module(new dualPortCOSlut())
+    val encoder         = Module(new encoder())
 
-    val indexCalculator = Module(new smallIndexCalculator2(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAndHalfPi : Int, Pi : Int, halfPi : Int))
-    val lutModule = Module(new dualPortCOSlut())
-    val encoder   = Module(new encoder())
+    //파이프라인 레지스터 정의
+    val stage2Reg      = RegInit(VecInit(Seq.fill(4)(0.U(32.W))))
+    val stage3Reg      = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
 
-    //stage1
-    indexCalculator.io.EN    := io.EN
-    indexCalculator.io.angle := io.angle
-    indexCalculator.io.x(0)  := io.x(0)
-    indexCalculator.io.x(1)  := io.x(1)
+    //FWD
+    val x0Reg = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
+    val x1Reg = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
+    val ENReg = RegInit(VecInit(Seq.fill(2)(false.B)))
 
-    //stage2
-    lutModule.io.cosIndex := indexCalculator.io.cosIndex
-    lutModule.io.sinIndex := indexCalculator.io.sinIndex
-    lutModule.io.EN := indexCalculator.io.ENout
-    lutModule.io.x := io.x
-    lutModule.io.cosSign := indexCalculator.io.cosSign
-    lutModule.io.sinSign := indexCalculator.io.sinSign
+    indexCalculator.io.angle       := io.angle
+    indexCalculator.io.x(0)        := io.x(0) 
+    indexCalculator.io.x(1)        := io.x(1) 
+    indexCalculator.io.EN          := io.EN
+
+    lutModule.io.cosIndex          := indexCalculator.io.cosIndex
+    lutModule.io.sinIndex          := indexCalculator.io.sinIndex
+    lutModule.io.x(0)              := indexCalculator.io.xFWD(0)
+    lutModule.io.x(1)              := indexCalculator.io.xFWD(1)
+    lutModule.io.sign(0)           := indexCalculator.io.cosSign
+    lutModule.io.sign(1)           := indexCalculator.io.sinSign
+    lutModule.io.EN                := indexCalculator.io.ENout
 
     stage2Reg(0) := lutModule.io.cosOut
     stage2Reg(1) := lutModule.io.sinOut
-    stage2Reg(2) := indexCalculator.io.cosSign
-    stage2Reg(3) := indexCalculator.io.sinSign
-    stage2Reg(4) := lutModule.io.xFWD(0)
-    stage2Reg(5) := lutModule.io.xFWD(1)
+    stage2Reg(2) := lutModule.io.signFWD(0)
+    stage2Reg(3) := lutModule.io.signFWD(1)
+    x0Reg(0)     := lutModule.io.xFWD(0)
+    x1Reg(0)     := lutModule.io.xFWD(1)
     ENReg(0)     := lutModule.io.ENout
 
-    //stage3
-    encoder.io.cosIn    := stage2Reg(0)
-    encoder.io.sinIn    := lutModule.io.sinOut
-    encoder.io.cosSign  := stage2Reg(2)
-    encoder.io.sinSign  := stage2Reg(3)
+    encoder.io.cosIn   := stage2Reg(0)
+    encoder.io.sinIn   := stage2Reg(1)
+    encoder.io.cosSign := stage2Reg(2)
+    encoder.io.sinSign := stage2Reg(3)
 
-    stage3Reg(0) := encoder.io.cosOut   //cos
-    stage3Reg(1) := encoder.io.sinOut   //sun
-    stage3Reg(2) := stage2Reg(4)        //x0
-    stage3Reg(3) := stage2Reg(5)        //x1
-    ENReg(1)     := ENReg(0)            //EN
+    stage3Reg(0) := encoder.io.cosOut
+    stage3Reg(1) := encoder.io.sinOut
+    x0Reg(1)     := x0Reg(0)
+    x1Reg(1)     := x1Reg(0)
+    ENReg(1)     := ENReg(0)
+
 
     //output
-    io.cosOut   := Mux(ENReg(1), stage3Reg(0), 0.U)
-    io.sinOut   := Mux(ENReg(1), stage3Reg(1), 0.U)
-    io.xFWD(0)  := Mux(ENReg(1), stage3Reg(2), 0.B) 
-    io.xFWD(1)  := Mux(ENReg(1), stage3Reg(3), 0.U)
+    io.sinOut   := Mux(ENReg(1), stage3Reg(0), 0.U) 
+    io.cosOut   := Mux(ENReg(1), stage3Reg(1), 0.U)
+    io.xFWD(0)  := Mux(ENReg(1), x0Reg(1),     0.U)
+    io.xFWD(1)  := Mux(ENReg(1), x1Reg(1),     0.U)
     io.ENout    := ENReg(1)
 }
-*/

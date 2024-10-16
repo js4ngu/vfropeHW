@@ -126,7 +126,6 @@ class SinCosLUT2Test extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-/*
 //SinCos LUT 시퀀셜 인풋 테스트코드
 class FP32rSinCosSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
   "FP32rSinCosSeqInputTest" should "Seq Input : Test throughput" in {
@@ -151,9 +150,9 @@ class FP32rSinCosSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-class smallSinCosLUT2Test extends AnyFlatSpec with ChiselScalatestTester {
-  "smallSinCosLUT2 SEQ" should "Seq Input : Test throughput" in {
-    test(new smallSinCosLUT2(LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+class dualPortSinCosLUTest extends AnyFlatSpec with ChiselScalatestTester {
+  "dualPortSinCosLUT SEQ" should "Seq Input : Test throughput" in {
+    test(new dualPortSinCosLUT(LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
     .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       val anglesToTest = Seq("h00000000",   // 0
                              "h3DCCCCCD",
@@ -181,12 +180,12 @@ class smallSinCosLUT2Test extends AnyFlatSpec with ChiselScalatestTester {
                              "h3FF33333",
                              "h40000000",   // 2
                             )
-      val delay = 10
+      val delay = 0
 
       for (angle <- anglesToTest) {
-        dut.io.angle.poke(angle.U)
         dut.io.x(0).poke(1.U)
         dut.io.x(1).poke(2.U)
+        dut.io.angle.poke(angle.U)
         dut.io.EN.poke(true.B)
         dut.clock.step(1)
         dut.io.EN.poke(false.B)
@@ -195,4 +194,3 @@ class smallSinCosLUT2Test extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
-*/
