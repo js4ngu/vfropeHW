@@ -166,24 +166,35 @@ class dualPortCOSlut() extends Module {
             cosLUT.write(index.U, value)
         }
     }
-    val cosTemp   = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
-    val sinTemp   = RegInit((0.U(32.W)))
+    val cosTemp    = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
+    val sinTemp    = RegInit((0.U(32.W)))
+    val cosSignReg = RegInit(VecInit(Seq.fill(2)(false.B)))
+    val sinSignReg = RegInit(VecInit(Seq.fill(2)(false.B)))
+    val ENReg      = RegInit(VecInit(Seq.fill(2)(false.B)))
+    val x0Reg      = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
+    val x1Reg      = RegInit(VecInit(Seq.fill(2)(0.U(32.W))))
 
-    val ENReg = RegInit(VecInit(Seq.fill(2)(false.B)))
     ENReg(0) := io.EN
     ENReg(1) := ENReg(0)
+    x0Reg(0) := io.x(0)
+    x1Reg(0) := io.x(1)
+    x0Reg(1) := x0Reg(0)
+    x1Reg(1) := x1Reg(0)
 
-    // 듀얼 포트 읽기
+    cosSignReg(0) := io.sign(0)
+    sinSignReg(0) := io.sign(1)
+    cosSignReg(1) := cosSignReg(0)
+    sinSignReg(1) := sinSignReg(0)
+
     cosTemp(0)  := cosLUT.read(io.cosIndex)
     cosTemp(1)  := cosTemp(0)
-
     sinTemp     := cosLUT.read(io.sinIndex)
 
     io.ENout      := ENReg(1)
-    io.cosOut     := Mux(ENReg(1), cosTemp(1), 0.U(32.W))
-    io.sinOut     := Mux(ENReg(1), sinTemp,    0.U(32.W))
-    io.xFWD(0)    := Mux(ENReg(1), io.x(0),    0.U(32.W))
-    io.xFWD(1)    := Mux(ENReg(1), io.x(1),    0.U(32.W))
-    io.signFWD(0) := Mux(ENReg(1), io.sign(0), 0.U(32.W)) // cos
-    io.signFWD(1) := Mux(ENReg(1), io.sign(1), 0.U(32.W)) // sin
+    io.cosOut     := Mux(ENReg(1), cosTemp(1)   , 0.U(32.W))
+    io.sinOut     := Mux(ENReg(1), sinTemp      , 0.U(32.W))
+    io.xFWD(0)    := Mux(ENReg(1), x0Reg(1)     , 0.U(32.W))
+    io.xFWD(1)    := Mux(ENReg(1), x1Reg(1)     , 0.U(32.W))
+    io.signFWD(0) := Mux(ENReg(1), cosSignReg(1), 0.U(32.W)) // cos
+    io.signFWD(1) := Mux(ENReg(1), sinSignReg(1), 0.U(32.W)) // sin
 }

@@ -114,8 +114,8 @@ class decoder(LutSize: Int, doublePi: Int, OneAndHalfPi : Int, Pi : Int, halfPi 
 
     io.cosIndex2 := cosIndexWire
     io.sinIndex2 := sinIndexWire
-    io.cosSign := cosSignWire
-    io.sinSign := sinSignWire
+    io.cosSign   := cosSignWire
+    io.sinSign   := sinSignWire
 }
 
 class encoder() extends Module {
@@ -129,8 +129,8 @@ class encoder() extends Module {
 
     })
 
-  io.cosOut := Cat(io.cosSign,  io.cosIn(30, 0))                   // 여기서 cos,sin sign 비트 CAT해서 반영
-  io.sinOut := Cat(io.sinSign ^ io.sinIn(31)   , io.sinIn(30, 0)) // 여기서 cos,sin sign 비트 CAT해서 반영
+  io.cosOut := Cat(io.cosSign ^ io.sinIn(31), io.cosIn(30, 0)) // 여기서 cos,sin sign 비트 CAT해서 반영
+  io.sinOut := Cat(io.sinSign ^ io.sinIn(31), io.sinIn(30, 0)) // 여기서 cos,sin sign 비트 CAT해서 반영
 }
 
 
@@ -193,8 +193,8 @@ class dualPortSinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAnd
 
 
     //output
-    io.sinOut   := Mux(ENReg(1), stage3Reg(0), 0.U) 
-    io.cosOut   := Mux(ENReg(1), stage3Reg(1), 0.U)
+    io.cosOut   := Mux(ENReg(1), stage3Reg(0), 0.U)
+    io.sinOut   := Mux(ENReg(1), stage3Reg(1), 0.U) 
     io.xFWD(0)  := Mux(ENReg(1), x0Reg(1),     0.U)
     io.xFWD(1)  := Mux(ENReg(1), x1Reg(1),     0.U)
     io.ENout    := ENReg(1)

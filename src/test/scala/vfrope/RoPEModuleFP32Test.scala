@@ -167,7 +167,7 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
 class FP32smallRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32smallRoPEmodule"
   it should "calculate angles correctly" in {
-    test(new FP32smallRoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0  ))
+    test(new FP32smallRoPEmodule(Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
       .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // 여기에 테스트 로직을 작성
       val testCases = Seq(

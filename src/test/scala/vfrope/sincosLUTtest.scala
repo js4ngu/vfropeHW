@@ -191,6 +191,8 @@ class dualPortSinCosLUTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(false.B)
         dut.clock.step(delay)
       }
-    }
+      dut.clock.step(15)
+
+    } 
   }
 }
