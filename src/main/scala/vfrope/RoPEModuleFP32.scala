@@ -326,7 +326,7 @@ class FP32smallRoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extend
     io.xhat(0) := outputReg(0)
     io.xhat(1) := outputReg(1)
     io.valid   := validReg
-    /*
+    
     // 디버그 출력 (파이프라인 단계별 출력)
     printf(s"--------RadCacl (Stage 1 Output)---------\n")
     printf(s"[EN] x0, x1, Rad             : [%b] %d, %d, %d\n", RadCacl.io.ENout, RadCacl.io.xFWD(0), RadCacl.io.xFWD(1), RadCacl.io.out)
@@ -344,5 +344,4 @@ class FP32smallRoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extend
     // Additional debug output
     printf(s"Debug: stage1EN = %b, stage2EN = %b, stage3EN = %b\n", stage1EN, stage2EN, stage3EN)
     printf(s"Debug: RoPEcore.io.ENout = %b, validReg = %b\n", RoPEcore.io.ENout, validReg)
-    */
 }

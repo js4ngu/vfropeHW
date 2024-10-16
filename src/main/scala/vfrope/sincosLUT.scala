@@ -221,11 +221,12 @@ class smallSinCosLUT(LutSize: Int, LutHalfSizeHEX: Int) extends Module {
   io.xFWD(0) := Mux(lutModule.io.ENout, lutModule.io.xFWD(0), 0.U(32.W))
   io.xFWD(1) := Mux(lutModule.io.ENout, lutModule.io.xFWD(1), 0.U(32.W))
 
-  printf(p"Angle: 0x${Hexadecimal(io.angle)}, cosSign: ${indexCalculator.io.cosSign} : ${lutModule.io.cosOut(31)}, sinSign: ${indexCalculator.io.sinSign} : ${lutModule.io.sinOut(31)}\t")
-  printf(p"cosOut: 0x${Hexadecimal(io.cosOut)}, sinOut: 0x${Hexadecimal(io.sinOut)}\n")
+  //printf(p"Angle: 0x${Hexadecimal(io.angle)}, cosSign: ${indexCalculator.io.cosSign} : ${lutModule.io.cosOut(31)}, sinSign: ${indexCalculator.io.sinSign} : ${lutModule.io.sinOut(31)}\t")
+  //printf(p"cosOut: 0x${Hexadecimal(io.cosOut)}, sinOut: 0x${Hexadecimal(io.sinOut)}\n")
   
   io.cosOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.cosSign ^ lutModule.io.cosOut(31), lutModule.io.cosOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
   io.sinOut := Mux(lutModule.io.ENout, Cat(indexCalculator.io.sinSign ^ lutModule.io.sinOut(31), lutModule.io.sinOut(30, 0)), 0.U(32.W)) // 여기서 cos,sin sign 비트 CAT해서 반영
 
   io.ENout  := Mux(lutModule.io.ENout, lutModule.io.ENout, 0.B)
 }
+// 값은 제대로 나옴 클럭 동기화에 신경좀 써야할듯.

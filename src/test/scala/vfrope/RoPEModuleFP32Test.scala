@@ -182,6 +182,7 @@ class FP32smallRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         ("40400000", "41100000", 27, 9, "3A000000", "Test #9"),
         ("41300000", "41500000", 17, 19, "3A000000", "Test #10")
       )
+      val delay = 0
 
       for ((x0, x1, m, baseIndex, theta, testName) <- testCases) {
         dut.io.x(0).poke(BigInt(x0, 16).U)
@@ -192,28 +193,9 @@ class FP32smallRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(true.B)
         dut.clock.step(1)
         dut.io.EN.poke(false.B)
-        
-        // Wait for the pipeline to complete
-        var cycleCount = 0
-        while (!dut.io.valid.peek().litToBoolean && cycleCount < 30) {
-          dut.clock.step(1)
-          cycleCount += 1
-        }
-
-        val valid = dut.io.valid.peek().litToBoolean
-        val xhat0 = dut.io.xhat(0).peek().litValue
-        val xhat1 = dut.io.xhat(1).peek().litValue
-        
-        println(s"$testName:")
-        println(s"  Input:  x0=${Float.intBitsToFloat(BigInt(x0, 16).toInt)}, x1=${Float.intBitsToFloat(BigInt(x1, 16).toInt)}, m=$m, baseIndex=$baseIndex, theta=${Float.intBitsToFloat(BigInt(theta, 16).toInt)}")
-        println(s"  Output: Valid=$valid, xhat0=${Float.intBitsToFloat(xhat0.toInt)}, xhat1=${Float.intBitsToFloat(xhat1.toInt)}")
-        println(s"  Cycles taken: $cycleCount")
-        println("----------------------------------------------")
-
-        dut.io.EN.poke(false.B)
-        //dut.clock.step(12)
+        dut.clock.step(delay)
       }
-
+        dut.clock.step(20)
     }
   }
 }

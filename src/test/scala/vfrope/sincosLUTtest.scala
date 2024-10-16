@@ -126,7 +126,7 @@ class SinCosLUT2Test extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-
+/*
 //SinCos LUT 시퀀셜 인풋 테스트코드
 class FP32rSinCosSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
   "FP32rSinCosSeqInputTest" should "Seq Input : Test throughput" in {
@@ -150,3 +150,49 @@ class FP32rSinCosSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
+class smallSinCosLUT2Test extends AnyFlatSpec with ChiselScalatestTester {
+  "smallSinCosLUT2 SEQ" should "Seq Input : Test throughput" in {
+    test(new smallSinCosLUT2(LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+    .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val anglesToTest = Seq("h00000000",   // 0
+                             "h3DCCCCCD",
+                             "h3E4CCCCD",
+                             "h3E800000",   //0.25
+                             "h3E99999A",
+                             "h3ECCCCCD",
+                             "h3F000000",   // 0.5
+                             "h3F19999A",
+                             "h3F333333",
+                             "h3F400000",   // 0.75
+                             "h3F4CCCCD",
+                             "h3F666666",
+                             "h3F800000",   // 1
+                             "h3F8CCCCD",
+                             "h3F99999A",
+                             "h3FA00000",   // 1.25
+                             "h3FA66666",
+                             "h3FB33333",
+                             "h3FC00000",   // 1.5
+                             "h3FCCCCCD",
+                             "h3FD9999A",
+                             "h3FE00000",   // 1.75
+                             "h3FE66666",
+                             "h3FF33333",
+                             "h40000000",   // 2
+                            )
+      val delay = 10
+
+      for (angle <- anglesToTest) {
+        dut.io.angle.poke(angle.U)
+        dut.io.x(0).poke(1.U)
+        dut.io.x(1).poke(2.U)
+        dut.io.EN.poke(true.B)
+        dut.clock.step(1)
+        dut.io.EN.poke(false.B)
+        dut.clock.step(delay)
+      }
+    }
+  }
+}
+*/
