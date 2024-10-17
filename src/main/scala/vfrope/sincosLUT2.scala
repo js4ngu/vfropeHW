@@ -192,9 +192,9 @@ class dualPortSinCosModule(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, One
     encoder.io.cosSign := lutModule.io.signFWD(0)
     encoder.io.sinSign := lutModule.io.signFWD(1)
 
-    io.ENout  := encoder.io.ENout
+    io.ENout   := encoder.io.ENout
     io.xFWD(0) := encoder.io.xFWD(0)
     io.xFWD(1) := encoder.io.xFWD(1)
-    io.cosOut := encoder.io.cosOut
-    io.sinOut := encoder.io.sinOut
+    io.cosOut  := encoder.io.cosOut
+    io.sinOut  := encoder.io.sinOut
 }
