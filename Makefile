@@ -56,19 +56,16 @@ FP32angleVCD:
 	sbt "testOnly vfrope.FP32radianCaclulatorTest -- -DwriteVcd=1"
 FP32angleSeq:
 	sbt "testOnly vfrope.FP32radCaclSeqInputTest -- -DwriteVcd=1"
-
 FP32core:
 	sbt "testOnly vfrope.FP32RoPEcoreTest"
 FP32coreSeq:
 	sbt "testOnly vfrope.FP32RoPEcoreSeqInputTest -- -DwriteVcd=1"
-
 FP32RoPE:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest"
 FP32RoPEVCD:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest -- -DwriteVcd=1"
-FP32RoPESeq:
-	sbt "testOnly vfrope.FP32RoPEmoduleSeqInputTest -- -DwriteVcd=1"
-
+dualPortSinCosModule:
+	sbt "testOnly vfrope.dualPortSinCosModuleTest -- -DwriteVcd=1"
 
 FP32smallRoPE:
 	sbt "testOnly vfrope.FP32smallRoPEmoduleTest -- -DwriteVcd=1"

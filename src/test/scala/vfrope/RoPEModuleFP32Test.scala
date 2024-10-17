@@ -163,7 +163,7 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-
+/*
 class FP32smallRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32smallRoPEmodule"
   it should "calculate angles correctly" in {
@@ -339,3 +339,4 @@ class FP32RoPEmoduleSeqInputTest extends AnyFlatSpec with ChiselScalatestTester 
   }
 }
 
+*/

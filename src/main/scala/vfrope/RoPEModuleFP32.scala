@@ -248,7 +248,7 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extends Mod
     printf(s"Debug: RoPEcore.io.ENout = %b, validReg = %b\n", RoPEcore.io.ENout, validReg)
     */
 }
-
+/*
 class FP32smallRoPEmodule(Index : Int, LutSize : Int, LutHalfSizeHEX : Int, doublePi : Int, OneAndHalfPi : Int, Pi : Int, halfPi : Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
@@ -327,3 +327,4 @@ class FP32smallRoPEmodule(Index : Int, LutSize : Int, LutHalfSizeHEX : Int, doub
     io.xhat(1) := outputReg(1)
     io.valid   := validReg
 }
+*/
