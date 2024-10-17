@@ -47,7 +47,7 @@ class smallIndexCalculator2(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, On
 
     FP32toINT32.io.ieee754 := FP32Index
     stage2Reg(0)           := FP32toINT32.io.int32.asUInt
-    stage2Reg(1)           := (stage2Reg(0) + halfPi.U)(LutSize - 1, 0)
+    stage2Reg(1)           := (FP32toINT32.io.int32.asUInt + halfPi.U)(LutSize - 1, 0)
 
     //stage3
     val decoder = Module(new decoder(LutSize, doublePi, OneAndHalfPi, Pi, halfPi))
@@ -190,7 +190,6 @@ class dualPortSinCosLUT(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAnd
     x0Reg(1)     := x0Reg(0)
     x1Reg(1)     := x1Reg(0)
     ENReg(1)     := ENReg(0)
-
 
     //output
     io.cosOut   := Mux(ENReg(1), stage3Reg(0), 0.U)

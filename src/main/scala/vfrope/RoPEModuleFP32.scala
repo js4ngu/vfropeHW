@@ -7,7 +7,7 @@ class FP32radianCaclulator(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) exten
         val EN          = Input(Bool())
         val m           = Input(UInt(32.W))
         val baseIndex   = Input(UInt(32.W))  // Changed from 'i' to 'baseIndex'        
-        val TwoDivD       = Input(UInt(32.W))
+        val TwoDivD      = Input(UInt(32.W))
         val out         = Output(UInt(32.W))
         val ENout       = Output(Bool())
         val xFWD        = Output(Vec(2, UInt(32.W)))
@@ -291,7 +291,7 @@ class FP32smallRoPEmodule(Index : Int, LutSize : Int, LutHalfSizeHEX : Int, doub
     RadCacl.io.x(1)         := stage1Reg(1)
     RadCacl.io.m            := stage1Reg(2)
     RadCacl.io.baseIndex    := stage1Reg(3)
-    RadCacl.io.TwoDivD        := stage1Reg(4)
+    RadCacl.io.TwoDivD      := stage1Reg(4)
 
     // stage2 입력
     stage2Reg(0) := RadCacl.io.xFWD(0)

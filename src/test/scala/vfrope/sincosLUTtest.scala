@@ -154,7 +154,8 @@ class dualPortSinCosLUTest extends AnyFlatSpec with ChiselScalatestTester {
   "dualPortSinCosLUT SEQ" should "Seq Input : Test throughput" in {
     test(new dualPortSinCosLUT(LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
     .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
-      val anglesToTest = Seq("h00000000",   // 0
+      val anglesToTest = Seq("h3FE00000",
+                             "h00000000",   // 0
                              "h3DCCCCCD",
                              "h3E4CCCCD",
                              "h3E800000",   //0.25
@@ -191,6 +192,8 @@ class dualPortSinCosLUTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.EN.poke(false.B)
         dut.clock.step(delay)
       }
+      dut.io.angle.poke("h40000000".U)
+      dut.io.EN.poke(true.B)
       dut.clock.step(15)
 
     } 
