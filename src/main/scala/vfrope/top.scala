@@ -11,3 +11,7 @@ object FP32RoPEsingleTop extends App {
 
   (new ChiselStage).emitVerilog(new FP32RoPEmodule(LutSize, LutHalfSizeHEX, Index))
 }
+
+object FP32smallRoPEsingleTop extends App {
+  (new ChiselStage).emitVerilog(new FP32smallRoPEmodule(Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+}

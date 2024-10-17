@@ -73,9 +73,10 @@ FP32smallRoPE2:
 
 
 # 베릴로그 변환
-runFP32RoPEsingle:
+verilogFP32RoPEsingle:
 	sbt "runMain vfrope.FP32RoPEsingleTop"
-
+verilogFP32smallRoPEsingle:
+	sbt "runMain vfrope.FP32smallRoPEsingleTop"
 # 파이썬
 pyRoPEcore:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPEcore.py
