@@ -248,7 +248,7 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extends Mod
     printf(s"Debug: RoPEcore.io.ENout = %b, validReg = %b\n", RoPEcore.io.ENout, validReg)
     */
 }
-/*
+
 class FP32smallRoPEmodule(Index : Int, LutSize : Int, LutHalfSizeHEX : Int, doublePi : Int, OneAndHalfPi : Int, Pi : Int, halfPi : Int) extends Module {
     val io = IO(new Bundle {
         val x       = Input(Vec(2, UInt(32.W)))
@@ -262,7 +262,7 @@ class FP32smallRoPEmodule(Index : Int, LutSize : Int, LutHalfSizeHEX : Int, doub
     
     // 필요한 모듈 선언   
     val RadCacl   = Module(new FP32radianCaclulator(LutSize, LutHalfSizeHEX, Index))
-    val SinCosLut = Module(new dualPortSinCosLUT(LutSize, LutHalfSizeHEX, doublePi, OneAndHalfPi, Pi, halfPi))
+    val SinCosLut = Module(new dualPortSinCosModule(LutSize, LutHalfSizeHEX, doublePi, OneAndHalfPi, Pi, halfPi))
     val RoPEcore  = Module(new FP32RoPEcore())
 
     // 파이프라인 레지스터와 EN 신호
@@ -327,4 +327,3 @@ class FP32smallRoPEmodule(Index : Int, LutSize : Int, LutHalfSizeHEX : Int, doub
     io.xhat(1) := outputReg(1)
     io.valid   := validReg
 }
-*/

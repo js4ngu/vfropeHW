@@ -66,7 +66,6 @@ FP32RoPEVCD:
 	sbt "testOnly vfrope.FP32RoPEmoduleTest -- -DwriteVcd=1"
 dualPortSinCosModule:
 	sbt "testOnly vfrope.dualPortSinCosModuleTest -- -DwriteVcd=1"
-
 FP32smallRoPE:
 	sbt "testOnly vfrope.FP32smallRoPEmoduleTest -- -DwriteVcd=1"
 

@@ -163,43 +163,6 @@ class FP32RoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-/*
-class FP32smallRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
-  behavior of "FP32smallRoPEmodule"
-  it should "calculate angles correctly" in {
-    test(new FP32smallRoPEmodule(Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
-      .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
-      // 여기에 테스트 로직을 작성
-      val testCases = Seq(
-        ("3F800000", "41200000", 64, 16, "3A000000", "Test #1"), //
-        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),
-        ("42C80000", "42C80000", 128, 32, "3A000000", "Test #3"),
-        ("40E00000", "40400000", 96, 24, "3A000000", "Test #4"),
-        ("00000000", "3F800000", 1, 1, "3A000000", "Test #5"),
-        ("447A0000", "447A0000", 1024, 256, "3A000000", "Test #6"),
-        ("41700000", "41A00000", 80, 20, "3A000000", "Test #7"),
-        ("40800000", "41000000", 16, 4, "3A000000", "Test #8"),
-        ("40400000", "41100000", 27, 9, "3A000000", "Test #9"),
-        ("41300000", "41500000", 17, 19, "3A000000", "Test #10")
-      )
-      val delay = 0
-
-      for ((x0, x1, m, baseIndex, theta, testName) <- testCases) {
-        dut.io.x(0).poke(BigInt(x0, 16).U)
-        dut.io.x(1).poke(BigInt(x1, 16).U)
-        dut.io.m.poke(m.U)
-        dut.io.baseIndex.poke(baseIndex.U)
-        dut.io.TwoDivD.poke(BigInt(theta, 16).U)
-        dut.io.EN.poke(true.B)
-        dut.clock.step(1)
-        dut.io.EN.poke(false.B)
-        dut.clock.step(delay)
-      }
-        dut.clock.step(20)
-    }
-  }
-}
-
 
 class RoPEresolitionTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "FP32RoPEmodule"
@@ -308,22 +271,27 @@ class FP32RoPEcoreSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
-//RoPEmodule 시퀀셜 인풋 테스트코드
-class FP32RoPEmoduleSeqInputTest extends AnyFlatSpec with ChiselScalatestTester {
-  behavior of "FP32RoPEmoduleSeqInputTest"
-  it should "Seq Input : Test throughput" in {
-    test(new FP32RoPEmodule(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0  ))
+class FP32smallRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "FP32smallRoPEmodule"
+  it should "calculate angles correctly" in {
+    test(new FP32smallRoPEmodule(Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
       .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // 여기에 테스트 로직을 작성
       val testCases = Seq(
-        ("3F800000", "41200000", 64, 16, "3A000000", "Test #1"), // -10.00,   0.996
-        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),  //  -0.07,   5.386
-        ("42C80000", "42C80000", 128, 32, "3A000000", "Test #3") //  99.88, 100.115
+        ("3F800000", "41200000", 64, 16, "3A000000", "Test #1"), //
+        ("40000000", "40A00000", 32, 8, "3A000000", "Test #2"),
+        ("42C80000", "42C80000", 128, 32, "3A000000", "Test #3"),
+        ("40E00000", "40400000", 96, 24, "3A000000", "Test #4"),
+        ("00000000", "3F800000", 1, 1, "3A000000", "Test #5"),
+        ("447A0000", "447A0000", 1024, 256, "3A000000", "Test #6"),
+        ("41700000", "41A00000", 80, 20, "3A000000", "Test #7"),
+        ("40800000", "41000000", 16, 4, "3A000000", "Test #8"),
+        ("40400000", "41100000", 27, 9, "3A000000", "Test #9"),
+        ("41300000", "41500000", 17, 19, "3A000000", "Test #10")
       )
       val delay = 0
 
       for ((x0, x1, m, baseIndex, theta, testName) <- testCases) {
-        println(s"$testName ,,,")
         dut.io.x(0).poke(BigInt(x0, 16).U)
         dut.io.x(1).poke(BigInt(x1, 16).U)
         dut.io.m.poke(m.U)
@@ -338,5 +306,3 @@ class FP32RoPEmoduleSeqInputTest extends AnyFlatSpec with ChiselScalatestTester 
     }
   }
 }
-
-*/
