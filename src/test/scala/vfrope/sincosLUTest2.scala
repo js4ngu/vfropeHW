@@ -148,3 +148,35 @@ class dualPortSinCosModuleTest extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
+class multiPortCOSlutTest extends AnyFlatSpec with ChiselScalatestTester {
+  "multiPortCOSlut" should "Seq Input : Test throughput" in {
+    test(new multiPortCOSlut(N = 3))
+    .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      dut.io.EN.poke(true.B) 
+      dut.io.x(0)(0).poke(1.U)
+      dut.io.x(0)(1).poke(2.U)
+      dut.io.x(1)(0).poke(3.U)
+      dut.io.x(1)(1).poke(4.U)
+      dut.io.x(2)(0).poke(5.U)
+      dut.io.x(2)(1).poke(6.U)
+
+      dut.io.cosIndex(0).poke(0.U)
+      dut.io.cosIndex(1).poke(1024.U)
+      dut.io.cosIndex(2).poke(2048.U)
+
+      dut.io.sinIndex(0).poke(512.U)
+      dut.io.sinIndex(1).poke(1536.U)
+      dut.io.sinIndex(2).poke(2560.U)
+
+      dut.io.sign(0)(0).poke(0.B)
+      dut.io.sign(0)(1).poke(0.B)
+      dut.io.sign(1)(0).poke(0.B)
+      dut.io.sign(1)(1).poke(0.B)
+      dut.io.sign(2)(0).poke(0.B)
+      dut.io.sign(2)(1).poke(0.B)
+
+      dut.clock.step(15)
+
+    } 
+  }
+}
