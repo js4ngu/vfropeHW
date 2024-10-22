@@ -198,3 +198,63 @@ class dualPortSinCosModule(LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, One
     io.cosOut  := encoder.io.cosOut
     io.sinOut  := encoder.io.sinOut
 }
+
+class multiPortSinCosModule(N: Int, LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAndHalfPi: Int, Pi: Int, halfPi: Int) extends Module {
+    val io = IO(new Bundle {
+        val x      = Input(Vec(N, Vec(2, UInt(32.W))))
+        val EN     = Input(Bool())
+        val angle  = Input(Vec(N, UInt(32.W)))
+        val sinOut = Output(Vec(N, UInt(32.W)))
+        val cosOut = Output(Vec(N, UInt(32.W)))
+        val ENout  = Output(Bool())
+        val xFWD   = Output(Vec(N, Vec(2, UInt(32.W))))
+    })
+
+    val indexCalculator = Array.fill(N) {
+        Module(new dualPortIndexCalculator(LutSize, LutHalfSizeHEX, doublePi, OneAndHalfPi, Pi, halfPi))
+    }
+    val lutModule = Module(new multiPortCOSlut(N))
+    val encoder = Array.fill(N) {
+        Module(new encoder())
+    }
+
+
+    //IO to indexCaluclator
+    for (i <- 0 until N) {
+        indexCalculator(i).io.EN    := io.EN
+        indexCalculator(i).io.x(0)  := io.x(i)(0)
+        indexCalculator(i).io.x(1)  := io.x(i)(1)
+        indexCalculator(i).io.angle := io.angle(i)
+    }
+
+    //indexCaluclator to lutModule
+    lutModule.io.EN                 := indexCalculator(0).io.ENout
+    for (i <- 0 until N) {
+        lutModule.io.x(i)(0)        := indexCalculator(i).io.xFWD(0)
+        lutModule.io.x(i)(1)        := indexCalculator(i).io.xFWD(1)
+        lutModule.io.cosIndex(i)    := indexCalculator(i).io.cosIndex
+        lutModule.io.sinIndex(i)    := indexCalculator(i).io.sinIndex
+        lutModule.io.sign(i)(0)     := indexCalculator(i).io.cosSign
+        lutModule.io.sign(i)(1)     := indexCalculator(i).io.sinSign
+    }
+
+    //lutmoule to encoder
+    for (i <- 0 until N) {
+        encoder(i).io.EN      := lutModule.io.ENout
+        encoder(i).io.x(0)    := lutModule.io.xFWD(i)(0)
+        encoder(i).io.x(1)    := lutModule.io.xFWD(i)(1)
+        encoder(i).io.cosIn   := lutModule.io.cosOut(i)
+        encoder(i).io.sinIn   := lutModule.io.sinOut(i)
+        encoder(i).io.cosSign := lutModule.io.signFWD(i)(0)
+        encoder(i).io.sinSign := lutModule.io.signFWD(i)(1)
+    }
+
+    //lutmoule to io
+    io.ENout          := encoder(0).io.ENout
+    for (i <- 0 until N) {
+        io.xFWD(i)(0) := encoder(i).io.xFWD(0)
+        io.xFWD(i)(1) := encoder(i).io.xFWD(1)
+        io.cosOut(i)  := encoder(i).io.cosOut
+        io.sinOut(i)  := encoder(i).io.sinOut
+    }
+}

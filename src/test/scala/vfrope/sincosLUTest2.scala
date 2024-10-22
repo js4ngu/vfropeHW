@@ -129,7 +129,6 @@ class dualPortSinCosModuleTest extends AnyFlatSpec with ChiselScalatestTester {
                              (4, 5, "h40000000"),   // 2
                             )      
       val delay = 0
-
       for ((a,b,angle) <- anglesToTest) {
         dut.io.x(0).poke(a.U)
         dut.io.x(1).poke(b.U)
@@ -178,5 +177,50 @@ class multiPortCOSlutTest extends AnyFlatSpec with ChiselScalatestTester {
       dut.clock.step(15)
 
     } 
+  }
+}
+
+class multiPortSinCosModuleTest extends AnyFlatSpec with ChiselScalatestTester {
+  "multiPortSinCosModuleTest" should "Seq Input : Test throughput" in {
+    test(new multiPortSinCosModule(N = 2, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+    .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      val delay = 0
+      val anglesToTest = Seq((1, 2, 2, 3, "h00000000",  "h3DCCCCCD"),   // 0
+                             (2, 3, 3, 4, "h3DCCCCCD",  "h3E4CCCCD"),
+                             (3, 4, 4, 5, "h3E4CCCCD",  "h3E800000"),
+                             (4, 5, 5, 6, "h3E800000",  "h3E99999A"),   //0.25
+                             (5, 6, 6, 7, "h3E99999A",  "h3ECCCCCD"),
+                             (6, 7, 7, 8, "h3ECCCCCD",  "h3F000000"),
+                             (7, 8, 8, 9, "h3F000000",  "h3F19999A"),   // 0.5
+                             (8, 9, 9, 0, "h3F19999A",  "h3F333333"),
+                             (9, 0, 0, 1, "h3F333333",  "h3F400000"),
+                             (0, 1, 1, 2, "h3F400000",  "h3F4CCCCD"),   // 0.75
+                             (1, 2, 2, 3, "h3F4CCCCD",  "h3F666666"),
+                             (2, 3, 3, 4, "h3F666666",  "h3F800000"),
+                             (3, 4, 4, 5, "h3F800000",  "h3F8CCCCD"),   // 1
+                             (4, 5, 5, 6, "h3F8CCCCD",  "h3F99999A"),
+                             (5, 6, 6, 7, "h3F99999A",  "h3FA00000"),
+                             (6, 7, 7, 8, "h3FA00000",  "h3FA66666"),   // 1.25
+                             (7, 8, 8, 9, "h3FA66666",  "h3FB33333"),
+                             (8, 9, 9, 0, "h3FB33333",  "h3FC00000"),
+                             (9, 0, 0, 1, "h3FC00000",  "h3FCCCCCD"),   // 1.5
+                             (0, 1, 1, 2, "h3FCCCCCD",  "h3FD9999A"),
+                             (1, 2, 2, 3, "h3FD9999A",  "h3FE00000"),
+                             (2, 3, 3, 4, "h3FE00000",  "h3FE66666"),   // 1.75
+                             (3, 4, 4, 5, "h3FE66666",  "h3FF33333"),
+                             (4, 5, 5, 6, "h3FF33333",  "h40000000"),
+                             (5, 6, 6, 7, "h40000000",  "h3DCCCCCD"),   // 2
+                            )
+      for ((a,b,c,d,angle1,angle2) <- anglesToTest) {
+        dut.io.EN.poke(true.B)
+        dut.io.x(0)(0).poke(a.U)
+        dut.io.x(0)(1).poke(b.U)
+        dut.io.angle(0).poke(angle1.U)
+        dut.io.x(1)(0).poke(c.U)
+        dut.io.x(1)(1).poke(d.U)
+        dut.io.angle(1).poke(angle2.U)
+        dut.clock.step(15)
+      }
+    }
   }
 }

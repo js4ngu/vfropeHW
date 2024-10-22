@@ -15,6 +15,8 @@ SinCosLUTseq:
 	sbt "testOnly vfrope.FP32rSinCosSeqInputTest -- -DwriteVcd=1"
 dualPortSinCosLUT:
 	sbt "testOnly vfrope.dualPortSinCosLUTest -- -DwriteVcd=1"
+multiPortSinCosLUT:
+	sbt "testOnly vfrope.multiPortSinCosModuleTest -- -DwriteVcd=1"
 
 
 #실수연산 관련
