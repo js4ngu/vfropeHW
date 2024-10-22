@@ -360,4 +360,47 @@ class FP32smallRoPEmoduleTest2 extends AnyFlatSpec with ChiselScalatestTester {
       }
     }
   }
-} // 이 닫는 중괄호를 추가했습니다
+}
+
+
+class multiLaneRoPEmoduleTest extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "multiLaneRoPEmodule"
+  it should "calculate angles correctly" in {
+    test(new multiLaneRoPEmodule(N = 2, Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+      .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      
+      val testCases = Seq(
+        ("3F800000", "41200000",  64, 16,  "3A000000", "40000000", "40A00000",   32,   8, "3A000000", "Test #1"),
+        ("42C80000", "42C80000", 128, 32,  "3A000000", "40E00000", "40400000",   96,  24, "3A000000", "Test #2"),
+        ("00000000", "3F800000",     1, 1, "3A000000", "447A0000", "447A0000", 1024, 256, "3A000000", "Test #3"),
+        ("41700000", "41A00000",   80, 20, "3A000000", "40800000", "41000000",   16,   4, "3A000000", "Test #4"),
+        ("40400000", "41100000",   27,  9, "3A000000", "41300000", "41500000",   17,  19, "3A000000", "Test #5")
+      )
+      val delay = 0
+
+      for ((ax0, ax1, am, abaseIndex, atheta, bx0, bx1, bm, bbaseIndex, btheta, testName) <- testCases) {
+        println(s"\nRunning $testName")
+        
+        // Lane 0 inputs
+        dut.io.x(0)(0).poke(BigInt(ax0, 16).U)
+        dut.io.x(0)(1).poke(BigInt(ax1, 16).U)
+        dut.io.m(0).poke(am.U)
+        dut.io.baseIndex(0).poke(abaseIndex.U)
+        dut.io.TwoDivD(0).poke(BigInt(atheta, 16).U)
+
+        // Lane 1 inputs
+        dut.io.x(1)(0).poke(BigInt(bx0, 16).U)
+        dut.io.x(1)(1).poke(BigInt(bx1, 16).U)
+        dut.io.m(1).poke(bm.U)
+        dut.io.baseIndex(1).poke(bbaseIndex.U)
+        dut.io.TwoDivD(1).poke(BigInt(btheta, 16).U)
+
+        dut.io.EN.poke(true.B)
+        dut.clock.step(1)
+        dut.io.EN.poke(false.B)
+        dut.clock.step(delay)
+      }
+      dut.clock.step(20)
+    }
+  }
+}

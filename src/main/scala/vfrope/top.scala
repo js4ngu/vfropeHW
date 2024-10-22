@@ -15,3 +15,15 @@ object FP32RoPEsingleTop extends App {
 object FP32smallRoPEsingleTop extends App {
   (new ChiselStage).emitVerilog(new FP32smallRoPEmodule(Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
 }
+
+object FP32RoPE4LaneTop extends App {
+  (new ChiselStage).emitVerilog(new multiLaneRoPEmodule(N = 2, Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+}
+
+object FP32RoPE8LaneTop extends App {
+  (new ChiselStage).emitVerilog(new multiLaneRoPEmodule(N = 4, Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+}
+
+object FP32RoPE16LaneTop extends App {
+  (new ChiselStage).emitVerilog(new multiLaneRoPEmodule(N = 8, Index = 0, LutSize = 12, LutHalfSizeHEX = 0x45000000, doublePi = 4096, OneAndHalfPi = 3072, Pi = 2048, halfPi = 1024))
+}

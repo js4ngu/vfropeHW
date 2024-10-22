@@ -72,6 +72,8 @@ FP32smallRoPE:
 	sbt "testOnly vfrope.FP32smallRoPEmoduleTest -- -DwriteVcd=1"
 FP32smallRoPE2:
 	sbt "testOnly vfrope.FP32smallRoPEmoduleTest2 -- -DwriteVcd=1"
+multiLaneRoPE:
+	sbt "testOnly vfrope.multiLaneRoPEmoduleTest -- -DwriteVcd=1"
 
 
 # 베릴로그 변환
@@ -79,6 +81,14 @@ verilogFP32RoPEsingle:
 	sbt "runMain vfrope.FP32RoPEsingleTop"
 verilogFP32smallRoPEsingle:
 	sbt "runMain vfrope.FP32smallRoPEsingleTop"
+	
+veliog4lane:
+	sbt "runMain vfrope.FP32RoPE4LaneTop"
+veliog8lane:
+	sbt "runMain vfrope.FP32RoPE8LaneTop"
+veliog16lane:
+	sbt "runMain vfrope.FP32RoPE16LaneTop"
+
 # 파이썬
 pyRoPEcore:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPEcore.py
