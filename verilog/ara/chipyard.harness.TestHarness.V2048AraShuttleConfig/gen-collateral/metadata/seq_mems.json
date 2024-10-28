@@ -1,0 +1,201 @@
+[
+  {
+    "module_name": "cc_dir_ext",
+    "depth": 1024,
+    "width": 136,
+    "masked": true,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "mask_granularity": 17,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.directory.cc_dir.cc_dir_ext"
+    ]
+  },
+  {
+    "module_name": "cc_banks_0_ext",
+    "depth": 8192,
+    "width": 64,
+    "masked": false,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_7.cc_banks_0_ext",
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_6.cc_banks_0_ext",
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_5.cc_banks_0_ext",
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_4.cc_banks_0_ext",
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_3.cc_banks_0_ext",
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_2.cc_banks_0_ext",
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_1.cc_banks_0_ext",
+      "ChipTop.system.coh_wrapper.l2.inclusive_cache_bank_sched.bankedStore.cc_banks_0.cc_banks_0_ext"
+    ]
+  },
+  {
+    "module_name": "tag_array_ext",
+    "depth": 64,
+    "width": 160,
+    "masked": true,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "mask_granularity": 20,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.frontend.icache.tag_array.tag_array_ext"
+    ]
+  },
+  {
+    "module_name": "data_arrays_0_ext",
+    "depth": 512,
+    "width": 512,
+    "masked": true,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "mask_granularity": 64,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.frontend.icache.data_arrays_0.data_arrays_0_ext"
+    ]
+  },
+  {
+    "module_name": "tag_array_0_ext",
+    "depth": 16,
+    "width": 88,
+    "masked": true,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "mask_granularity": 22,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.meta.arrays_3.tag_array.tag_array_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.meta.arrays_2.tag_array.tag_array_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.meta.arrays_1.tag_array.tag_array_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.meta.arrays_0.tag_array.tag_array_0_ext"
+    ]
+  },
+  {
+    "module_name": "array_0_ext",
+    "depth": 128,
+    "width": 256,
+    "masked": true,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "mask_granularity": 64,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.datas_3.array_0.array_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.datas_2.array_0.array_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.datas_1.array_0.array_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.dcache.datas_0.array_0.array_0_ext"
+    ]
+  },
+  {
+    "module_name": "dataMems_0_ext",
+    "depth": 32,
+    "width": 515,
+    "masked": false,
+    "read": 1,
+    "write": 1,
+    "readwrite": 0,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_63.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_62.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_61.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_60.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_59.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_58.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_57.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_56.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_55.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_54.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_53.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_52.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_51.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_50.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_49.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_48.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_47.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_46.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_45.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_44.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_43.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_42.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_41.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_40.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_39.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_38.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_37.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_36.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_35.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_34.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_33.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_32.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_31.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_30.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_29.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_28.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_27.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_26.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_25.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_24.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_23.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_22.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_21.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_20.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_19.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_18.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_17.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_16.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_15.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_14.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_13.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_12.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_11.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_10.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_9.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_8.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_7.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_6.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_5.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_4.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_3.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_2.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_1.dataMems_0_ext",
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.vector_unit.axi42tl.listBuffer.dataMems_0.dataMems_0_ext"
+    ]
+  },
+  {
+    "module_name": "l2_tlb_ram_0_ext",
+    "depth": 512,
+    "width": 45,
+    "masked": false,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.tile_prci_domain.element_reset_domain_shuttle_tile.ptw.l2_tlb_ram_0.l2_tlb_ram_0_ext"
+    ]
+  },
+  {
+    "module_name": "mem_ext",
+    "depth": 8192,
+    "width": 64,
+    "masked": true,
+    "read": 0,
+    "write": 0,
+    "readwrite": 1,
+    "mask_granularity": 8,
+    "extra_ports": [],
+    "hierarchy": [
+      "ChipTop.system.bank.ram.mem.mem_ext"
+    ]
+  }
+]
