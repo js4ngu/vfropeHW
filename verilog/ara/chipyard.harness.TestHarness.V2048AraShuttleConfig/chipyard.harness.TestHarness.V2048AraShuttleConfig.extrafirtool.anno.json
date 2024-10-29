@@ -1,0 +1,14 @@
+[
+	{
+		"class":"sifive.enterprise.firrtl.MarkDUTAnnotation",
+		"target":"~TestHarness|ChipTop"
+	},
+	{
+		"class": "sifive.enterprise.firrtl.TestHarnessHierarchyAnnotation",
+		"filename": "/home/chipyard/chipyard/sims/verilator/generated-src/chipyard.harness.TestHarness.V2048AraShuttleConfig/model_module_hierarchy.json"
+	},
+	{
+		"class": "sifive.enterprise.firrtl.ModuleHierarchyAnnotation",
+		"filename": "/home/chipyard/chipyard/sims/verilator/generated-src/chipyard.harness.TestHarness.V2048AraShuttleConfig/top_module_hierarchy.json"
+	}
+]
