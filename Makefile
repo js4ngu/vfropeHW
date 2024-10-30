@@ -58,6 +58,9 @@ FP32angleVCD:
 	sbt "testOnly vfrope.FP32radianCaclulatorTest -- -DwriteVcd=1"
 FP32angleSeq:
 	sbt "testOnly vfrope.FP32radCaclSeqInputTest -- -DwriteVcd=1"
+FP32radianV2:
+	sbt "testOnly vfrope.FP32radCaclSeqInputTestV2 -- -DwriteVcd=1"
+
 FP32core:
 	sbt "testOnly vfrope.FP32RoPEcoreTest"
 FP32coreSeq:
@@ -74,6 +77,8 @@ FP32smallRoPE2:
 	sbt "testOnly vfrope.FP32smallRoPEmoduleTest2 -- -DwriteVcd=1"
 multiLaneRoPE:
 	sbt "testOnly vfrope.multiLaneRoPEmoduleTest -- -DwriteVcd=1"
+multiLaneRoPEV2:
+	sbt "testOnly vfrope.multiLaneRoPEmoduleTestV2 -- -DwriteVcd=1"
 
 
 # 베릴로그 변환

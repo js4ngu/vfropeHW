@@ -218,7 +218,6 @@ class multiPortSinCosModule(N: Int, LutSize: Int, LutHalfSizeHEX: Int, doublePi:
         Module(new encoder())
     }
 
-
     //IO to indexCaluclator
     for (i <- 0 until N) {
         indexCalculator(i).io.EN    := io.EN
