@@ -20,23 +20,23 @@ module FP32radianCaclulatorV2(
 `endif // RANDOMIZE_REG_INIT
   wire [32:0] _stage1Reg_T = {{1'd0}, io_baseIndex}; // @[RoPEModuleFP32v2.scala 19:73]
   wire [63:0] _stage1Reg_T_2 = io_m * _stage1Reg_T[31:0]; // @[RoPEModuleFP32v2.scala 19:57]
-  wire [95:0] _stage1Reg_T_3 = io_ResMode * _stage1Reg_T_2; // @[RoPEModuleFP32v2.scala 19:49]
+  wire [43:0] _stage1Reg_T_4 = io_ResMode * _stage1Reg_T_2[11:0]; // @[RoPEModuleFP32v2.scala 19:49]
   reg [31:0] stage1Reg_0; // @[RoPEModuleFP32v2.scala 18:28]
   reg [31:0] stage1Reg_1; // @[RoPEModuleFP32v2.scala 18:28]
   reg [31:0] stage1Reg_2; // @[RoPEModuleFP32v2.scala 18:28]
-  reg  enReg_0; // @[RoPEModuleFP32v2.scala 20:28]
-  assign io_out = enReg_0 ? stage1Reg_2 : 32'h0; // @[RoPEModuleFP32v2.scala 29:22]
-  assign io_ENout = enReg_0; // @[RoPEModuleFP32v2.scala 30:16]
-  assign io_xFWD_0 = enReg_0 ? stage1Reg_0 : 32'h0; // @[RoPEModuleFP32v2.scala 27:22]
-  assign io_xFWD_1 = enReg_0 ? stage1Reg_1 : 32'h0; // @[RoPEModuleFP32v2.scala 28:22]
+  reg  enReg_0; // @[RoPEModuleFP32v2.scala 21:28]
+  assign io_out = enReg_0 ? stage1Reg_2 : 32'h0; // @[RoPEModuleFP32v2.scala 30:22]
+  assign io_ENout = enReg_0; // @[RoPEModuleFP32v2.scala 31:16]
+  assign io_xFWD_0 = enReg_0 ? stage1Reg_0 : 32'h0; // @[RoPEModuleFP32v2.scala 28:22]
+  assign io_xFWD_1 = enReg_0 ? stage1Reg_1 : 32'h0; // @[RoPEModuleFP32v2.scala 29:22]
   always @(posedge clock) begin
     stage1Reg_0 <= io_x_0; // @[RoPEModuleFP32v2.scala 18:{36,36}]
     stage1Reg_1 <= io_x_1; // @[RoPEModuleFP32v2.scala 18:{36,36}]
-    stage1Reg_2 <= {{20'd0}, _stage1Reg_T_3[11:0]}; // @[RoPEModuleFP32v2.scala 18:{36,36}]
-    if (reset) begin // @[RoPEModuleFP32v2.scala 20:28]
-      enReg_0 <= 1'h0; // @[RoPEModuleFP32v2.scala 20:28]
+    stage1Reg_2 <= {{20'd0}, _stage1Reg_T_4[11:0]}; // @[RoPEModuleFP32v2.scala 18:{36,36}]
+    if (reset) begin // @[RoPEModuleFP32v2.scala 21:28]
+      enReg_0 <= 1'h0; // @[RoPEModuleFP32v2.scala 21:28]
     end else begin
-      enReg_0 <= io_EN; // @[RoPEModuleFP32v2.scala 23:14]
+      enReg_0 <= io_EN; // @[RoPEModuleFP32v2.scala 24:14]
     end
   end
 // Register and memory initialization
@@ -312,26 +312,105 @@ module multiPortCOSlut(
   input         io_EN,
   input  [31:0] io_x_0_0,
   input  [31:0] io_x_0_1,
+  input  [31:0] io_x_1_0,
+  input  [31:0] io_x_1_1,
+  input  [31:0] io_x_2_0,
+  input  [31:0] io_x_2_1,
+  input  [31:0] io_x_3_0,
+  input  [31:0] io_x_3_1,
+  input  [31:0] io_x_4_0,
+  input  [31:0] io_x_4_1,
+  input  [31:0] io_x_5_0,
+  input  [31:0] io_x_5_1,
+  input  [31:0] io_x_6_0,
+  input  [31:0] io_x_6_1,
+  input  [31:0] io_x_7_0,
+  input  [31:0] io_x_7_1,
   input  [31:0] io_cosIndex_0,
+  input  [31:0] io_cosIndex_1,
+  input  [31:0] io_cosIndex_2,
+  input  [31:0] io_cosIndex_3,
+  input  [31:0] io_cosIndex_4,
+  input  [31:0] io_cosIndex_5,
+  input  [31:0] io_cosIndex_6,
+  input  [31:0] io_cosIndex_7,
   input  [31:0] io_sinIndex_0,
+  input  [31:0] io_sinIndex_1,
+  input  [31:0] io_sinIndex_2,
+  input  [31:0] io_sinIndex_3,
+  input  [31:0] io_sinIndex_4,
+  input  [31:0] io_sinIndex_5,
+  input  [31:0] io_sinIndex_6,
+  input  [31:0] io_sinIndex_7,
   input         io_sign_0_0,
   input         io_sign_0_1,
+  input         io_sign_1_0,
+  input         io_sign_1_1,
+  input         io_sign_2_0,
+  input         io_sign_2_1,
+  input         io_sign_3_0,
+  input         io_sign_3_1,
+  input         io_sign_4_0,
+  input         io_sign_4_1,
+  input         io_sign_5_0,
+  input         io_sign_5_1,
+  input         io_sign_6_0,
+  input         io_sign_6_1,
+  input         io_sign_7_0,
+  input         io_sign_7_1,
   output [31:0] io_sinOut_0,
+  output [31:0] io_sinOut_1,
+  output [31:0] io_sinOut_2,
+  output [31:0] io_sinOut_3,
+  output [31:0] io_sinOut_4,
+  output [31:0] io_sinOut_5,
+  output [31:0] io_sinOut_6,
+  output [31:0] io_sinOut_7,
   output [31:0] io_cosOut_0,
+  output [31:0] io_cosOut_1,
+  output [31:0] io_cosOut_2,
+  output [31:0] io_cosOut_3,
+  output [31:0] io_cosOut_4,
+  output [31:0] io_cosOut_5,
+  output [31:0] io_cosOut_6,
+  output [31:0] io_cosOut_7,
   output        io_ENout,
   output [31:0] io_xFWD_0_0,
   output [31:0] io_xFWD_0_1,
+  output [31:0] io_xFWD_1_0,
+  output [31:0] io_xFWD_1_1,
+  output [31:0] io_xFWD_2_0,
+  output [31:0] io_xFWD_2_1,
+  output [31:0] io_xFWD_3_0,
+  output [31:0] io_xFWD_3_1,
+  output [31:0] io_xFWD_4_0,
+  output [31:0] io_xFWD_4_1,
+  output [31:0] io_xFWD_5_0,
+  output [31:0] io_xFWD_5_1,
+  output [31:0] io_xFWD_6_0,
+  output [31:0] io_xFWD_6_1,
+  output [31:0] io_xFWD_7_0,
+  output [31:0] io_xFWD_7_1,
   output        io_signFWD_0_0,
-  output        io_signFWD_0_1
+  output        io_signFWD_0_1,
+  output        io_signFWD_1_0,
+  output        io_signFWD_1_1,
+  output        io_signFWD_2_0,
+  output        io_signFWD_2_1,
+  output        io_signFWD_3_0,
+  output        io_signFWD_3_1,
+  output        io_signFWD_4_0,
+  output        io_signFWD_4_1,
+  output        io_signFWD_5_0,
+  output        io_signFWD_5_1,
+  output        io_signFWD_6_0,
+  output        io_signFWD_6_1,
+  output        io_signFWD_7_0,
+  output        io_signFWD_7_1
 );
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
   reg [31:0] _RAND_1;
   reg [31:0] _RAND_2;
-`endif // RANDOMIZE_GARBAGE_ASSIGN
-`ifdef RANDOMIZE_MEM_INIT
-  reg [31:0] _RAND_0;
-`endif // RANDOMIZE_MEM_INIT
-`ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_3;
   reg [31:0] _RAND_4;
   reg [31:0] _RAND_5;
@@ -341,6 +420,81 @@ module multiPortCOSlut(
   reg [31:0] _RAND_9;
   reg [31:0] _RAND_10;
   reg [31:0] _RAND_11;
+  reg [31:0] _RAND_12;
+  reg [31:0] _RAND_13;
+  reg [31:0] _RAND_14;
+  reg [31:0] _RAND_15;
+  reg [31:0] _RAND_16;
+`endif // RANDOMIZE_GARBAGE_ASSIGN
+`ifdef RANDOMIZE_MEM_INIT
+  reg [31:0] _RAND_0;
+`endif // RANDOMIZE_MEM_INIT
+`ifdef RANDOMIZE_REG_INIT
+  reg [31:0] _RAND_17;
+  reg [31:0] _RAND_18;
+  reg [31:0] _RAND_19;
+  reg [31:0] _RAND_20;
+  reg [31:0] _RAND_21;
+  reg [31:0] _RAND_22;
+  reg [31:0] _RAND_23;
+  reg [31:0] _RAND_24;
+  reg [31:0] _RAND_25;
+  reg [31:0] _RAND_26;
+  reg [31:0] _RAND_27;
+  reg [31:0] _RAND_28;
+  reg [31:0] _RAND_29;
+  reg [31:0] _RAND_30;
+  reg [31:0] _RAND_31;
+  reg [31:0] _RAND_32;
+  reg [31:0] _RAND_33;
+  reg [31:0] _RAND_34;
+  reg [31:0] _RAND_35;
+  reg [31:0] _RAND_36;
+  reg [31:0] _RAND_37;
+  reg [31:0] _RAND_38;
+  reg [31:0] _RAND_39;
+  reg [31:0] _RAND_40;
+  reg [31:0] _RAND_41;
+  reg [31:0] _RAND_42;
+  reg [31:0] _RAND_43;
+  reg [31:0] _RAND_44;
+  reg [31:0] _RAND_45;
+  reg [31:0] _RAND_46;
+  reg [31:0] _RAND_47;
+  reg [31:0] _RAND_48;
+  reg [31:0] _RAND_49;
+  reg [31:0] _RAND_50;
+  reg [31:0] _RAND_51;
+  reg [31:0] _RAND_52;
+  reg [31:0] _RAND_53;
+  reg [31:0] _RAND_54;
+  reg [31:0] _RAND_55;
+  reg [31:0] _RAND_56;
+  reg [31:0] _RAND_57;
+  reg [31:0] _RAND_58;
+  reg [31:0] _RAND_59;
+  reg [31:0] _RAND_60;
+  reg [31:0] _RAND_61;
+  reg [31:0] _RAND_62;
+  reg [31:0] _RAND_63;
+  reg [31:0] _RAND_64;
+  reg [31:0] _RAND_65;
+  reg [31:0] _RAND_66;
+  reg [31:0] _RAND_67;
+  reg [31:0] _RAND_68;
+  reg [31:0] _RAND_69;
+  reg [31:0] _RAND_70;
+  reg [31:0] _RAND_71;
+  reg [31:0] _RAND_72;
+  reg [31:0] _RAND_73;
+  reg [31:0] _RAND_74;
+  reg [31:0] _RAND_75;
+  reg [31:0] _RAND_76;
+  reg [31:0] _RAND_77;
+  reg [31:0] _RAND_78;
+  reg [31:0] _RAND_79;
+  reg [31:0] _RAND_80;
+  reg [31:0] _RAND_81;
 `endif // RANDOMIZE_REG_INIT
   reg [31:0] cosLUT [0:1024]; // @[LUTbank2.scala 323:29]
   wire  cosLUT_io_cosOut_0_MPORT_en; // @[LUTbank2.scala 323:29]
@@ -349,6 +503,48 @@ module multiPortCOSlut(
   wire  cosLUT_io_sinOut_0_MPORT_en; // @[LUTbank2.scala 323:29]
   wire [10:0] cosLUT_io_sinOut_0_MPORT_addr; // @[LUTbank2.scala 323:29]
   wire [31:0] cosLUT_io_sinOut_0_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_cosOut_1_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_cosOut_1_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_cosOut_1_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_sinOut_1_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_sinOut_1_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_sinOut_1_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_cosOut_2_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_cosOut_2_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_cosOut_2_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_sinOut_2_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_sinOut_2_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_sinOut_2_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_cosOut_3_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_cosOut_3_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_cosOut_3_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_sinOut_3_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_sinOut_3_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_sinOut_3_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_cosOut_4_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_cosOut_4_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_cosOut_4_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_sinOut_4_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_sinOut_4_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_sinOut_4_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_cosOut_5_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_cosOut_5_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_cosOut_5_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_sinOut_5_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_sinOut_5_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_sinOut_5_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_cosOut_6_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_cosOut_6_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_cosOut_6_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_sinOut_6_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_sinOut_6_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_sinOut_6_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_cosOut_7_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_cosOut_7_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_cosOut_7_MPORT_data; // @[LUTbank2.scala 323:29]
+  wire  cosLUT_io_sinOut_7_MPORT_en; // @[LUTbank2.scala 323:29]
+  wire [10:0] cosLUT_io_sinOut_7_MPORT_addr; // @[LUTbank2.scala 323:29]
+  wire [31:0] cosLUT_io_sinOut_7_MPORT_data; // @[LUTbank2.scala 323:29]
   wire [31:0] cosLUT_MPORT_data; // @[LUTbank2.scala 323:29]
   wire [10:0] cosLUT_MPORT_addr; // @[LUTbank2.scala 323:29]
   wire  cosLUT_MPORT_mask; // @[LUTbank2.scala 323:29]
@@ -4453,11 +4649,67 @@ module multiPortCOSlut(
   reg [10:0] cosLUT_io_cosOut_0_MPORT_addr_pipe_0;
   reg  cosLUT_io_sinOut_0_MPORT_en_pipe_0;
   reg [10:0] cosLUT_io_sinOut_0_MPORT_addr_pipe_0;
+  reg  cosLUT_io_cosOut_1_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_cosOut_1_MPORT_addr_pipe_0;
+  reg  cosLUT_io_sinOut_1_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_sinOut_1_MPORT_addr_pipe_0;
+  reg  cosLUT_io_cosOut_2_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_cosOut_2_MPORT_addr_pipe_0;
+  reg  cosLUT_io_sinOut_2_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_sinOut_2_MPORT_addr_pipe_0;
+  reg  cosLUT_io_cosOut_3_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_cosOut_3_MPORT_addr_pipe_0;
+  reg  cosLUT_io_sinOut_3_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_sinOut_3_MPORT_addr_pipe_0;
+  reg  cosLUT_io_cosOut_4_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_cosOut_4_MPORT_addr_pipe_0;
+  reg  cosLUT_io_sinOut_4_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_sinOut_4_MPORT_addr_pipe_0;
+  reg  cosLUT_io_cosOut_5_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_cosOut_5_MPORT_addr_pipe_0;
+  reg  cosLUT_io_sinOut_5_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_sinOut_5_MPORT_addr_pipe_0;
+  reg  cosLUT_io_cosOut_6_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_cosOut_6_MPORT_addr_pipe_0;
+  reg  cosLUT_io_sinOut_6_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_sinOut_6_MPORT_addr_pipe_0;
+  reg  cosLUT_io_cosOut_7_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_cosOut_7_MPORT_addr_pipe_0;
+  reg  cosLUT_io_sinOut_7_MPORT_en_pipe_0;
+  reg [10:0] cosLUT_io_sinOut_7_MPORT_addr_pipe_0;
   reg  ENReg; // @[LUTbank2.scala 331:29]
   reg [31:0] xFWDReg_0_0; // @[LUTbank2.scala 332:29]
   reg [31:0] xFWDReg_0_1; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_1_0; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_1_1; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_2_0; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_2_1; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_3_0; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_3_1; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_4_0; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_4_1; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_5_0; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_5_1; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_6_0; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_6_1; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_7_0; // @[LUTbank2.scala 332:29]
+  reg [31:0] xFWDReg_7_1; // @[LUTbank2.scala 332:29]
   reg  signReg_0_0; // @[LUTbank2.scala 333:29]
   reg  signReg_0_1; // @[LUTbank2.scala 333:29]
+  reg  signReg_1_0; // @[LUTbank2.scala 333:29]
+  reg  signReg_1_1; // @[LUTbank2.scala 333:29]
+  reg  signReg_2_0; // @[LUTbank2.scala 333:29]
+  reg  signReg_2_1; // @[LUTbank2.scala 333:29]
+  reg  signReg_3_0; // @[LUTbank2.scala 333:29]
+  reg  signReg_3_1; // @[LUTbank2.scala 333:29]
+  reg  signReg_4_0; // @[LUTbank2.scala 333:29]
+  reg  signReg_4_1; // @[LUTbank2.scala 333:29]
+  reg  signReg_5_0; // @[LUTbank2.scala 333:29]
+  reg  signReg_5_1; // @[LUTbank2.scala 333:29]
+  reg  signReg_6_0; // @[LUTbank2.scala 333:29]
+  reg  signReg_6_1; // @[LUTbank2.scala 333:29]
+  reg  signReg_7_0; // @[LUTbank2.scala 333:29]
+  reg  signReg_7_1; // @[LUTbank2.scala 333:29]
   assign cosLUT_io_cosOut_0_MPORT_en = cosLUT_io_cosOut_0_MPORT_en_pipe_0;
   assign cosLUT_io_cosOut_0_MPORT_addr = cosLUT_io_cosOut_0_MPORT_addr_pipe_0;
   `ifndef RANDOMIZE_GARBAGE_ASSIGN
@@ -4473,6 +4725,118 @@ module multiPortCOSlut(
   `else
   assign cosLUT_io_sinOut_0_MPORT_data = cosLUT_io_sinOut_0_MPORT_addr >= 11'h401 ? _RAND_2[31:0] :
     cosLUT[cosLUT_io_sinOut_0_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_1_MPORT_en = cosLUT_io_cosOut_1_MPORT_en_pipe_0;
+  assign cosLUT_io_cosOut_1_MPORT_addr = cosLUT_io_cosOut_1_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_1_MPORT_data = cosLUT[cosLUT_io_cosOut_1_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_cosOut_1_MPORT_data = cosLUT_io_cosOut_1_MPORT_addr >= 11'h401 ? _RAND_3[31:0] :
+    cosLUT[cosLUT_io_cosOut_1_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_1_MPORT_en = cosLUT_io_sinOut_1_MPORT_en_pipe_0;
+  assign cosLUT_io_sinOut_1_MPORT_addr = cosLUT_io_sinOut_1_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_1_MPORT_data = cosLUT[cosLUT_io_sinOut_1_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_sinOut_1_MPORT_data = cosLUT_io_sinOut_1_MPORT_addr >= 11'h401 ? _RAND_4[31:0] :
+    cosLUT[cosLUT_io_sinOut_1_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_2_MPORT_en = cosLUT_io_cosOut_2_MPORT_en_pipe_0;
+  assign cosLUT_io_cosOut_2_MPORT_addr = cosLUT_io_cosOut_2_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_2_MPORT_data = cosLUT[cosLUT_io_cosOut_2_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_cosOut_2_MPORT_data = cosLUT_io_cosOut_2_MPORT_addr >= 11'h401 ? _RAND_5[31:0] :
+    cosLUT[cosLUT_io_cosOut_2_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_2_MPORT_en = cosLUT_io_sinOut_2_MPORT_en_pipe_0;
+  assign cosLUT_io_sinOut_2_MPORT_addr = cosLUT_io_sinOut_2_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_2_MPORT_data = cosLUT[cosLUT_io_sinOut_2_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_sinOut_2_MPORT_data = cosLUT_io_sinOut_2_MPORT_addr >= 11'h401 ? _RAND_6[31:0] :
+    cosLUT[cosLUT_io_sinOut_2_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_3_MPORT_en = cosLUT_io_cosOut_3_MPORT_en_pipe_0;
+  assign cosLUT_io_cosOut_3_MPORT_addr = cosLUT_io_cosOut_3_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_3_MPORT_data = cosLUT[cosLUT_io_cosOut_3_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_cosOut_3_MPORT_data = cosLUT_io_cosOut_3_MPORT_addr >= 11'h401 ? _RAND_7[31:0] :
+    cosLUT[cosLUT_io_cosOut_3_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_3_MPORT_en = cosLUT_io_sinOut_3_MPORT_en_pipe_0;
+  assign cosLUT_io_sinOut_3_MPORT_addr = cosLUT_io_sinOut_3_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_3_MPORT_data = cosLUT[cosLUT_io_sinOut_3_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_sinOut_3_MPORT_data = cosLUT_io_sinOut_3_MPORT_addr >= 11'h401 ? _RAND_8[31:0] :
+    cosLUT[cosLUT_io_sinOut_3_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_4_MPORT_en = cosLUT_io_cosOut_4_MPORT_en_pipe_0;
+  assign cosLUT_io_cosOut_4_MPORT_addr = cosLUT_io_cosOut_4_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_4_MPORT_data = cosLUT[cosLUT_io_cosOut_4_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_cosOut_4_MPORT_data = cosLUT_io_cosOut_4_MPORT_addr >= 11'h401 ? _RAND_9[31:0] :
+    cosLUT[cosLUT_io_cosOut_4_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_4_MPORT_en = cosLUT_io_sinOut_4_MPORT_en_pipe_0;
+  assign cosLUT_io_sinOut_4_MPORT_addr = cosLUT_io_sinOut_4_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_4_MPORT_data = cosLUT[cosLUT_io_sinOut_4_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_sinOut_4_MPORT_data = cosLUT_io_sinOut_4_MPORT_addr >= 11'h401 ? _RAND_10[31:0] :
+    cosLUT[cosLUT_io_sinOut_4_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_5_MPORT_en = cosLUT_io_cosOut_5_MPORT_en_pipe_0;
+  assign cosLUT_io_cosOut_5_MPORT_addr = cosLUT_io_cosOut_5_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_5_MPORT_data = cosLUT[cosLUT_io_cosOut_5_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_cosOut_5_MPORT_data = cosLUT_io_cosOut_5_MPORT_addr >= 11'h401 ? _RAND_11[31:0] :
+    cosLUT[cosLUT_io_cosOut_5_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_5_MPORT_en = cosLUT_io_sinOut_5_MPORT_en_pipe_0;
+  assign cosLUT_io_sinOut_5_MPORT_addr = cosLUT_io_sinOut_5_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_5_MPORT_data = cosLUT[cosLUT_io_sinOut_5_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_sinOut_5_MPORT_data = cosLUT_io_sinOut_5_MPORT_addr >= 11'h401 ? _RAND_12[31:0] :
+    cosLUT[cosLUT_io_sinOut_5_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_6_MPORT_en = cosLUT_io_cosOut_6_MPORT_en_pipe_0;
+  assign cosLUT_io_cosOut_6_MPORT_addr = cosLUT_io_cosOut_6_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_6_MPORT_data = cosLUT[cosLUT_io_cosOut_6_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_cosOut_6_MPORT_data = cosLUT_io_cosOut_6_MPORT_addr >= 11'h401 ? _RAND_13[31:0] :
+    cosLUT[cosLUT_io_cosOut_6_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_6_MPORT_en = cosLUT_io_sinOut_6_MPORT_en_pipe_0;
+  assign cosLUT_io_sinOut_6_MPORT_addr = cosLUT_io_sinOut_6_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_6_MPORT_data = cosLUT[cosLUT_io_sinOut_6_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_sinOut_6_MPORT_data = cosLUT_io_sinOut_6_MPORT_addr >= 11'h401 ? _RAND_14[31:0] :
+    cosLUT[cosLUT_io_sinOut_6_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_7_MPORT_en = cosLUT_io_cosOut_7_MPORT_en_pipe_0;
+  assign cosLUT_io_cosOut_7_MPORT_addr = cosLUT_io_cosOut_7_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_cosOut_7_MPORT_data = cosLUT[cosLUT_io_cosOut_7_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_cosOut_7_MPORT_data = cosLUT_io_cosOut_7_MPORT_addr >= 11'h401 ? _RAND_15[31:0] :
+    cosLUT[cosLUT_io_cosOut_7_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `endif // RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_7_MPORT_en = cosLUT_io_sinOut_7_MPORT_en_pipe_0;
+  assign cosLUT_io_sinOut_7_MPORT_addr = cosLUT_io_sinOut_7_MPORT_addr_pipe_0;
+  `ifndef RANDOMIZE_GARBAGE_ASSIGN
+  assign cosLUT_io_sinOut_7_MPORT_data = cosLUT[cosLUT_io_sinOut_7_MPORT_addr]; // @[LUTbank2.scala 323:29]
+  `else
+  assign cosLUT_io_sinOut_7_MPORT_data = cosLUT_io_sinOut_7_MPORT_addr >= 11'h401 ? _RAND_16[31:0] :
+    cosLUT[cosLUT_io_sinOut_7_MPORT_addr]; // @[LUTbank2.scala 323:29]
   `endif // RANDOMIZE_GARBAGE_ASSIGN
   assign cosLUT_MPORT_data = 32'h3f800000;
   assign cosLUT_MPORT_addr = 11'h0;
@@ -8575,12 +8939,54 @@ module multiPortCOSlut(
   assign cosLUT_MPORT_1024_mask = 1'h1;
   assign cosLUT_MPORT_1024_en = reset;
   assign io_sinOut_0 = ENReg ? cosLUT_io_sinOut_0_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
+  assign io_sinOut_1 = ENReg ? cosLUT_io_sinOut_1_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
+  assign io_sinOut_2 = ENReg ? cosLUT_io_sinOut_2_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
+  assign io_sinOut_3 = ENReg ? cosLUT_io_sinOut_3_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
+  assign io_sinOut_4 = ENReg ? cosLUT_io_sinOut_4_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
+  assign io_sinOut_5 = ENReg ? cosLUT_io_sinOut_5_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
+  assign io_sinOut_6 = ENReg ? cosLUT_io_sinOut_6_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
+  assign io_sinOut_7 = ENReg ? cosLUT_io_sinOut_7_MPORT_data : 32'h0; // @[LUTbank2.scala 347:32]
   assign io_cosOut_0 = ENReg ? cosLUT_io_cosOut_0_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
+  assign io_cosOut_1 = ENReg ? cosLUT_io_cosOut_1_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
+  assign io_cosOut_2 = ENReg ? cosLUT_io_cosOut_2_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
+  assign io_cosOut_3 = ENReg ? cosLUT_io_cosOut_3_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
+  assign io_cosOut_4 = ENReg ? cosLUT_io_cosOut_4_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
+  assign io_cosOut_5 = ENReg ? cosLUT_io_cosOut_5_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
+  assign io_cosOut_6 = ENReg ? cosLUT_io_cosOut_6_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
+  assign io_cosOut_7 = ENReg ? cosLUT_io_cosOut_7_MPORT_data : 32'h0; // @[LUTbank2.scala 346:32]
   assign io_ENout = ENReg; // @[LUTbank2.scala 343:14]
   assign io_xFWD_0_0 = ENReg ? xFWDReg_0_0 : 32'h0; // @[LUTbank2.scala 348:32]
   assign io_xFWD_0_1 = ENReg ? xFWDReg_0_1 : 32'h0; // @[LUTbank2.scala 349:32]
+  assign io_xFWD_1_0 = ENReg ? xFWDReg_1_0 : 32'h0; // @[LUTbank2.scala 348:32]
+  assign io_xFWD_1_1 = ENReg ? xFWDReg_1_1 : 32'h0; // @[LUTbank2.scala 349:32]
+  assign io_xFWD_2_0 = ENReg ? xFWDReg_2_0 : 32'h0; // @[LUTbank2.scala 348:32]
+  assign io_xFWD_2_1 = ENReg ? xFWDReg_2_1 : 32'h0; // @[LUTbank2.scala 349:32]
+  assign io_xFWD_3_0 = ENReg ? xFWDReg_3_0 : 32'h0; // @[LUTbank2.scala 348:32]
+  assign io_xFWD_3_1 = ENReg ? xFWDReg_3_1 : 32'h0; // @[LUTbank2.scala 349:32]
+  assign io_xFWD_4_0 = ENReg ? xFWDReg_4_0 : 32'h0; // @[LUTbank2.scala 348:32]
+  assign io_xFWD_4_1 = ENReg ? xFWDReg_4_1 : 32'h0; // @[LUTbank2.scala 349:32]
+  assign io_xFWD_5_0 = ENReg ? xFWDReg_5_0 : 32'h0; // @[LUTbank2.scala 348:32]
+  assign io_xFWD_5_1 = ENReg ? xFWDReg_5_1 : 32'h0; // @[LUTbank2.scala 349:32]
+  assign io_xFWD_6_0 = ENReg ? xFWDReg_6_0 : 32'h0; // @[LUTbank2.scala 348:32]
+  assign io_xFWD_6_1 = ENReg ? xFWDReg_6_1 : 32'h0; // @[LUTbank2.scala 349:32]
+  assign io_xFWD_7_0 = ENReg ? xFWDReg_7_0 : 32'h0; // @[LUTbank2.scala 348:32]
+  assign io_xFWD_7_1 = ENReg ? xFWDReg_7_1 : 32'h0; // @[LUTbank2.scala 349:32]
   assign io_signFWD_0_0 = ENReg & signReg_0_0; // @[LUTbank2.scala 350:32]
   assign io_signFWD_0_1 = ENReg & signReg_0_1; // @[LUTbank2.scala 351:32]
+  assign io_signFWD_1_0 = ENReg & signReg_1_0; // @[LUTbank2.scala 350:32]
+  assign io_signFWD_1_1 = ENReg & signReg_1_1; // @[LUTbank2.scala 351:32]
+  assign io_signFWD_2_0 = ENReg & signReg_2_0; // @[LUTbank2.scala 350:32]
+  assign io_signFWD_2_1 = ENReg & signReg_2_1; // @[LUTbank2.scala 351:32]
+  assign io_signFWD_3_0 = ENReg & signReg_3_0; // @[LUTbank2.scala 350:32]
+  assign io_signFWD_3_1 = ENReg & signReg_3_1; // @[LUTbank2.scala 351:32]
+  assign io_signFWD_4_0 = ENReg & signReg_4_0; // @[LUTbank2.scala 350:32]
+  assign io_signFWD_4_1 = ENReg & signReg_4_1; // @[LUTbank2.scala 351:32]
+  assign io_signFWD_5_0 = ENReg & signReg_5_0; // @[LUTbank2.scala 350:32]
+  assign io_signFWD_5_1 = ENReg & signReg_5_1; // @[LUTbank2.scala 351:32]
+  assign io_signFWD_6_0 = ENReg & signReg_6_0; // @[LUTbank2.scala 350:32]
+  assign io_signFWD_6_1 = ENReg & signReg_6_1; // @[LUTbank2.scala 351:32]
+  assign io_signFWD_7_0 = ENReg & signReg_7_0; // @[LUTbank2.scala 350:32]
+  assign io_signFWD_7_1 = ENReg & signReg_7_1; // @[LUTbank2.scala 351:32]
   always @(posedge clock) begin
     if (cosLUT_MPORT_en & cosLUT_MPORT_mask) begin
       cosLUT[cosLUT_MPORT_addr] <= cosLUT_MPORT_data; // @[LUTbank2.scala 323:29]
@@ -11665,6 +12071,62 @@ module multiPortCOSlut(
     if (1'h1) begin
       cosLUT_io_sinOut_0_MPORT_addr_pipe_0 <= io_sinIndex_0[10:0];
     end
+    cosLUT_io_cosOut_1_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_cosOut_1_MPORT_addr_pipe_0 <= io_cosIndex_1[10:0];
+    end
+    cosLUT_io_sinOut_1_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_sinOut_1_MPORT_addr_pipe_0 <= io_sinIndex_1[10:0];
+    end
+    cosLUT_io_cosOut_2_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_cosOut_2_MPORT_addr_pipe_0 <= io_cosIndex_2[10:0];
+    end
+    cosLUT_io_sinOut_2_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_sinOut_2_MPORT_addr_pipe_0 <= io_sinIndex_2[10:0];
+    end
+    cosLUT_io_cosOut_3_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_cosOut_3_MPORT_addr_pipe_0 <= io_cosIndex_3[10:0];
+    end
+    cosLUT_io_sinOut_3_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_sinOut_3_MPORT_addr_pipe_0 <= io_sinIndex_3[10:0];
+    end
+    cosLUT_io_cosOut_4_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_cosOut_4_MPORT_addr_pipe_0 <= io_cosIndex_4[10:0];
+    end
+    cosLUT_io_sinOut_4_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_sinOut_4_MPORT_addr_pipe_0 <= io_sinIndex_4[10:0];
+    end
+    cosLUT_io_cosOut_5_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_cosOut_5_MPORT_addr_pipe_0 <= io_cosIndex_5[10:0];
+    end
+    cosLUT_io_sinOut_5_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_sinOut_5_MPORT_addr_pipe_0 <= io_sinIndex_5[10:0];
+    end
+    cosLUT_io_cosOut_6_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_cosOut_6_MPORT_addr_pipe_0 <= io_cosIndex_6[10:0];
+    end
+    cosLUT_io_sinOut_6_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_sinOut_6_MPORT_addr_pipe_0 <= io_sinIndex_6[10:0];
+    end
+    cosLUT_io_cosOut_7_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_cosOut_7_MPORT_addr_pipe_0 <= io_cosIndex_7[10:0];
+    end
+    cosLUT_io_sinOut_7_MPORT_en_pipe_0 <= 1'h1;
+    if (1'h1) begin
+      cosLUT_io_sinOut_7_MPORT_addr_pipe_0 <= io_sinIndex_7[10:0];
+    end
     if (reset) begin // @[LUTbank2.scala 331:29]
       ENReg <= 1'h0; // @[LUTbank2.scala 331:29]
     end else begin
@@ -11680,6 +12142,76 @@ module multiPortCOSlut(
     end else begin
       xFWDReg_0_1 <= io_x_0_1; // @[LUTbank2.scala 338:23]
     end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_1_0 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_1_0 <= io_x_1_0; // @[LUTbank2.scala 337:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_1_1 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_1_1 <= io_x_1_1; // @[LUTbank2.scala 338:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_2_0 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_2_0 <= io_x_2_0; // @[LUTbank2.scala 337:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_2_1 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_2_1 <= io_x_2_1; // @[LUTbank2.scala 338:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_3_0 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_3_0 <= io_x_3_0; // @[LUTbank2.scala 337:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_3_1 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_3_1 <= io_x_3_1; // @[LUTbank2.scala 338:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_4_0 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_4_0 <= io_x_4_0; // @[LUTbank2.scala 337:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_4_1 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_4_1 <= io_x_4_1; // @[LUTbank2.scala 338:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_5_0 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_5_0 <= io_x_5_0; // @[LUTbank2.scala 337:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_5_1 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_5_1 <= io_x_5_1; // @[LUTbank2.scala 338:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_6_0 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_6_0 <= io_x_6_0; // @[LUTbank2.scala 337:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_6_1 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_6_1 <= io_x_6_1; // @[LUTbank2.scala 338:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_7_0 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_7_0 <= io_x_7_0; // @[LUTbank2.scala 337:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 332:29]
+      xFWDReg_7_1 <= 32'h0; // @[LUTbank2.scala 332:29]
+    end else begin
+      xFWDReg_7_1 <= io_x_7_1; // @[LUTbank2.scala 338:23]
+    end
     if (reset) begin // @[LUTbank2.scala 333:29]
       signReg_0_0 <= 1'h0; // @[LUTbank2.scala 333:29]
     end else begin
@@ -11689,6 +12221,76 @@ module multiPortCOSlut(
       signReg_0_1 <= 1'h0; // @[LUTbank2.scala 333:29]
     end else begin
       signReg_0_1 <= io_sign_0_1; // @[LUTbank2.scala 340:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_1_0 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_1_0 <= io_sign_1_0; // @[LUTbank2.scala 339:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_1_1 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_1_1 <= io_sign_1_1; // @[LUTbank2.scala 340:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_2_0 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_2_0 <= io_sign_2_0; // @[LUTbank2.scala 339:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_2_1 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_2_1 <= io_sign_2_1; // @[LUTbank2.scala 340:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_3_0 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_3_0 <= io_sign_3_0; // @[LUTbank2.scala 339:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_3_1 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_3_1 <= io_sign_3_1; // @[LUTbank2.scala 340:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_4_0 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_4_0 <= io_sign_4_0; // @[LUTbank2.scala 339:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_4_1 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_4_1 <= io_sign_4_1; // @[LUTbank2.scala 340:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_5_0 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_5_0 <= io_sign_5_0; // @[LUTbank2.scala 339:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_5_1 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_5_1 <= io_sign_5_1; // @[LUTbank2.scala 340:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_6_0 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_6_0 <= io_sign_6_0; // @[LUTbank2.scala 339:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_6_1 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_6_1 <= io_sign_6_1; // @[LUTbank2.scala 340:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_7_0 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_7_0 <= io_sign_7_0; // @[LUTbank2.scala 339:23]
+    end
+    if (reset) begin // @[LUTbank2.scala 333:29]
+      signReg_7_1 <= 1'h0; // @[LUTbank2.scala 333:29]
+    end else begin
+      signReg_7_1 <= io_sign_7_1; // @[LUTbank2.scala 340:23]
     end
   end
 // Register and memory initialization
@@ -11729,6 +12331,20 @@ initial begin
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
   _RAND_1 = {1{`RANDOM}};
   _RAND_2 = {1{`RANDOM}};
+  _RAND_3 = {1{`RANDOM}};
+  _RAND_4 = {1{`RANDOM}};
+  _RAND_5 = {1{`RANDOM}};
+  _RAND_6 = {1{`RANDOM}};
+  _RAND_7 = {1{`RANDOM}};
+  _RAND_8 = {1{`RANDOM}};
+  _RAND_9 = {1{`RANDOM}};
+  _RAND_10 = {1{`RANDOM}};
+  _RAND_11 = {1{`RANDOM}};
+  _RAND_12 = {1{`RANDOM}};
+  _RAND_13 = {1{`RANDOM}};
+  _RAND_14 = {1{`RANDOM}};
+  _RAND_15 = {1{`RANDOM}};
+  _RAND_16 = {1{`RANDOM}};
 `endif // RANDOMIZE_GARBAGE_ASSIGN
 `ifdef RANDOMIZE_MEM_INIT
   _RAND_0 = {1{`RANDOM}};
@@ -11736,24 +12352,136 @@ initial begin
     cosLUT[initvar] = _RAND_0[31:0];
 `endif // RANDOMIZE_MEM_INIT
 `ifdef RANDOMIZE_REG_INIT
-  _RAND_3 = {1{`RANDOM}};
-  cosLUT_io_cosOut_0_MPORT_en_pipe_0 = _RAND_3[0:0];
-  _RAND_4 = {1{`RANDOM}};
-  cosLUT_io_cosOut_0_MPORT_addr_pipe_0 = _RAND_4[10:0];
-  _RAND_5 = {1{`RANDOM}};
-  cosLUT_io_sinOut_0_MPORT_en_pipe_0 = _RAND_5[0:0];
-  _RAND_6 = {1{`RANDOM}};
-  cosLUT_io_sinOut_0_MPORT_addr_pipe_0 = _RAND_6[10:0];
-  _RAND_7 = {1{`RANDOM}};
-  ENReg = _RAND_7[0:0];
-  _RAND_8 = {1{`RANDOM}};
-  xFWDReg_0_0 = _RAND_8[31:0];
-  _RAND_9 = {1{`RANDOM}};
-  xFWDReg_0_1 = _RAND_9[31:0];
-  _RAND_10 = {1{`RANDOM}};
-  signReg_0_0 = _RAND_10[0:0];
-  _RAND_11 = {1{`RANDOM}};
-  signReg_0_1 = _RAND_11[0:0];
+  _RAND_17 = {1{`RANDOM}};
+  cosLUT_io_cosOut_0_MPORT_en_pipe_0 = _RAND_17[0:0];
+  _RAND_18 = {1{`RANDOM}};
+  cosLUT_io_cosOut_0_MPORT_addr_pipe_0 = _RAND_18[10:0];
+  _RAND_19 = {1{`RANDOM}};
+  cosLUT_io_sinOut_0_MPORT_en_pipe_0 = _RAND_19[0:0];
+  _RAND_20 = {1{`RANDOM}};
+  cosLUT_io_sinOut_0_MPORT_addr_pipe_0 = _RAND_20[10:0];
+  _RAND_21 = {1{`RANDOM}};
+  cosLUT_io_cosOut_1_MPORT_en_pipe_0 = _RAND_21[0:0];
+  _RAND_22 = {1{`RANDOM}};
+  cosLUT_io_cosOut_1_MPORT_addr_pipe_0 = _RAND_22[10:0];
+  _RAND_23 = {1{`RANDOM}};
+  cosLUT_io_sinOut_1_MPORT_en_pipe_0 = _RAND_23[0:0];
+  _RAND_24 = {1{`RANDOM}};
+  cosLUT_io_sinOut_1_MPORT_addr_pipe_0 = _RAND_24[10:0];
+  _RAND_25 = {1{`RANDOM}};
+  cosLUT_io_cosOut_2_MPORT_en_pipe_0 = _RAND_25[0:0];
+  _RAND_26 = {1{`RANDOM}};
+  cosLUT_io_cosOut_2_MPORT_addr_pipe_0 = _RAND_26[10:0];
+  _RAND_27 = {1{`RANDOM}};
+  cosLUT_io_sinOut_2_MPORT_en_pipe_0 = _RAND_27[0:0];
+  _RAND_28 = {1{`RANDOM}};
+  cosLUT_io_sinOut_2_MPORT_addr_pipe_0 = _RAND_28[10:0];
+  _RAND_29 = {1{`RANDOM}};
+  cosLUT_io_cosOut_3_MPORT_en_pipe_0 = _RAND_29[0:0];
+  _RAND_30 = {1{`RANDOM}};
+  cosLUT_io_cosOut_3_MPORT_addr_pipe_0 = _RAND_30[10:0];
+  _RAND_31 = {1{`RANDOM}};
+  cosLUT_io_sinOut_3_MPORT_en_pipe_0 = _RAND_31[0:0];
+  _RAND_32 = {1{`RANDOM}};
+  cosLUT_io_sinOut_3_MPORT_addr_pipe_0 = _RAND_32[10:0];
+  _RAND_33 = {1{`RANDOM}};
+  cosLUT_io_cosOut_4_MPORT_en_pipe_0 = _RAND_33[0:0];
+  _RAND_34 = {1{`RANDOM}};
+  cosLUT_io_cosOut_4_MPORT_addr_pipe_0 = _RAND_34[10:0];
+  _RAND_35 = {1{`RANDOM}};
+  cosLUT_io_sinOut_4_MPORT_en_pipe_0 = _RAND_35[0:0];
+  _RAND_36 = {1{`RANDOM}};
+  cosLUT_io_sinOut_4_MPORT_addr_pipe_0 = _RAND_36[10:0];
+  _RAND_37 = {1{`RANDOM}};
+  cosLUT_io_cosOut_5_MPORT_en_pipe_0 = _RAND_37[0:0];
+  _RAND_38 = {1{`RANDOM}};
+  cosLUT_io_cosOut_5_MPORT_addr_pipe_0 = _RAND_38[10:0];
+  _RAND_39 = {1{`RANDOM}};
+  cosLUT_io_sinOut_5_MPORT_en_pipe_0 = _RAND_39[0:0];
+  _RAND_40 = {1{`RANDOM}};
+  cosLUT_io_sinOut_5_MPORT_addr_pipe_0 = _RAND_40[10:0];
+  _RAND_41 = {1{`RANDOM}};
+  cosLUT_io_cosOut_6_MPORT_en_pipe_0 = _RAND_41[0:0];
+  _RAND_42 = {1{`RANDOM}};
+  cosLUT_io_cosOut_6_MPORT_addr_pipe_0 = _RAND_42[10:0];
+  _RAND_43 = {1{`RANDOM}};
+  cosLUT_io_sinOut_6_MPORT_en_pipe_0 = _RAND_43[0:0];
+  _RAND_44 = {1{`RANDOM}};
+  cosLUT_io_sinOut_6_MPORT_addr_pipe_0 = _RAND_44[10:0];
+  _RAND_45 = {1{`RANDOM}};
+  cosLUT_io_cosOut_7_MPORT_en_pipe_0 = _RAND_45[0:0];
+  _RAND_46 = {1{`RANDOM}};
+  cosLUT_io_cosOut_7_MPORT_addr_pipe_0 = _RAND_46[10:0];
+  _RAND_47 = {1{`RANDOM}};
+  cosLUT_io_sinOut_7_MPORT_en_pipe_0 = _RAND_47[0:0];
+  _RAND_48 = {1{`RANDOM}};
+  cosLUT_io_sinOut_7_MPORT_addr_pipe_0 = _RAND_48[10:0];
+  _RAND_49 = {1{`RANDOM}};
+  ENReg = _RAND_49[0:0];
+  _RAND_50 = {1{`RANDOM}};
+  xFWDReg_0_0 = _RAND_50[31:0];
+  _RAND_51 = {1{`RANDOM}};
+  xFWDReg_0_1 = _RAND_51[31:0];
+  _RAND_52 = {1{`RANDOM}};
+  xFWDReg_1_0 = _RAND_52[31:0];
+  _RAND_53 = {1{`RANDOM}};
+  xFWDReg_1_1 = _RAND_53[31:0];
+  _RAND_54 = {1{`RANDOM}};
+  xFWDReg_2_0 = _RAND_54[31:0];
+  _RAND_55 = {1{`RANDOM}};
+  xFWDReg_2_1 = _RAND_55[31:0];
+  _RAND_56 = {1{`RANDOM}};
+  xFWDReg_3_0 = _RAND_56[31:0];
+  _RAND_57 = {1{`RANDOM}};
+  xFWDReg_3_1 = _RAND_57[31:0];
+  _RAND_58 = {1{`RANDOM}};
+  xFWDReg_4_0 = _RAND_58[31:0];
+  _RAND_59 = {1{`RANDOM}};
+  xFWDReg_4_1 = _RAND_59[31:0];
+  _RAND_60 = {1{`RANDOM}};
+  xFWDReg_5_0 = _RAND_60[31:0];
+  _RAND_61 = {1{`RANDOM}};
+  xFWDReg_5_1 = _RAND_61[31:0];
+  _RAND_62 = {1{`RANDOM}};
+  xFWDReg_6_0 = _RAND_62[31:0];
+  _RAND_63 = {1{`RANDOM}};
+  xFWDReg_6_1 = _RAND_63[31:0];
+  _RAND_64 = {1{`RANDOM}};
+  xFWDReg_7_0 = _RAND_64[31:0];
+  _RAND_65 = {1{`RANDOM}};
+  xFWDReg_7_1 = _RAND_65[31:0];
+  _RAND_66 = {1{`RANDOM}};
+  signReg_0_0 = _RAND_66[0:0];
+  _RAND_67 = {1{`RANDOM}};
+  signReg_0_1 = _RAND_67[0:0];
+  _RAND_68 = {1{`RANDOM}};
+  signReg_1_0 = _RAND_68[0:0];
+  _RAND_69 = {1{`RANDOM}};
+  signReg_1_1 = _RAND_69[0:0];
+  _RAND_70 = {1{`RANDOM}};
+  signReg_2_0 = _RAND_70[0:0];
+  _RAND_71 = {1{`RANDOM}};
+  signReg_2_1 = _RAND_71[0:0];
+  _RAND_72 = {1{`RANDOM}};
+  signReg_3_0 = _RAND_72[0:0];
+  _RAND_73 = {1{`RANDOM}};
+  signReg_3_1 = _RAND_73[0:0];
+  _RAND_74 = {1{`RANDOM}};
+  signReg_4_0 = _RAND_74[0:0];
+  _RAND_75 = {1{`RANDOM}};
+  signReg_4_1 = _RAND_75[0:0];
+  _RAND_76 = {1{`RANDOM}};
+  signReg_5_0 = _RAND_76[0:0];
+  _RAND_77 = {1{`RANDOM}};
+  signReg_5_1 = _RAND_77[0:0];
+  _RAND_78 = {1{`RANDOM}};
+  signReg_6_0 = _RAND_78[0:0];
+  _RAND_79 = {1{`RANDOM}};
+  signReg_6_1 = _RAND_79[0:0];
+  _RAND_80 = {1{`RANDOM}};
+  signReg_7_0 = _RAND_80[0:0];
+  _RAND_81 = {1{`RANDOM}};
+  signReg_7_1 = _RAND_81[0:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial
@@ -11905,13 +12633,62 @@ module multiPortSinCosModuleV2(
   input         reset,
   input  [31:0] io_x_0_0,
   input  [31:0] io_x_0_1,
+  input  [31:0] io_x_1_0,
+  input  [31:0] io_x_1_1,
+  input  [31:0] io_x_2_0,
+  input  [31:0] io_x_2_1,
+  input  [31:0] io_x_3_0,
+  input  [31:0] io_x_3_1,
+  input  [31:0] io_x_4_0,
+  input  [31:0] io_x_4_1,
+  input  [31:0] io_x_5_0,
+  input  [31:0] io_x_5_1,
+  input  [31:0] io_x_6_0,
+  input  [31:0] io_x_6_1,
+  input  [31:0] io_x_7_0,
+  input  [31:0] io_x_7_1,
   input         io_EN,
   input  [31:0] io_angle_0,
+  input  [31:0] io_angle_1,
+  input  [31:0] io_angle_2,
+  input  [31:0] io_angle_3,
+  input  [31:0] io_angle_4,
+  input  [31:0] io_angle_5,
+  input  [31:0] io_angle_6,
+  input  [31:0] io_angle_7,
   output [31:0] io_sinOut_0,
+  output [31:0] io_sinOut_1,
+  output [31:0] io_sinOut_2,
+  output [31:0] io_sinOut_3,
+  output [31:0] io_sinOut_4,
+  output [31:0] io_sinOut_5,
+  output [31:0] io_sinOut_6,
+  output [31:0] io_sinOut_7,
   output [31:0] io_cosOut_0,
+  output [31:0] io_cosOut_1,
+  output [31:0] io_cosOut_2,
+  output [31:0] io_cosOut_3,
+  output [31:0] io_cosOut_4,
+  output [31:0] io_cosOut_5,
+  output [31:0] io_cosOut_6,
+  output [31:0] io_cosOut_7,
   output        io_ENout,
   output [31:0] io_xFWD_0_0,
-  output [31:0] io_xFWD_0_1
+  output [31:0] io_xFWD_0_1,
+  output [31:0] io_xFWD_1_0,
+  output [31:0] io_xFWD_1_1,
+  output [31:0] io_xFWD_2_0,
+  output [31:0] io_xFWD_2_1,
+  output [31:0] io_xFWD_3_0,
+  output [31:0] io_xFWD_3_1,
+  output [31:0] io_xFWD_4_0,
+  output [31:0] io_xFWD_4_1,
+  output [31:0] io_xFWD_5_0,
+  output [31:0] io_xFWD_5_1,
+  output [31:0] io_xFWD_6_0,
+  output [31:0] io_xFWD_6_1,
+  output [31:0] io_xFWD_7_0,
+  output [31:0] io_xFWD_7_1
 );
   wire  dualPortIndexCalculatorV2_clock; // @[sincosLUT3.scala 67:15]
   wire  dualPortIndexCalculatorV2_reset; // @[sincosLUT3.scala 67:15]
@@ -11926,22 +12703,197 @@ module multiPortSinCosModuleV2(
   wire  dualPortIndexCalculatorV2_io_ENout; // @[sincosLUT3.scala 67:15]
   wire [31:0] dualPortIndexCalculatorV2_io_xFWD_0; // @[sincosLUT3.scala 67:15]
   wire [31:0] dualPortIndexCalculatorV2_io_xFWD_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_1_clock; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_1_reset; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_1_io_x_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_1_io_x_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_1_io_EN; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_1_io_angle; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_1_io_cosIndex; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_1_io_sinIndex; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_1_io_cosSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_1_io_sinSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_1_io_ENout; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_1_io_xFWD_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_1_io_xFWD_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_2_clock; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_2_reset; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_2_io_x_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_2_io_x_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_2_io_EN; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_2_io_angle; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_2_io_cosIndex; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_2_io_sinIndex; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_2_io_cosSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_2_io_sinSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_2_io_ENout; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_2_io_xFWD_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_2_io_xFWD_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_3_clock; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_3_reset; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_3_io_x_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_3_io_x_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_3_io_EN; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_3_io_angle; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_3_io_cosIndex; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_3_io_sinIndex; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_3_io_cosSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_3_io_sinSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_3_io_ENout; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_3_io_xFWD_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_3_io_xFWD_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_4_clock; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_4_reset; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_4_io_x_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_4_io_x_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_4_io_EN; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_4_io_angle; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_4_io_cosIndex; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_4_io_sinIndex; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_4_io_cosSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_4_io_sinSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_4_io_ENout; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_4_io_xFWD_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_4_io_xFWD_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_5_clock; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_5_reset; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_5_io_x_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_5_io_x_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_5_io_EN; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_5_io_angle; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_5_io_cosIndex; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_5_io_sinIndex; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_5_io_cosSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_5_io_sinSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_5_io_ENout; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_5_io_xFWD_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_5_io_xFWD_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_6_clock; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_6_reset; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_6_io_x_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_6_io_x_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_6_io_EN; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_6_io_angle; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_6_io_cosIndex; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_6_io_sinIndex; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_6_io_cosSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_6_io_sinSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_6_io_ENout; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_6_io_xFWD_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_6_io_xFWD_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_7_clock; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_7_reset; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_7_io_x_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_7_io_x_1; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_7_io_EN; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_7_io_angle; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_7_io_cosIndex; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_7_io_sinIndex; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_7_io_cosSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_7_io_sinSign; // @[sincosLUT3.scala 67:15]
+  wire  dualPortIndexCalculatorV2_7_io_ENout; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_7_io_xFWD_0; // @[sincosLUT3.scala 67:15]
+  wire [31:0] dualPortIndexCalculatorV2_7_io_xFWD_1; // @[sincosLUT3.scala 67:15]
   wire  lutModule_clock; // @[sincosLUT3.scala 69:27]
   wire  lutModule_reset; // @[sincosLUT3.scala 69:27]
   wire  lutModule_io_EN; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_x_0_0; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_x_0_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_1_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_1_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_2_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_2_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_3_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_3_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_4_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_4_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_5_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_5_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_6_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_6_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_7_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_x_7_1; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_cosIndex_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosIndex_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosIndex_2; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosIndex_3; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosIndex_4; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosIndex_5; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosIndex_6; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosIndex_7; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_sinIndex_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinIndex_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinIndex_2; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinIndex_3; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinIndex_4; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinIndex_5; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinIndex_6; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinIndex_7; // @[sincosLUT3.scala 69:27]
   wire  lutModule_io_sign_0_0; // @[sincosLUT3.scala 69:27]
   wire  lutModule_io_sign_0_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_1_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_1_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_2_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_2_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_3_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_3_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_4_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_4_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_5_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_5_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_6_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_6_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_7_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_sign_7_1; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_sinOut_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinOut_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinOut_2; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinOut_3; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinOut_4; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinOut_5; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinOut_6; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_sinOut_7; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_cosOut_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosOut_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosOut_2; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosOut_3; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosOut_4; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosOut_5; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosOut_6; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_cosOut_7; // @[sincosLUT3.scala 69:27]
   wire  lutModule_io_ENout; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_xFWD_0_0; // @[sincosLUT3.scala 69:27]
   wire [31:0] lutModule_io_xFWD_0_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_1_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_1_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_2_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_2_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_3_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_3_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_4_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_4_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_5_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_5_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_6_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_6_1; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_7_0; // @[sincosLUT3.scala 69:27]
+  wire [31:0] lutModule_io_xFWD_7_1; // @[sincosLUT3.scala 69:27]
   wire  lutModule_io_signFWD_0_0; // @[sincosLUT3.scala 69:27]
   wire  lutModule_io_signFWD_0_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_1_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_1_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_2_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_2_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_3_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_3_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_4_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_4_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_5_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_5_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_6_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_6_1; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_7_0; // @[sincosLUT3.scala 69:27]
+  wire  lutModule_io_signFWD_7_1; // @[sincosLUT3.scala 69:27]
   wire  encoder_clock; // @[sincosLUT3.scala 71:15]
   wire  encoder_reset; // @[sincosLUT3.scala 71:15]
   wire [31:0] encoder_io_x_0; // @[sincosLUT3.scala 71:15]
@@ -11956,6 +12908,104 @@ module multiPortSinCosModuleV2(
   wire  encoder_io_ENout; // @[sincosLUT3.scala 71:15]
   wire [31:0] encoder_io_xFWD_0; // @[sincosLUT3.scala 71:15]
   wire [31:0] encoder_io_xFWD_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_1_clock; // @[sincosLUT3.scala 71:15]
+  wire  encoder_1_reset; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_x_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_x_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_1_io_EN; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_cosIn; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_sinIn; // @[sincosLUT3.scala 71:15]
+  wire  encoder_1_io_cosSign; // @[sincosLUT3.scala 71:15]
+  wire  encoder_1_io_sinSign; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_cosOut; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_sinOut; // @[sincosLUT3.scala 71:15]
+  wire  encoder_1_io_ENout; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_xFWD_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_1_io_xFWD_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_2_clock; // @[sincosLUT3.scala 71:15]
+  wire  encoder_2_reset; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_x_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_x_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_2_io_EN; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_cosIn; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_sinIn; // @[sincosLUT3.scala 71:15]
+  wire  encoder_2_io_cosSign; // @[sincosLUT3.scala 71:15]
+  wire  encoder_2_io_sinSign; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_cosOut; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_sinOut; // @[sincosLUT3.scala 71:15]
+  wire  encoder_2_io_ENout; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_xFWD_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_2_io_xFWD_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_3_clock; // @[sincosLUT3.scala 71:15]
+  wire  encoder_3_reset; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_x_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_x_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_3_io_EN; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_cosIn; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_sinIn; // @[sincosLUT3.scala 71:15]
+  wire  encoder_3_io_cosSign; // @[sincosLUT3.scala 71:15]
+  wire  encoder_3_io_sinSign; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_cosOut; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_sinOut; // @[sincosLUT3.scala 71:15]
+  wire  encoder_3_io_ENout; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_xFWD_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_3_io_xFWD_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_4_clock; // @[sincosLUT3.scala 71:15]
+  wire  encoder_4_reset; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_x_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_x_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_4_io_EN; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_cosIn; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_sinIn; // @[sincosLUT3.scala 71:15]
+  wire  encoder_4_io_cosSign; // @[sincosLUT3.scala 71:15]
+  wire  encoder_4_io_sinSign; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_cosOut; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_sinOut; // @[sincosLUT3.scala 71:15]
+  wire  encoder_4_io_ENout; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_xFWD_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_4_io_xFWD_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_5_clock; // @[sincosLUT3.scala 71:15]
+  wire  encoder_5_reset; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_x_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_x_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_5_io_EN; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_cosIn; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_sinIn; // @[sincosLUT3.scala 71:15]
+  wire  encoder_5_io_cosSign; // @[sincosLUT3.scala 71:15]
+  wire  encoder_5_io_sinSign; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_cosOut; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_sinOut; // @[sincosLUT3.scala 71:15]
+  wire  encoder_5_io_ENout; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_xFWD_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_5_io_xFWD_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_6_clock; // @[sincosLUT3.scala 71:15]
+  wire  encoder_6_reset; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_x_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_x_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_6_io_EN; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_cosIn; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_sinIn; // @[sincosLUT3.scala 71:15]
+  wire  encoder_6_io_cosSign; // @[sincosLUT3.scala 71:15]
+  wire  encoder_6_io_sinSign; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_cosOut; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_sinOut; // @[sincosLUT3.scala 71:15]
+  wire  encoder_6_io_ENout; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_xFWD_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_6_io_xFWD_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_7_clock; // @[sincosLUT3.scala 71:15]
+  wire  encoder_7_reset; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_x_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_x_1; // @[sincosLUT3.scala 71:15]
+  wire  encoder_7_io_EN; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_cosIn; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_sinIn; // @[sincosLUT3.scala 71:15]
+  wire  encoder_7_io_cosSign; // @[sincosLUT3.scala 71:15]
+  wire  encoder_7_io_sinSign; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_cosOut; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_sinOut; // @[sincosLUT3.scala 71:15]
+  wire  encoder_7_io_ENout; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_xFWD_0; // @[sincosLUT3.scala 71:15]
+  wire [31:0] encoder_7_io_xFWD_1; // @[sincosLUT3.scala 71:15]
   dualPortIndexCalculatorV2 dualPortIndexCalculatorV2 ( // @[sincosLUT3.scala 67:15]
     .clock(dualPortIndexCalculatorV2_clock),
     .reset(dualPortIndexCalculatorV2_reset),
@@ -11971,23 +13021,212 @@ module multiPortSinCosModuleV2(
     .io_xFWD_0(dualPortIndexCalculatorV2_io_xFWD_0),
     .io_xFWD_1(dualPortIndexCalculatorV2_io_xFWD_1)
   );
+  dualPortIndexCalculatorV2 dualPortIndexCalculatorV2_1 ( // @[sincosLUT3.scala 67:15]
+    .clock(dualPortIndexCalculatorV2_1_clock),
+    .reset(dualPortIndexCalculatorV2_1_reset),
+    .io_x_0(dualPortIndexCalculatorV2_1_io_x_0),
+    .io_x_1(dualPortIndexCalculatorV2_1_io_x_1),
+    .io_EN(dualPortIndexCalculatorV2_1_io_EN),
+    .io_angle(dualPortIndexCalculatorV2_1_io_angle),
+    .io_cosIndex(dualPortIndexCalculatorV2_1_io_cosIndex),
+    .io_sinIndex(dualPortIndexCalculatorV2_1_io_sinIndex),
+    .io_cosSign(dualPortIndexCalculatorV2_1_io_cosSign),
+    .io_sinSign(dualPortIndexCalculatorV2_1_io_sinSign),
+    .io_ENout(dualPortIndexCalculatorV2_1_io_ENout),
+    .io_xFWD_0(dualPortIndexCalculatorV2_1_io_xFWD_0),
+    .io_xFWD_1(dualPortIndexCalculatorV2_1_io_xFWD_1)
+  );
+  dualPortIndexCalculatorV2 dualPortIndexCalculatorV2_2 ( // @[sincosLUT3.scala 67:15]
+    .clock(dualPortIndexCalculatorV2_2_clock),
+    .reset(dualPortIndexCalculatorV2_2_reset),
+    .io_x_0(dualPortIndexCalculatorV2_2_io_x_0),
+    .io_x_1(dualPortIndexCalculatorV2_2_io_x_1),
+    .io_EN(dualPortIndexCalculatorV2_2_io_EN),
+    .io_angle(dualPortIndexCalculatorV2_2_io_angle),
+    .io_cosIndex(dualPortIndexCalculatorV2_2_io_cosIndex),
+    .io_sinIndex(dualPortIndexCalculatorV2_2_io_sinIndex),
+    .io_cosSign(dualPortIndexCalculatorV2_2_io_cosSign),
+    .io_sinSign(dualPortIndexCalculatorV2_2_io_sinSign),
+    .io_ENout(dualPortIndexCalculatorV2_2_io_ENout),
+    .io_xFWD_0(dualPortIndexCalculatorV2_2_io_xFWD_0),
+    .io_xFWD_1(dualPortIndexCalculatorV2_2_io_xFWD_1)
+  );
+  dualPortIndexCalculatorV2 dualPortIndexCalculatorV2_3 ( // @[sincosLUT3.scala 67:15]
+    .clock(dualPortIndexCalculatorV2_3_clock),
+    .reset(dualPortIndexCalculatorV2_3_reset),
+    .io_x_0(dualPortIndexCalculatorV2_3_io_x_0),
+    .io_x_1(dualPortIndexCalculatorV2_3_io_x_1),
+    .io_EN(dualPortIndexCalculatorV2_3_io_EN),
+    .io_angle(dualPortIndexCalculatorV2_3_io_angle),
+    .io_cosIndex(dualPortIndexCalculatorV2_3_io_cosIndex),
+    .io_sinIndex(dualPortIndexCalculatorV2_3_io_sinIndex),
+    .io_cosSign(dualPortIndexCalculatorV2_3_io_cosSign),
+    .io_sinSign(dualPortIndexCalculatorV2_3_io_sinSign),
+    .io_ENout(dualPortIndexCalculatorV2_3_io_ENout),
+    .io_xFWD_0(dualPortIndexCalculatorV2_3_io_xFWD_0),
+    .io_xFWD_1(dualPortIndexCalculatorV2_3_io_xFWD_1)
+  );
+  dualPortIndexCalculatorV2 dualPortIndexCalculatorV2_4 ( // @[sincosLUT3.scala 67:15]
+    .clock(dualPortIndexCalculatorV2_4_clock),
+    .reset(dualPortIndexCalculatorV2_4_reset),
+    .io_x_0(dualPortIndexCalculatorV2_4_io_x_0),
+    .io_x_1(dualPortIndexCalculatorV2_4_io_x_1),
+    .io_EN(dualPortIndexCalculatorV2_4_io_EN),
+    .io_angle(dualPortIndexCalculatorV2_4_io_angle),
+    .io_cosIndex(dualPortIndexCalculatorV2_4_io_cosIndex),
+    .io_sinIndex(dualPortIndexCalculatorV2_4_io_sinIndex),
+    .io_cosSign(dualPortIndexCalculatorV2_4_io_cosSign),
+    .io_sinSign(dualPortIndexCalculatorV2_4_io_sinSign),
+    .io_ENout(dualPortIndexCalculatorV2_4_io_ENout),
+    .io_xFWD_0(dualPortIndexCalculatorV2_4_io_xFWD_0),
+    .io_xFWD_1(dualPortIndexCalculatorV2_4_io_xFWD_1)
+  );
+  dualPortIndexCalculatorV2 dualPortIndexCalculatorV2_5 ( // @[sincosLUT3.scala 67:15]
+    .clock(dualPortIndexCalculatorV2_5_clock),
+    .reset(dualPortIndexCalculatorV2_5_reset),
+    .io_x_0(dualPortIndexCalculatorV2_5_io_x_0),
+    .io_x_1(dualPortIndexCalculatorV2_5_io_x_1),
+    .io_EN(dualPortIndexCalculatorV2_5_io_EN),
+    .io_angle(dualPortIndexCalculatorV2_5_io_angle),
+    .io_cosIndex(dualPortIndexCalculatorV2_5_io_cosIndex),
+    .io_sinIndex(dualPortIndexCalculatorV2_5_io_sinIndex),
+    .io_cosSign(dualPortIndexCalculatorV2_5_io_cosSign),
+    .io_sinSign(dualPortIndexCalculatorV2_5_io_sinSign),
+    .io_ENout(dualPortIndexCalculatorV2_5_io_ENout),
+    .io_xFWD_0(dualPortIndexCalculatorV2_5_io_xFWD_0),
+    .io_xFWD_1(dualPortIndexCalculatorV2_5_io_xFWD_1)
+  );
+  dualPortIndexCalculatorV2 dualPortIndexCalculatorV2_6 ( // @[sincosLUT3.scala 67:15]
+    .clock(dualPortIndexCalculatorV2_6_clock),
+    .reset(dualPortIndexCalculatorV2_6_reset),
+    .io_x_0(dualPortIndexCalculatorV2_6_io_x_0),
+    .io_x_1(dualPortIndexCalculatorV2_6_io_x_1),
+    .io_EN(dualPortIndexCalculatorV2_6_io_EN),
+    .io_angle(dualPortIndexCalculatorV2_6_io_angle),
+    .io_cosIndex(dualPortIndexCalculatorV2_6_io_cosIndex),
+    .io_sinIndex(dualPortIndexCalculatorV2_6_io_sinIndex),
+    .io_cosSign(dualPortIndexCalculatorV2_6_io_cosSign),
+    .io_sinSign(dualPortIndexCalculatorV2_6_io_sinSign),
+    .io_ENout(dualPortIndexCalculatorV2_6_io_ENout),
+    .io_xFWD_0(dualPortIndexCalculatorV2_6_io_xFWD_0),
+    .io_xFWD_1(dualPortIndexCalculatorV2_6_io_xFWD_1)
+  );
+  dualPortIndexCalculatorV2 dualPortIndexCalculatorV2_7 ( // @[sincosLUT3.scala 67:15]
+    .clock(dualPortIndexCalculatorV2_7_clock),
+    .reset(dualPortIndexCalculatorV2_7_reset),
+    .io_x_0(dualPortIndexCalculatorV2_7_io_x_0),
+    .io_x_1(dualPortIndexCalculatorV2_7_io_x_1),
+    .io_EN(dualPortIndexCalculatorV2_7_io_EN),
+    .io_angle(dualPortIndexCalculatorV2_7_io_angle),
+    .io_cosIndex(dualPortIndexCalculatorV2_7_io_cosIndex),
+    .io_sinIndex(dualPortIndexCalculatorV2_7_io_sinIndex),
+    .io_cosSign(dualPortIndexCalculatorV2_7_io_cosSign),
+    .io_sinSign(dualPortIndexCalculatorV2_7_io_sinSign),
+    .io_ENout(dualPortIndexCalculatorV2_7_io_ENout),
+    .io_xFWD_0(dualPortIndexCalculatorV2_7_io_xFWD_0),
+    .io_xFWD_1(dualPortIndexCalculatorV2_7_io_xFWD_1)
+  );
   multiPortCOSlut lutModule ( // @[sincosLUT3.scala 69:27]
     .clock(lutModule_clock),
     .reset(lutModule_reset),
     .io_EN(lutModule_io_EN),
     .io_x_0_0(lutModule_io_x_0_0),
     .io_x_0_1(lutModule_io_x_0_1),
+    .io_x_1_0(lutModule_io_x_1_0),
+    .io_x_1_1(lutModule_io_x_1_1),
+    .io_x_2_0(lutModule_io_x_2_0),
+    .io_x_2_1(lutModule_io_x_2_1),
+    .io_x_3_0(lutModule_io_x_3_0),
+    .io_x_3_1(lutModule_io_x_3_1),
+    .io_x_4_0(lutModule_io_x_4_0),
+    .io_x_4_1(lutModule_io_x_4_1),
+    .io_x_5_0(lutModule_io_x_5_0),
+    .io_x_5_1(lutModule_io_x_5_1),
+    .io_x_6_0(lutModule_io_x_6_0),
+    .io_x_6_1(lutModule_io_x_6_1),
+    .io_x_7_0(lutModule_io_x_7_0),
+    .io_x_7_1(lutModule_io_x_7_1),
     .io_cosIndex_0(lutModule_io_cosIndex_0),
+    .io_cosIndex_1(lutModule_io_cosIndex_1),
+    .io_cosIndex_2(lutModule_io_cosIndex_2),
+    .io_cosIndex_3(lutModule_io_cosIndex_3),
+    .io_cosIndex_4(lutModule_io_cosIndex_4),
+    .io_cosIndex_5(lutModule_io_cosIndex_5),
+    .io_cosIndex_6(lutModule_io_cosIndex_6),
+    .io_cosIndex_7(lutModule_io_cosIndex_7),
     .io_sinIndex_0(lutModule_io_sinIndex_0),
+    .io_sinIndex_1(lutModule_io_sinIndex_1),
+    .io_sinIndex_2(lutModule_io_sinIndex_2),
+    .io_sinIndex_3(lutModule_io_sinIndex_3),
+    .io_sinIndex_4(lutModule_io_sinIndex_4),
+    .io_sinIndex_5(lutModule_io_sinIndex_5),
+    .io_sinIndex_6(lutModule_io_sinIndex_6),
+    .io_sinIndex_7(lutModule_io_sinIndex_7),
     .io_sign_0_0(lutModule_io_sign_0_0),
     .io_sign_0_1(lutModule_io_sign_0_1),
+    .io_sign_1_0(lutModule_io_sign_1_0),
+    .io_sign_1_1(lutModule_io_sign_1_1),
+    .io_sign_2_0(lutModule_io_sign_2_0),
+    .io_sign_2_1(lutModule_io_sign_2_1),
+    .io_sign_3_0(lutModule_io_sign_3_0),
+    .io_sign_3_1(lutModule_io_sign_3_1),
+    .io_sign_4_0(lutModule_io_sign_4_0),
+    .io_sign_4_1(lutModule_io_sign_4_1),
+    .io_sign_5_0(lutModule_io_sign_5_0),
+    .io_sign_5_1(lutModule_io_sign_5_1),
+    .io_sign_6_0(lutModule_io_sign_6_0),
+    .io_sign_6_1(lutModule_io_sign_6_1),
+    .io_sign_7_0(lutModule_io_sign_7_0),
+    .io_sign_7_1(lutModule_io_sign_7_1),
     .io_sinOut_0(lutModule_io_sinOut_0),
+    .io_sinOut_1(lutModule_io_sinOut_1),
+    .io_sinOut_2(lutModule_io_sinOut_2),
+    .io_sinOut_3(lutModule_io_sinOut_3),
+    .io_sinOut_4(lutModule_io_sinOut_4),
+    .io_sinOut_5(lutModule_io_sinOut_5),
+    .io_sinOut_6(lutModule_io_sinOut_6),
+    .io_sinOut_7(lutModule_io_sinOut_7),
     .io_cosOut_0(lutModule_io_cosOut_0),
+    .io_cosOut_1(lutModule_io_cosOut_1),
+    .io_cosOut_2(lutModule_io_cosOut_2),
+    .io_cosOut_3(lutModule_io_cosOut_3),
+    .io_cosOut_4(lutModule_io_cosOut_4),
+    .io_cosOut_5(lutModule_io_cosOut_5),
+    .io_cosOut_6(lutModule_io_cosOut_6),
+    .io_cosOut_7(lutModule_io_cosOut_7),
     .io_ENout(lutModule_io_ENout),
     .io_xFWD_0_0(lutModule_io_xFWD_0_0),
     .io_xFWD_0_1(lutModule_io_xFWD_0_1),
+    .io_xFWD_1_0(lutModule_io_xFWD_1_0),
+    .io_xFWD_1_1(lutModule_io_xFWD_1_1),
+    .io_xFWD_2_0(lutModule_io_xFWD_2_0),
+    .io_xFWD_2_1(lutModule_io_xFWD_2_1),
+    .io_xFWD_3_0(lutModule_io_xFWD_3_0),
+    .io_xFWD_3_1(lutModule_io_xFWD_3_1),
+    .io_xFWD_4_0(lutModule_io_xFWD_4_0),
+    .io_xFWD_4_1(lutModule_io_xFWD_4_1),
+    .io_xFWD_5_0(lutModule_io_xFWD_5_0),
+    .io_xFWD_5_1(lutModule_io_xFWD_5_1),
+    .io_xFWD_6_0(lutModule_io_xFWD_6_0),
+    .io_xFWD_6_1(lutModule_io_xFWD_6_1),
+    .io_xFWD_7_0(lutModule_io_xFWD_7_0),
+    .io_xFWD_7_1(lutModule_io_xFWD_7_1),
     .io_signFWD_0_0(lutModule_io_signFWD_0_0),
-    .io_signFWD_0_1(lutModule_io_signFWD_0_1)
+    .io_signFWD_0_1(lutModule_io_signFWD_0_1),
+    .io_signFWD_1_0(lutModule_io_signFWD_1_0),
+    .io_signFWD_1_1(lutModule_io_signFWD_1_1),
+    .io_signFWD_2_0(lutModule_io_signFWD_2_0),
+    .io_signFWD_2_1(lutModule_io_signFWD_2_1),
+    .io_signFWD_3_0(lutModule_io_signFWD_3_0),
+    .io_signFWD_3_1(lutModule_io_signFWD_3_1),
+    .io_signFWD_4_0(lutModule_io_signFWD_4_0),
+    .io_signFWD_4_1(lutModule_io_signFWD_4_1),
+    .io_signFWD_5_0(lutModule_io_signFWD_5_0),
+    .io_signFWD_5_1(lutModule_io_signFWD_5_1),
+    .io_signFWD_6_0(lutModule_io_signFWD_6_0),
+    .io_signFWD_6_1(lutModule_io_signFWD_6_1),
+    .io_signFWD_7_0(lutModule_io_signFWD_7_0),
+    .io_signFWD_7_1(lutModule_io_signFWD_7_1)
   );
   encoder encoder ( // @[sincosLUT3.scala 71:15]
     .clock(encoder_clock),
@@ -12005,26 +13244,250 @@ module multiPortSinCosModuleV2(
     .io_xFWD_0(encoder_io_xFWD_0),
     .io_xFWD_1(encoder_io_xFWD_1)
   );
+  encoder encoder_1 ( // @[sincosLUT3.scala 71:15]
+    .clock(encoder_1_clock),
+    .reset(encoder_1_reset),
+    .io_x_0(encoder_1_io_x_0),
+    .io_x_1(encoder_1_io_x_1),
+    .io_EN(encoder_1_io_EN),
+    .io_cosIn(encoder_1_io_cosIn),
+    .io_sinIn(encoder_1_io_sinIn),
+    .io_cosSign(encoder_1_io_cosSign),
+    .io_sinSign(encoder_1_io_sinSign),
+    .io_cosOut(encoder_1_io_cosOut),
+    .io_sinOut(encoder_1_io_sinOut),
+    .io_ENout(encoder_1_io_ENout),
+    .io_xFWD_0(encoder_1_io_xFWD_0),
+    .io_xFWD_1(encoder_1_io_xFWD_1)
+  );
+  encoder encoder_2 ( // @[sincosLUT3.scala 71:15]
+    .clock(encoder_2_clock),
+    .reset(encoder_2_reset),
+    .io_x_0(encoder_2_io_x_0),
+    .io_x_1(encoder_2_io_x_1),
+    .io_EN(encoder_2_io_EN),
+    .io_cosIn(encoder_2_io_cosIn),
+    .io_sinIn(encoder_2_io_sinIn),
+    .io_cosSign(encoder_2_io_cosSign),
+    .io_sinSign(encoder_2_io_sinSign),
+    .io_cosOut(encoder_2_io_cosOut),
+    .io_sinOut(encoder_2_io_sinOut),
+    .io_ENout(encoder_2_io_ENout),
+    .io_xFWD_0(encoder_2_io_xFWD_0),
+    .io_xFWD_1(encoder_2_io_xFWD_1)
+  );
+  encoder encoder_3 ( // @[sincosLUT3.scala 71:15]
+    .clock(encoder_3_clock),
+    .reset(encoder_3_reset),
+    .io_x_0(encoder_3_io_x_0),
+    .io_x_1(encoder_3_io_x_1),
+    .io_EN(encoder_3_io_EN),
+    .io_cosIn(encoder_3_io_cosIn),
+    .io_sinIn(encoder_3_io_sinIn),
+    .io_cosSign(encoder_3_io_cosSign),
+    .io_sinSign(encoder_3_io_sinSign),
+    .io_cosOut(encoder_3_io_cosOut),
+    .io_sinOut(encoder_3_io_sinOut),
+    .io_ENout(encoder_3_io_ENout),
+    .io_xFWD_0(encoder_3_io_xFWD_0),
+    .io_xFWD_1(encoder_3_io_xFWD_1)
+  );
+  encoder encoder_4 ( // @[sincosLUT3.scala 71:15]
+    .clock(encoder_4_clock),
+    .reset(encoder_4_reset),
+    .io_x_0(encoder_4_io_x_0),
+    .io_x_1(encoder_4_io_x_1),
+    .io_EN(encoder_4_io_EN),
+    .io_cosIn(encoder_4_io_cosIn),
+    .io_sinIn(encoder_4_io_sinIn),
+    .io_cosSign(encoder_4_io_cosSign),
+    .io_sinSign(encoder_4_io_sinSign),
+    .io_cosOut(encoder_4_io_cosOut),
+    .io_sinOut(encoder_4_io_sinOut),
+    .io_ENout(encoder_4_io_ENout),
+    .io_xFWD_0(encoder_4_io_xFWD_0),
+    .io_xFWD_1(encoder_4_io_xFWD_1)
+  );
+  encoder encoder_5 ( // @[sincosLUT3.scala 71:15]
+    .clock(encoder_5_clock),
+    .reset(encoder_5_reset),
+    .io_x_0(encoder_5_io_x_0),
+    .io_x_1(encoder_5_io_x_1),
+    .io_EN(encoder_5_io_EN),
+    .io_cosIn(encoder_5_io_cosIn),
+    .io_sinIn(encoder_5_io_sinIn),
+    .io_cosSign(encoder_5_io_cosSign),
+    .io_sinSign(encoder_5_io_sinSign),
+    .io_cosOut(encoder_5_io_cosOut),
+    .io_sinOut(encoder_5_io_sinOut),
+    .io_ENout(encoder_5_io_ENout),
+    .io_xFWD_0(encoder_5_io_xFWD_0),
+    .io_xFWD_1(encoder_5_io_xFWD_1)
+  );
+  encoder encoder_6 ( // @[sincosLUT3.scala 71:15]
+    .clock(encoder_6_clock),
+    .reset(encoder_6_reset),
+    .io_x_0(encoder_6_io_x_0),
+    .io_x_1(encoder_6_io_x_1),
+    .io_EN(encoder_6_io_EN),
+    .io_cosIn(encoder_6_io_cosIn),
+    .io_sinIn(encoder_6_io_sinIn),
+    .io_cosSign(encoder_6_io_cosSign),
+    .io_sinSign(encoder_6_io_sinSign),
+    .io_cosOut(encoder_6_io_cosOut),
+    .io_sinOut(encoder_6_io_sinOut),
+    .io_ENout(encoder_6_io_ENout),
+    .io_xFWD_0(encoder_6_io_xFWD_0),
+    .io_xFWD_1(encoder_6_io_xFWD_1)
+  );
+  encoder encoder_7 ( // @[sincosLUT3.scala 71:15]
+    .clock(encoder_7_clock),
+    .reset(encoder_7_reset),
+    .io_x_0(encoder_7_io_x_0),
+    .io_x_1(encoder_7_io_x_1),
+    .io_EN(encoder_7_io_EN),
+    .io_cosIn(encoder_7_io_cosIn),
+    .io_sinIn(encoder_7_io_sinIn),
+    .io_cosSign(encoder_7_io_cosSign),
+    .io_sinSign(encoder_7_io_sinSign),
+    .io_cosOut(encoder_7_io_cosOut),
+    .io_sinOut(encoder_7_io_sinOut),
+    .io_ENout(encoder_7_io_ENout),
+    .io_xFWD_0(encoder_7_io_xFWD_0),
+    .io_xFWD_1(encoder_7_io_xFWD_1)
+  );
   assign io_sinOut_0 = encoder_io_sinOut; // @[sincosLUT3.scala 110:23]
+  assign io_sinOut_1 = encoder_1_io_sinOut; // @[sincosLUT3.scala 110:23]
+  assign io_sinOut_2 = encoder_2_io_sinOut; // @[sincosLUT3.scala 110:23]
+  assign io_sinOut_3 = encoder_3_io_sinOut; // @[sincosLUT3.scala 110:23]
+  assign io_sinOut_4 = encoder_4_io_sinOut; // @[sincosLUT3.scala 110:23]
+  assign io_sinOut_5 = encoder_5_io_sinOut; // @[sincosLUT3.scala 110:23]
+  assign io_sinOut_6 = encoder_6_io_sinOut; // @[sincosLUT3.scala 110:23]
+  assign io_sinOut_7 = encoder_7_io_sinOut; // @[sincosLUT3.scala 110:23]
   assign io_cosOut_0 = encoder_io_cosOut; // @[sincosLUT3.scala 109:23]
+  assign io_cosOut_1 = encoder_1_io_cosOut; // @[sincosLUT3.scala 109:23]
+  assign io_cosOut_2 = encoder_2_io_cosOut; // @[sincosLUT3.scala 109:23]
+  assign io_cosOut_3 = encoder_3_io_cosOut; // @[sincosLUT3.scala 109:23]
+  assign io_cosOut_4 = encoder_4_io_cosOut; // @[sincosLUT3.scala 109:23]
+  assign io_cosOut_5 = encoder_5_io_cosOut; // @[sincosLUT3.scala 109:23]
+  assign io_cosOut_6 = encoder_6_io_cosOut; // @[sincosLUT3.scala 109:23]
+  assign io_cosOut_7 = encoder_7_io_cosOut; // @[sincosLUT3.scala 109:23]
   assign io_ENout = encoder_io_ENout; // @[sincosLUT3.scala 105:23]
   assign io_xFWD_0_0 = encoder_io_xFWD_0; // @[sincosLUT3.scala 107:23]
   assign io_xFWD_0_1 = encoder_io_xFWD_1; // @[sincosLUT3.scala 108:23]
+  assign io_xFWD_1_0 = encoder_1_io_xFWD_0; // @[sincosLUT3.scala 107:23]
+  assign io_xFWD_1_1 = encoder_1_io_xFWD_1; // @[sincosLUT3.scala 108:23]
+  assign io_xFWD_2_0 = encoder_2_io_xFWD_0; // @[sincosLUT3.scala 107:23]
+  assign io_xFWD_2_1 = encoder_2_io_xFWD_1; // @[sincosLUT3.scala 108:23]
+  assign io_xFWD_3_0 = encoder_3_io_xFWD_0; // @[sincosLUT3.scala 107:23]
+  assign io_xFWD_3_1 = encoder_3_io_xFWD_1; // @[sincosLUT3.scala 108:23]
+  assign io_xFWD_4_0 = encoder_4_io_xFWD_0; // @[sincosLUT3.scala 107:23]
+  assign io_xFWD_4_1 = encoder_4_io_xFWD_1; // @[sincosLUT3.scala 108:23]
+  assign io_xFWD_5_0 = encoder_5_io_xFWD_0; // @[sincosLUT3.scala 107:23]
+  assign io_xFWD_5_1 = encoder_5_io_xFWD_1; // @[sincosLUT3.scala 108:23]
+  assign io_xFWD_6_0 = encoder_6_io_xFWD_0; // @[sincosLUT3.scala 107:23]
+  assign io_xFWD_6_1 = encoder_6_io_xFWD_1; // @[sincosLUT3.scala 108:23]
+  assign io_xFWD_7_0 = encoder_7_io_xFWD_0; // @[sincosLUT3.scala 107:23]
+  assign io_xFWD_7_1 = encoder_7_io_xFWD_1; // @[sincosLUT3.scala 108:23]
   assign dualPortIndexCalculatorV2_clock = clock;
   assign dualPortIndexCalculatorV2_reset = reset;
   assign dualPortIndexCalculatorV2_io_x_0 = io_x_0_0; // @[sincosLUT3.scala 77:37]
   assign dualPortIndexCalculatorV2_io_x_1 = io_x_0_1; // @[sincosLUT3.scala 78:37]
   assign dualPortIndexCalculatorV2_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
   assign dualPortIndexCalculatorV2_io_angle = io_angle_0; // @[sincosLUT3.scala 79:37]
+  assign dualPortIndexCalculatorV2_1_clock = clock;
+  assign dualPortIndexCalculatorV2_1_reset = reset;
+  assign dualPortIndexCalculatorV2_1_io_x_0 = io_x_1_0; // @[sincosLUT3.scala 77:37]
+  assign dualPortIndexCalculatorV2_1_io_x_1 = io_x_1_1; // @[sincosLUT3.scala 78:37]
+  assign dualPortIndexCalculatorV2_1_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
+  assign dualPortIndexCalculatorV2_1_io_angle = io_angle_1; // @[sincosLUT3.scala 79:37]
+  assign dualPortIndexCalculatorV2_2_clock = clock;
+  assign dualPortIndexCalculatorV2_2_reset = reset;
+  assign dualPortIndexCalculatorV2_2_io_x_0 = io_x_2_0; // @[sincosLUT3.scala 77:37]
+  assign dualPortIndexCalculatorV2_2_io_x_1 = io_x_2_1; // @[sincosLUT3.scala 78:37]
+  assign dualPortIndexCalculatorV2_2_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
+  assign dualPortIndexCalculatorV2_2_io_angle = io_angle_2; // @[sincosLUT3.scala 79:37]
+  assign dualPortIndexCalculatorV2_3_clock = clock;
+  assign dualPortIndexCalculatorV2_3_reset = reset;
+  assign dualPortIndexCalculatorV2_3_io_x_0 = io_x_3_0; // @[sincosLUT3.scala 77:37]
+  assign dualPortIndexCalculatorV2_3_io_x_1 = io_x_3_1; // @[sincosLUT3.scala 78:37]
+  assign dualPortIndexCalculatorV2_3_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
+  assign dualPortIndexCalculatorV2_3_io_angle = io_angle_3; // @[sincosLUT3.scala 79:37]
+  assign dualPortIndexCalculatorV2_4_clock = clock;
+  assign dualPortIndexCalculatorV2_4_reset = reset;
+  assign dualPortIndexCalculatorV2_4_io_x_0 = io_x_4_0; // @[sincosLUT3.scala 77:37]
+  assign dualPortIndexCalculatorV2_4_io_x_1 = io_x_4_1; // @[sincosLUT3.scala 78:37]
+  assign dualPortIndexCalculatorV2_4_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
+  assign dualPortIndexCalculatorV2_4_io_angle = io_angle_4; // @[sincosLUT3.scala 79:37]
+  assign dualPortIndexCalculatorV2_5_clock = clock;
+  assign dualPortIndexCalculatorV2_5_reset = reset;
+  assign dualPortIndexCalculatorV2_5_io_x_0 = io_x_5_0; // @[sincosLUT3.scala 77:37]
+  assign dualPortIndexCalculatorV2_5_io_x_1 = io_x_5_1; // @[sincosLUT3.scala 78:37]
+  assign dualPortIndexCalculatorV2_5_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
+  assign dualPortIndexCalculatorV2_5_io_angle = io_angle_5; // @[sincosLUT3.scala 79:37]
+  assign dualPortIndexCalculatorV2_6_clock = clock;
+  assign dualPortIndexCalculatorV2_6_reset = reset;
+  assign dualPortIndexCalculatorV2_6_io_x_0 = io_x_6_0; // @[sincosLUT3.scala 77:37]
+  assign dualPortIndexCalculatorV2_6_io_x_1 = io_x_6_1; // @[sincosLUT3.scala 78:37]
+  assign dualPortIndexCalculatorV2_6_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
+  assign dualPortIndexCalculatorV2_6_io_angle = io_angle_6; // @[sincosLUT3.scala 79:37]
+  assign dualPortIndexCalculatorV2_7_clock = clock;
+  assign dualPortIndexCalculatorV2_7_reset = reset;
+  assign dualPortIndexCalculatorV2_7_io_x_0 = io_x_7_0; // @[sincosLUT3.scala 77:37]
+  assign dualPortIndexCalculatorV2_7_io_x_1 = io_x_7_1; // @[sincosLUT3.scala 78:37]
+  assign dualPortIndexCalculatorV2_7_io_EN = io_EN; // @[sincosLUT3.scala 76:37]
+  assign dualPortIndexCalculatorV2_7_io_angle = io_angle_7; // @[sincosLUT3.scala 79:37]
   assign lutModule_clock = clock;
   assign lutModule_reset = reset;
   assign lutModule_io_EN = dualPortIndexCalculatorV2_io_ENout; // @[sincosLUT3.scala 83:37]
   assign lutModule_io_x_0_0 = dualPortIndexCalculatorV2_io_xFWD_0; // @[sincosLUT3.scala 85:37]
   assign lutModule_io_x_0_1 = dualPortIndexCalculatorV2_io_xFWD_1; // @[sincosLUT3.scala 86:37]
+  assign lutModule_io_x_1_0 = dualPortIndexCalculatorV2_1_io_xFWD_0; // @[sincosLUT3.scala 85:37]
+  assign lutModule_io_x_1_1 = dualPortIndexCalculatorV2_1_io_xFWD_1; // @[sincosLUT3.scala 86:37]
+  assign lutModule_io_x_2_0 = dualPortIndexCalculatorV2_2_io_xFWD_0; // @[sincosLUT3.scala 85:37]
+  assign lutModule_io_x_2_1 = dualPortIndexCalculatorV2_2_io_xFWD_1; // @[sincosLUT3.scala 86:37]
+  assign lutModule_io_x_3_0 = dualPortIndexCalculatorV2_3_io_xFWD_0; // @[sincosLUT3.scala 85:37]
+  assign lutModule_io_x_3_1 = dualPortIndexCalculatorV2_3_io_xFWD_1; // @[sincosLUT3.scala 86:37]
+  assign lutModule_io_x_4_0 = dualPortIndexCalculatorV2_4_io_xFWD_0; // @[sincosLUT3.scala 85:37]
+  assign lutModule_io_x_4_1 = dualPortIndexCalculatorV2_4_io_xFWD_1; // @[sincosLUT3.scala 86:37]
+  assign lutModule_io_x_5_0 = dualPortIndexCalculatorV2_5_io_xFWD_0; // @[sincosLUT3.scala 85:37]
+  assign lutModule_io_x_5_1 = dualPortIndexCalculatorV2_5_io_xFWD_1; // @[sincosLUT3.scala 86:37]
+  assign lutModule_io_x_6_0 = dualPortIndexCalculatorV2_6_io_xFWD_0; // @[sincosLUT3.scala 85:37]
+  assign lutModule_io_x_6_1 = dualPortIndexCalculatorV2_6_io_xFWD_1; // @[sincosLUT3.scala 86:37]
+  assign lutModule_io_x_7_0 = dualPortIndexCalculatorV2_7_io_xFWD_0; // @[sincosLUT3.scala 85:37]
+  assign lutModule_io_x_7_1 = dualPortIndexCalculatorV2_7_io_xFWD_1; // @[sincosLUT3.scala 86:37]
   assign lutModule_io_cosIndex_0 = dualPortIndexCalculatorV2_io_cosIndex; // @[sincosLUT3.scala 87:37]
+  assign lutModule_io_cosIndex_1 = dualPortIndexCalculatorV2_1_io_cosIndex; // @[sincosLUT3.scala 87:37]
+  assign lutModule_io_cosIndex_2 = dualPortIndexCalculatorV2_2_io_cosIndex; // @[sincosLUT3.scala 87:37]
+  assign lutModule_io_cosIndex_3 = dualPortIndexCalculatorV2_3_io_cosIndex; // @[sincosLUT3.scala 87:37]
+  assign lutModule_io_cosIndex_4 = dualPortIndexCalculatorV2_4_io_cosIndex; // @[sincosLUT3.scala 87:37]
+  assign lutModule_io_cosIndex_5 = dualPortIndexCalculatorV2_5_io_cosIndex; // @[sincosLUT3.scala 87:37]
+  assign lutModule_io_cosIndex_6 = dualPortIndexCalculatorV2_6_io_cosIndex; // @[sincosLUT3.scala 87:37]
+  assign lutModule_io_cosIndex_7 = dualPortIndexCalculatorV2_7_io_cosIndex; // @[sincosLUT3.scala 87:37]
   assign lutModule_io_sinIndex_0 = dualPortIndexCalculatorV2_io_sinIndex; // @[sincosLUT3.scala 88:37]
+  assign lutModule_io_sinIndex_1 = dualPortIndexCalculatorV2_1_io_sinIndex; // @[sincosLUT3.scala 88:37]
+  assign lutModule_io_sinIndex_2 = dualPortIndexCalculatorV2_2_io_sinIndex; // @[sincosLUT3.scala 88:37]
+  assign lutModule_io_sinIndex_3 = dualPortIndexCalculatorV2_3_io_sinIndex; // @[sincosLUT3.scala 88:37]
+  assign lutModule_io_sinIndex_4 = dualPortIndexCalculatorV2_4_io_sinIndex; // @[sincosLUT3.scala 88:37]
+  assign lutModule_io_sinIndex_5 = dualPortIndexCalculatorV2_5_io_sinIndex; // @[sincosLUT3.scala 88:37]
+  assign lutModule_io_sinIndex_6 = dualPortIndexCalculatorV2_6_io_sinIndex; // @[sincosLUT3.scala 88:37]
+  assign lutModule_io_sinIndex_7 = dualPortIndexCalculatorV2_7_io_sinIndex; // @[sincosLUT3.scala 88:37]
   assign lutModule_io_sign_0_0 = dualPortIndexCalculatorV2_io_cosSign; // @[sincosLUT3.scala 89:37]
   assign lutModule_io_sign_0_1 = dualPortIndexCalculatorV2_io_sinSign; // @[sincosLUT3.scala 90:37]
+  assign lutModule_io_sign_1_0 = dualPortIndexCalculatorV2_1_io_cosSign; // @[sincosLUT3.scala 89:37]
+  assign lutModule_io_sign_1_1 = dualPortIndexCalculatorV2_1_io_sinSign; // @[sincosLUT3.scala 90:37]
+  assign lutModule_io_sign_2_0 = dualPortIndexCalculatorV2_2_io_cosSign; // @[sincosLUT3.scala 89:37]
+  assign lutModule_io_sign_2_1 = dualPortIndexCalculatorV2_2_io_sinSign; // @[sincosLUT3.scala 90:37]
+  assign lutModule_io_sign_3_0 = dualPortIndexCalculatorV2_3_io_cosSign; // @[sincosLUT3.scala 89:37]
+  assign lutModule_io_sign_3_1 = dualPortIndexCalculatorV2_3_io_sinSign; // @[sincosLUT3.scala 90:37]
+  assign lutModule_io_sign_4_0 = dualPortIndexCalculatorV2_4_io_cosSign; // @[sincosLUT3.scala 89:37]
+  assign lutModule_io_sign_4_1 = dualPortIndexCalculatorV2_4_io_sinSign; // @[sincosLUT3.scala 90:37]
+  assign lutModule_io_sign_5_0 = dualPortIndexCalculatorV2_5_io_cosSign; // @[sincosLUT3.scala 89:37]
+  assign lutModule_io_sign_5_1 = dualPortIndexCalculatorV2_5_io_sinSign; // @[sincosLUT3.scala 90:37]
+  assign lutModule_io_sign_6_0 = dualPortIndexCalculatorV2_6_io_cosSign; // @[sincosLUT3.scala 89:37]
+  assign lutModule_io_sign_6_1 = dualPortIndexCalculatorV2_6_io_sinSign; // @[sincosLUT3.scala 90:37]
+  assign lutModule_io_sign_7_0 = dualPortIndexCalculatorV2_7_io_cosSign; // @[sincosLUT3.scala 89:37]
+  assign lutModule_io_sign_7_1 = dualPortIndexCalculatorV2_7_io_sinSign; // @[sincosLUT3.scala 90:37]
   assign encoder_clock = clock;
   assign encoder_reset = reset;
   assign encoder_io_x_0 = lutModule_io_xFWD_0_0; // @[sincosLUT3.scala 96:31]
@@ -12034,6 +13497,69 @@ module multiPortSinCosModuleV2(
   assign encoder_io_sinIn = lutModule_io_sinOut_0; // @[sincosLUT3.scala 99:31]
   assign encoder_io_cosSign = lutModule_io_signFWD_0_0; // @[sincosLUT3.scala 100:31]
   assign encoder_io_sinSign = lutModule_io_signFWD_0_1; // @[sincosLUT3.scala 101:31]
+  assign encoder_1_clock = clock;
+  assign encoder_1_reset = reset;
+  assign encoder_1_io_x_0 = lutModule_io_xFWD_1_0; // @[sincosLUT3.scala 96:31]
+  assign encoder_1_io_x_1 = lutModule_io_xFWD_1_1; // @[sincosLUT3.scala 97:31]
+  assign encoder_1_io_EN = lutModule_io_ENout; // @[sincosLUT3.scala 95:31]
+  assign encoder_1_io_cosIn = lutModule_io_cosOut_1; // @[sincosLUT3.scala 98:31]
+  assign encoder_1_io_sinIn = lutModule_io_sinOut_1; // @[sincosLUT3.scala 99:31]
+  assign encoder_1_io_cosSign = lutModule_io_signFWD_1_0; // @[sincosLUT3.scala 100:31]
+  assign encoder_1_io_sinSign = lutModule_io_signFWD_1_1; // @[sincosLUT3.scala 101:31]
+  assign encoder_2_clock = clock;
+  assign encoder_2_reset = reset;
+  assign encoder_2_io_x_0 = lutModule_io_xFWD_2_0; // @[sincosLUT3.scala 96:31]
+  assign encoder_2_io_x_1 = lutModule_io_xFWD_2_1; // @[sincosLUT3.scala 97:31]
+  assign encoder_2_io_EN = lutModule_io_ENout; // @[sincosLUT3.scala 95:31]
+  assign encoder_2_io_cosIn = lutModule_io_cosOut_2; // @[sincosLUT3.scala 98:31]
+  assign encoder_2_io_sinIn = lutModule_io_sinOut_2; // @[sincosLUT3.scala 99:31]
+  assign encoder_2_io_cosSign = lutModule_io_signFWD_2_0; // @[sincosLUT3.scala 100:31]
+  assign encoder_2_io_sinSign = lutModule_io_signFWD_2_1; // @[sincosLUT3.scala 101:31]
+  assign encoder_3_clock = clock;
+  assign encoder_3_reset = reset;
+  assign encoder_3_io_x_0 = lutModule_io_xFWD_3_0; // @[sincosLUT3.scala 96:31]
+  assign encoder_3_io_x_1 = lutModule_io_xFWD_3_1; // @[sincosLUT3.scala 97:31]
+  assign encoder_3_io_EN = lutModule_io_ENout; // @[sincosLUT3.scala 95:31]
+  assign encoder_3_io_cosIn = lutModule_io_cosOut_3; // @[sincosLUT3.scala 98:31]
+  assign encoder_3_io_sinIn = lutModule_io_sinOut_3; // @[sincosLUT3.scala 99:31]
+  assign encoder_3_io_cosSign = lutModule_io_signFWD_3_0; // @[sincosLUT3.scala 100:31]
+  assign encoder_3_io_sinSign = lutModule_io_signFWD_3_1; // @[sincosLUT3.scala 101:31]
+  assign encoder_4_clock = clock;
+  assign encoder_4_reset = reset;
+  assign encoder_4_io_x_0 = lutModule_io_xFWD_4_0; // @[sincosLUT3.scala 96:31]
+  assign encoder_4_io_x_1 = lutModule_io_xFWD_4_1; // @[sincosLUT3.scala 97:31]
+  assign encoder_4_io_EN = lutModule_io_ENout; // @[sincosLUT3.scala 95:31]
+  assign encoder_4_io_cosIn = lutModule_io_cosOut_4; // @[sincosLUT3.scala 98:31]
+  assign encoder_4_io_sinIn = lutModule_io_sinOut_4; // @[sincosLUT3.scala 99:31]
+  assign encoder_4_io_cosSign = lutModule_io_signFWD_4_0; // @[sincosLUT3.scala 100:31]
+  assign encoder_4_io_sinSign = lutModule_io_signFWD_4_1; // @[sincosLUT3.scala 101:31]
+  assign encoder_5_clock = clock;
+  assign encoder_5_reset = reset;
+  assign encoder_5_io_x_0 = lutModule_io_xFWD_5_0; // @[sincosLUT3.scala 96:31]
+  assign encoder_5_io_x_1 = lutModule_io_xFWD_5_1; // @[sincosLUT3.scala 97:31]
+  assign encoder_5_io_EN = lutModule_io_ENout; // @[sincosLUT3.scala 95:31]
+  assign encoder_5_io_cosIn = lutModule_io_cosOut_5; // @[sincosLUT3.scala 98:31]
+  assign encoder_5_io_sinIn = lutModule_io_sinOut_5; // @[sincosLUT3.scala 99:31]
+  assign encoder_5_io_cosSign = lutModule_io_signFWD_5_0; // @[sincosLUT3.scala 100:31]
+  assign encoder_5_io_sinSign = lutModule_io_signFWD_5_1; // @[sincosLUT3.scala 101:31]
+  assign encoder_6_clock = clock;
+  assign encoder_6_reset = reset;
+  assign encoder_6_io_x_0 = lutModule_io_xFWD_6_0; // @[sincosLUT3.scala 96:31]
+  assign encoder_6_io_x_1 = lutModule_io_xFWD_6_1; // @[sincosLUT3.scala 97:31]
+  assign encoder_6_io_EN = lutModule_io_ENout; // @[sincosLUT3.scala 95:31]
+  assign encoder_6_io_cosIn = lutModule_io_cosOut_6; // @[sincosLUT3.scala 98:31]
+  assign encoder_6_io_sinIn = lutModule_io_sinOut_6; // @[sincosLUT3.scala 99:31]
+  assign encoder_6_io_cosSign = lutModule_io_signFWD_6_0; // @[sincosLUT3.scala 100:31]
+  assign encoder_6_io_sinSign = lutModule_io_signFWD_6_1; // @[sincosLUT3.scala 101:31]
+  assign encoder_7_clock = clock;
+  assign encoder_7_reset = reset;
+  assign encoder_7_io_x_0 = lutModule_io_xFWD_7_0; // @[sincosLUT3.scala 96:31]
+  assign encoder_7_io_x_1 = lutModule_io_xFWD_7_1; // @[sincosLUT3.scala 97:31]
+  assign encoder_7_io_EN = lutModule_io_ENout; // @[sincosLUT3.scala 95:31]
+  assign encoder_7_io_cosIn = lutModule_io_cosOut_7; // @[sincosLUT3.scala 98:31]
+  assign encoder_7_io_sinIn = lutModule_io_sinOut_7; // @[sincosLUT3.scala 99:31]
+  assign encoder_7_io_cosSign = lutModule_io_signFWD_7_0; // @[sincosLUT3.scala 100:31]
+  assign encoder_7_io_sinSign = lutModule_io_signFWD_7_1; // @[sincosLUT3.scala 101:31]
 endmodule
 module MulFullRawFN(
   input         io_a_isNaN,
@@ -13273,12 +14799,61 @@ module multiLaneRoPEmoduleV2(
   input         reset,
   input  [31:0] io_x_0_0,
   input  [31:0] io_x_0_1,
+  input  [31:0] io_x_1_0,
+  input  [31:0] io_x_1_1,
+  input  [31:0] io_x_2_0,
+  input  [31:0] io_x_2_1,
+  input  [31:0] io_x_3_0,
+  input  [31:0] io_x_3_1,
+  input  [31:0] io_x_4_0,
+  input  [31:0] io_x_4_1,
+  input  [31:0] io_x_5_0,
+  input  [31:0] io_x_5_1,
+  input  [31:0] io_x_6_0,
+  input  [31:0] io_x_6_1,
+  input  [31:0] io_x_7_0,
+  input  [31:0] io_x_7_1,
   input         io_EN,
   input  [31:0] io_m_0,
+  input  [31:0] io_m_1,
+  input  [31:0] io_m_2,
+  input  [31:0] io_m_3,
+  input  [31:0] io_m_4,
+  input  [31:0] io_m_5,
+  input  [31:0] io_m_6,
+  input  [31:0] io_m_7,
   input  [31:0] io_baseIndex_0,
+  input  [31:0] io_baseIndex_1,
+  input  [31:0] io_baseIndex_2,
+  input  [31:0] io_baseIndex_3,
+  input  [31:0] io_baseIndex_4,
+  input  [31:0] io_baseIndex_5,
+  input  [31:0] io_baseIndex_6,
+  input  [31:0] io_baseIndex_7,
   input  [31:0] io_ResMode_0,
+  input  [31:0] io_ResMode_1,
+  input  [31:0] io_ResMode_2,
+  input  [31:0] io_ResMode_3,
+  input  [31:0] io_ResMode_4,
+  input  [31:0] io_ResMode_5,
+  input  [31:0] io_ResMode_6,
+  input  [31:0] io_ResMode_7,
   output [31:0] io_xhat_0_0,
   output [31:0] io_xhat_0_1,
+  output [31:0] io_xhat_1_0,
+  output [31:0] io_xhat_1_1,
+  output [31:0] io_xhat_2_0,
+  output [31:0] io_xhat_2_1,
+  output [31:0] io_xhat_3_0,
+  output [31:0] io_xhat_3_1,
+  output [31:0] io_xhat_4_0,
+  output [31:0] io_xhat_4_1,
+  output [31:0] io_xhat_5_0,
+  output [31:0] io_xhat_5_1,
+  output [31:0] io_xhat_6_0,
+  output [31:0] io_xhat_6_1,
+  output [31:0] io_xhat_7_0,
+  output [31:0] io_xhat_7_1,
   output        io_valid
 );
 `ifdef RANDOMIZE_REG_INIT
@@ -13300,59 +14875,458 @@ module multiLaneRoPEmoduleV2(
   reg [31:0] _RAND_15;
   reg [31:0] _RAND_16;
   reg [31:0] _RAND_17;
+  reg [31:0] _RAND_18;
+  reg [31:0] _RAND_19;
+  reg [31:0] _RAND_20;
+  reg [31:0] _RAND_21;
+  reg [31:0] _RAND_22;
+  reg [31:0] _RAND_23;
+  reg [31:0] _RAND_24;
+  reg [31:0] _RAND_25;
+  reg [31:0] _RAND_26;
+  reg [31:0] _RAND_27;
+  reg [31:0] _RAND_28;
+  reg [31:0] _RAND_29;
+  reg [31:0] _RAND_30;
+  reg [31:0] _RAND_31;
+  reg [31:0] _RAND_32;
+  reg [31:0] _RAND_33;
+  reg [31:0] _RAND_34;
+  reg [31:0] _RAND_35;
+  reg [31:0] _RAND_36;
+  reg [31:0] _RAND_37;
+  reg [31:0] _RAND_38;
+  reg [31:0] _RAND_39;
+  reg [31:0] _RAND_40;
+  reg [31:0] _RAND_41;
+  reg [31:0] _RAND_42;
+  reg [31:0] _RAND_43;
+  reg [31:0] _RAND_44;
+  reg [31:0] _RAND_45;
+  reg [31:0] _RAND_46;
+  reg [31:0] _RAND_47;
+  reg [31:0] _RAND_48;
+  reg [31:0] _RAND_49;
+  reg [31:0] _RAND_50;
+  reg [31:0] _RAND_51;
+  reg [31:0] _RAND_52;
+  reg [31:0] _RAND_53;
+  reg [31:0] _RAND_54;
+  reg [31:0] _RAND_55;
+  reg [31:0] _RAND_56;
+  reg [31:0] _RAND_57;
+  reg [31:0] _RAND_58;
+  reg [31:0] _RAND_59;
+  reg [31:0] _RAND_60;
+  reg [31:0] _RAND_61;
+  reg [31:0] _RAND_62;
+  reg [31:0] _RAND_63;
+  reg [31:0] _RAND_64;
+  reg [31:0] _RAND_65;
+  reg [31:0] _RAND_66;
+  reg [31:0] _RAND_67;
+  reg [31:0] _RAND_68;
+  reg [31:0] _RAND_69;
+  reg [31:0] _RAND_70;
+  reg [31:0] _RAND_71;
+  reg [31:0] _RAND_72;
+  reg [31:0] _RAND_73;
+  reg [31:0] _RAND_74;
+  reg [31:0] _RAND_75;
+  reg [31:0] _RAND_76;
+  reg [31:0] _RAND_77;
+  reg [31:0] _RAND_78;
+  reg [31:0] _RAND_79;
+  reg [31:0] _RAND_80;
+  reg [31:0] _RAND_81;
+  reg [31:0] _RAND_82;
+  reg [31:0] _RAND_83;
+  reg [31:0] _RAND_84;
+  reg [31:0] _RAND_85;
+  reg [31:0] _RAND_86;
+  reg [31:0] _RAND_87;
+  reg [31:0] _RAND_88;
+  reg [31:0] _RAND_89;
+  reg [31:0] _RAND_90;
+  reg [31:0] _RAND_91;
+  reg [31:0] _RAND_92;
+  reg [31:0] _RAND_93;
+  reg [31:0] _RAND_94;
+  reg [31:0] _RAND_95;
+  reg [31:0] _RAND_96;
+  reg [31:0] _RAND_97;
+  reg [31:0] _RAND_98;
+  reg [31:0] _RAND_99;
+  reg [31:0] _RAND_100;
+  reg [31:0] _RAND_101;
+  reg [31:0] _RAND_102;
+  reg [31:0] _RAND_103;
+  reg [31:0] _RAND_104;
+  reg [31:0] _RAND_105;
+  reg [31:0] _RAND_106;
+  reg [31:0] _RAND_107;
+  reg [31:0] _RAND_108;
+  reg [31:0] _RAND_109;
+  reg [31:0] _RAND_110;
+  reg [31:0] _RAND_111;
+  reg [31:0] _RAND_112;
+  reg [31:0] _RAND_113;
+  reg [31:0] _RAND_114;
+  reg [31:0] _RAND_115;
 `endif // RANDOMIZE_REG_INIT
-  wire  FP32radianCaclulatorV2_clock; // @[RoPEModuleFP32v2.scala 46:15]
-  wire  FP32radianCaclulatorV2_reset; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_x_0; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_x_1; // @[RoPEModuleFP32v2.scala 46:15]
-  wire  FP32radianCaclulatorV2_io_EN; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_m; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_baseIndex; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_ResMode; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_out; // @[RoPEModuleFP32v2.scala 46:15]
-  wire  FP32radianCaclulatorV2_io_ENout; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_xFWD_0; // @[RoPEModuleFP32v2.scala 46:15]
-  wire [31:0] FP32radianCaclulatorV2_io_xFWD_1; // @[RoPEModuleFP32v2.scala 46:15]
-  wire  SinCosLut_clock; // @[RoPEModuleFP32v2.scala 48:27]
-  wire  SinCosLut_reset; // @[RoPEModuleFP32v2.scala 48:27]
-  wire [31:0] SinCosLut_io_x_0_0; // @[RoPEModuleFP32v2.scala 48:27]
-  wire [31:0] SinCosLut_io_x_0_1; // @[RoPEModuleFP32v2.scala 48:27]
-  wire  SinCosLut_io_EN; // @[RoPEModuleFP32v2.scala 48:27]
-  wire [31:0] SinCosLut_io_angle_0; // @[RoPEModuleFP32v2.scala 48:27]
-  wire [31:0] SinCosLut_io_sinOut_0; // @[RoPEModuleFP32v2.scala 48:27]
-  wire [31:0] SinCosLut_io_cosOut_0; // @[RoPEModuleFP32v2.scala 48:27]
-  wire  SinCosLut_io_ENout; // @[RoPEModuleFP32v2.scala 48:27]
-  wire [31:0] SinCosLut_io_xFWD_0_0; // @[RoPEModuleFP32v2.scala 48:27]
-  wire [31:0] SinCosLut_io_xFWD_0_1; // @[RoPEModuleFP32v2.scala 48:27]
-  wire  FP32RoPEcore_clock; // @[RoPEModuleFP32v2.scala 50:15]
-  wire  FP32RoPEcore_reset; // @[RoPEModuleFP32v2.scala 50:15]
-  wire  FP32RoPEcore_io_EN; // @[RoPEModuleFP32v2.scala 50:15]
-  wire [31:0] FP32RoPEcore_io_x_0; // @[RoPEModuleFP32v2.scala 50:15]
-  wire [31:0] FP32RoPEcore_io_x_1; // @[RoPEModuleFP32v2.scala 50:15]
-  wire [31:0] FP32RoPEcore_io_sin; // @[RoPEModuleFP32v2.scala 50:15]
-  wire [31:0] FP32RoPEcore_io_cos; // @[RoPEModuleFP32v2.scala 50:15]
-  wire [31:0] FP32RoPEcore_io_xhat_0; // @[RoPEModuleFP32v2.scala 50:15]
-  wire [31:0] FP32RoPEcore_io_xhat_1; // @[RoPEModuleFP32v2.scala 50:15]
-  wire  FP32RoPEcore_io_ENout; // @[RoPEModuleFP32v2.scala 50:15]
-  reg [31:0] stage1Reg_0_0; // @[RoPEModuleFP32v2.scala 54:28]
-  reg [31:0] stage1Reg_0_1; // @[RoPEModuleFP32v2.scala 54:28]
-  reg [31:0] stage1Reg_0_2; // @[RoPEModuleFP32v2.scala 54:28]
-  reg [31:0] stage1Reg_0_3; // @[RoPEModuleFP32v2.scala 54:28]
-  reg [31:0] stage1Reg_0_4; // @[RoPEModuleFP32v2.scala 54:28]
-  reg  stage1EN; // @[RoPEModuleFP32v2.scala 55:28]
-  reg [31:0] stage2Reg_0_0; // @[RoPEModuleFP32v2.scala 56:28]
-  reg [31:0] stage2Reg_0_1; // @[RoPEModuleFP32v2.scala 56:28]
-  reg [31:0] stage2Reg_0_2; // @[RoPEModuleFP32v2.scala 56:28]
-  reg  stage2EN; // @[RoPEModuleFP32v2.scala 57:28]
-  reg [31:0] stage3Reg_0_0; // @[RoPEModuleFP32v2.scala 58:28]
-  reg [31:0] stage3Reg_0_1; // @[RoPEModuleFP32v2.scala 58:28]
-  reg [31:0] stage3Reg_0_2; // @[RoPEModuleFP32v2.scala 58:28]
-  reg [31:0] stage3Reg_0_3; // @[RoPEModuleFP32v2.scala 58:28]
-  reg  stage3EN; // @[RoPEModuleFP32v2.scala 59:28]
-  reg [31:0] outputReg_0_0; // @[RoPEModuleFP32v2.scala 120:28]
-  reg [31:0] outputReg_0_1; // @[RoPEModuleFP32v2.scala 120:28]
-  reg  validReg; // @[RoPEModuleFP32v2.scala 121:27]
-  FP32radianCaclulatorV2 FP32radianCaclulatorV2 ( // @[RoPEModuleFP32v2.scala 46:15]
+  wire  FP32radianCaclulatorV2_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_1_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_1_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_1_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_1_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_1_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_2_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_2_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_2_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_2_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_2_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_3_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_3_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_3_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_3_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_3_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_4_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_4_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_4_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_4_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_4_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_5_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_5_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_5_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_5_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_5_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_6_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_6_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_6_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_6_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_6_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_7_clock; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_7_reset; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_x_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_x_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_7_io_EN; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_m; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_baseIndex; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_ResMode; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_out; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  FP32radianCaclulatorV2_7_io_ENout; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_xFWD_0; // @[RoPEModuleFP32v2.scala 47:15]
+  wire [31:0] FP32radianCaclulatorV2_7_io_xFWD_1; // @[RoPEModuleFP32v2.scala 47:15]
+  wire  SinCosLut_clock; // @[RoPEModuleFP32v2.scala 49:27]
+  wire  SinCosLut_reset; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_0_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_0_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_1_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_1_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_2_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_2_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_3_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_3_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_4_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_4_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_5_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_5_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_6_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_6_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_7_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_x_7_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire  SinCosLut_io_EN; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_2; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_3; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_4; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_5; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_6; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_angle_7; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_2; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_3; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_4; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_5; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_6; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_sinOut_7; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_2; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_3; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_4; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_5; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_6; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_cosOut_7; // @[RoPEModuleFP32v2.scala 49:27]
+  wire  SinCosLut_io_ENout; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_0_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_0_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_1_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_1_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_2_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_2_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_3_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_3_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_4_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_4_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_5_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_5_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_6_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_6_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_7_0; // @[RoPEModuleFP32v2.scala 49:27]
+  wire [31:0] SinCosLut_io_xFWD_7_1; // @[RoPEModuleFP32v2.scala 49:27]
+  wire  FP32RoPEcore_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_1_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_1_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_1_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_1_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_1_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_1_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_1_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_1_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_1_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_1_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_2_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_2_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_2_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_2_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_2_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_2_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_2_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_2_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_2_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_2_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_3_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_3_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_3_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_3_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_3_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_3_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_3_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_3_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_3_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_3_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_4_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_4_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_4_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_4_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_4_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_4_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_4_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_4_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_4_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_4_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_5_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_5_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_5_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_5_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_5_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_5_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_5_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_5_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_5_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_5_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_6_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_6_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_6_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_6_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_6_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_6_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_6_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_6_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_6_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_6_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_7_clock; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_7_reset; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_7_io_EN; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_7_io_x_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_7_io_x_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_7_io_sin; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_7_io_cos; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_7_io_xhat_0; // @[RoPEModuleFP32v2.scala 51:15]
+  wire [31:0] FP32RoPEcore_7_io_xhat_1; // @[RoPEModuleFP32v2.scala 51:15]
+  wire  FP32RoPEcore_7_io_ENout; // @[RoPEModuleFP32v2.scala 51:15]
+  reg [31:0] stage1Reg_0_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_0_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_0_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_0_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_0_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_1_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_1_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_1_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_1_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_1_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_2_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_2_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_2_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_2_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_2_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_3_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_3_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_3_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_3_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_3_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_4_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_4_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_4_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_4_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_4_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_5_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_5_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_5_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_5_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_5_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_6_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_6_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_6_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_6_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_6_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_7_0; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_7_1; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_7_2; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_7_3; // @[RoPEModuleFP32v2.scala 55:28]
+  reg [31:0] stage1Reg_7_4; // @[RoPEModuleFP32v2.scala 55:28]
+  reg  stage1EN; // @[RoPEModuleFP32v2.scala 56:28]
+  reg [31:0] stage2Reg_0_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_0_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_0_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_1_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_1_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_1_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_2_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_2_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_2_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_3_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_3_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_3_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_4_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_4_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_4_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_5_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_5_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_5_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_6_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_6_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_6_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_7_0; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_7_1; // @[RoPEModuleFP32v2.scala 57:28]
+  reg [31:0] stage2Reg_7_2; // @[RoPEModuleFP32v2.scala 57:28]
+  reg  stage2EN; // @[RoPEModuleFP32v2.scala 58:28]
+  reg [31:0] stage3Reg_0_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_0_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_0_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_0_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_1_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_1_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_1_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_1_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_2_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_2_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_2_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_2_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_3_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_3_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_3_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_3_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_4_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_4_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_4_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_4_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_5_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_5_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_5_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_5_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_6_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_6_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_6_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_6_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_7_0; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_7_1; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_7_2; // @[RoPEModuleFP32v2.scala 59:28]
+  reg [31:0] stage3Reg_7_3; // @[RoPEModuleFP32v2.scala 59:28]
+  reg  stage3EN; // @[RoPEModuleFP32v2.scala 60:28]
+  reg [31:0] outputReg_0_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_0_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_1_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_1_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_2_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_2_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_3_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_3_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_4_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_4_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_5_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_5_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_6_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_6_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_7_0; // @[RoPEModuleFP32v2.scala 121:28]
+  reg [31:0] outputReg_7_1; // @[RoPEModuleFP32v2.scala 121:28]
+  reg  validReg; // @[RoPEModuleFP32v2.scala 122:27]
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2 ( // @[RoPEModuleFP32v2.scala 47:15]
     .clock(FP32radianCaclulatorV2_clock),
     .reset(FP32radianCaclulatorV2_reset),
     .io_x_0(FP32radianCaclulatorV2_io_x_0),
@@ -13366,20 +15340,167 @@ module multiLaneRoPEmoduleV2(
     .io_xFWD_0(FP32radianCaclulatorV2_io_xFWD_0),
     .io_xFWD_1(FP32radianCaclulatorV2_io_xFWD_1)
   );
-  multiPortSinCosModuleV2 SinCosLut ( // @[RoPEModuleFP32v2.scala 48:27]
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2_1 ( // @[RoPEModuleFP32v2.scala 47:15]
+    .clock(FP32radianCaclulatorV2_1_clock),
+    .reset(FP32radianCaclulatorV2_1_reset),
+    .io_x_0(FP32radianCaclulatorV2_1_io_x_0),
+    .io_x_1(FP32radianCaclulatorV2_1_io_x_1),
+    .io_EN(FP32radianCaclulatorV2_1_io_EN),
+    .io_m(FP32radianCaclulatorV2_1_io_m),
+    .io_baseIndex(FP32radianCaclulatorV2_1_io_baseIndex),
+    .io_ResMode(FP32radianCaclulatorV2_1_io_ResMode),
+    .io_out(FP32radianCaclulatorV2_1_io_out),
+    .io_ENout(FP32radianCaclulatorV2_1_io_ENout),
+    .io_xFWD_0(FP32radianCaclulatorV2_1_io_xFWD_0),
+    .io_xFWD_1(FP32radianCaclulatorV2_1_io_xFWD_1)
+  );
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2_2 ( // @[RoPEModuleFP32v2.scala 47:15]
+    .clock(FP32radianCaclulatorV2_2_clock),
+    .reset(FP32radianCaclulatorV2_2_reset),
+    .io_x_0(FP32radianCaclulatorV2_2_io_x_0),
+    .io_x_1(FP32radianCaclulatorV2_2_io_x_1),
+    .io_EN(FP32radianCaclulatorV2_2_io_EN),
+    .io_m(FP32radianCaclulatorV2_2_io_m),
+    .io_baseIndex(FP32radianCaclulatorV2_2_io_baseIndex),
+    .io_ResMode(FP32radianCaclulatorV2_2_io_ResMode),
+    .io_out(FP32radianCaclulatorV2_2_io_out),
+    .io_ENout(FP32radianCaclulatorV2_2_io_ENout),
+    .io_xFWD_0(FP32radianCaclulatorV2_2_io_xFWD_0),
+    .io_xFWD_1(FP32radianCaclulatorV2_2_io_xFWD_1)
+  );
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2_3 ( // @[RoPEModuleFP32v2.scala 47:15]
+    .clock(FP32radianCaclulatorV2_3_clock),
+    .reset(FP32radianCaclulatorV2_3_reset),
+    .io_x_0(FP32radianCaclulatorV2_3_io_x_0),
+    .io_x_1(FP32radianCaclulatorV2_3_io_x_1),
+    .io_EN(FP32radianCaclulatorV2_3_io_EN),
+    .io_m(FP32radianCaclulatorV2_3_io_m),
+    .io_baseIndex(FP32radianCaclulatorV2_3_io_baseIndex),
+    .io_ResMode(FP32radianCaclulatorV2_3_io_ResMode),
+    .io_out(FP32radianCaclulatorV2_3_io_out),
+    .io_ENout(FP32radianCaclulatorV2_3_io_ENout),
+    .io_xFWD_0(FP32radianCaclulatorV2_3_io_xFWD_0),
+    .io_xFWD_1(FP32radianCaclulatorV2_3_io_xFWD_1)
+  );
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2_4 ( // @[RoPEModuleFP32v2.scala 47:15]
+    .clock(FP32radianCaclulatorV2_4_clock),
+    .reset(FP32radianCaclulatorV2_4_reset),
+    .io_x_0(FP32radianCaclulatorV2_4_io_x_0),
+    .io_x_1(FP32radianCaclulatorV2_4_io_x_1),
+    .io_EN(FP32radianCaclulatorV2_4_io_EN),
+    .io_m(FP32radianCaclulatorV2_4_io_m),
+    .io_baseIndex(FP32radianCaclulatorV2_4_io_baseIndex),
+    .io_ResMode(FP32radianCaclulatorV2_4_io_ResMode),
+    .io_out(FP32radianCaclulatorV2_4_io_out),
+    .io_ENout(FP32radianCaclulatorV2_4_io_ENout),
+    .io_xFWD_0(FP32radianCaclulatorV2_4_io_xFWD_0),
+    .io_xFWD_1(FP32radianCaclulatorV2_4_io_xFWD_1)
+  );
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2_5 ( // @[RoPEModuleFP32v2.scala 47:15]
+    .clock(FP32radianCaclulatorV2_5_clock),
+    .reset(FP32radianCaclulatorV2_5_reset),
+    .io_x_0(FP32radianCaclulatorV2_5_io_x_0),
+    .io_x_1(FP32radianCaclulatorV2_5_io_x_1),
+    .io_EN(FP32radianCaclulatorV2_5_io_EN),
+    .io_m(FP32radianCaclulatorV2_5_io_m),
+    .io_baseIndex(FP32radianCaclulatorV2_5_io_baseIndex),
+    .io_ResMode(FP32radianCaclulatorV2_5_io_ResMode),
+    .io_out(FP32radianCaclulatorV2_5_io_out),
+    .io_ENout(FP32radianCaclulatorV2_5_io_ENout),
+    .io_xFWD_0(FP32radianCaclulatorV2_5_io_xFWD_0),
+    .io_xFWD_1(FP32radianCaclulatorV2_5_io_xFWD_1)
+  );
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2_6 ( // @[RoPEModuleFP32v2.scala 47:15]
+    .clock(FP32radianCaclulatorV2_6_clock),
+    .reset(FP32radianCaclulatorV2_6_reset),
+    .io_x_0(FP32radianCaclulatorV2_6_io_x_0),
+    .io_x_1(FP32radianCaclulatorV2_6_io_x_1),
+    .io_EN(FP32radianCaclulatorV2_6_io_EN),
+    .io_m(FP32radianCaclulatorV2_6_io_m),
+    .io_baseIndex(FP32radianCaclulatorV2_6_io_baseIndex),
+    .io_ResMode(FP32radianCaclulatorV2_6_io_ResMode),
+    .io_out(FP32radianCaclulatorV2_6_io_out),
+    .io_ENout(FP32radianCaclulatorV2_6_io_ENout),
+    .io_xFWD_0(FP32radianCaclulatorV2_6_io_xFWD_0),
+    .io_xFWD_1(FP32radianCaclulatorV2_6_io_xFWD_1)
+  );
+  FP32radianCaclulatorV2 FP32radianCaclulatorV2_7 ( // @[RoPEModuleFP32v2.scala 47:15]
+    .clock(FP32radianCaclulatorV2_7_clock),
+    .reset(FP32radianCaclulatorV2_7_reset),
+    .io_x_0(FP32radianCaclulatorV2_7_io_x_0),
+    .io_x_1(FP32radianCaclulatorV2_7_io_x_1),
+    .io_EN(FP32radianCaclulatorV2_7_io_EN),
+    .io_m(FP32radianCaclulatorV2_7_io_m),
+    .io_baseIndex(FP32radianCaclulatorV2_7_io_baseIndex),
+    .io_ResMode(FP32radianCaclulatorV2_7_io_ResMode),
+    .io_out(FP32radianCaclulatorV2_7_io_out),
+    .io_ENout(FP32radianCaclulatorV2_7_io_ENout),
+    .io_xFWD_0(FP32radianCaclulatorV2_7_io_xFWD_0),
+    .io_xFWD_1(FP32radianCaclulatorV2_7_io_xFWD_1)
+  );
+  multiPortSinCosModuleV2 SinCosLut ( // @[RoPEModuleFP32v2.scala 49:27]
     .clock(SinCosLut_clock),
     .reset(SinCosLut_reset),
     .io_x_0_0(SinCosLut_io_x_0_0),
     .io_x_0_1(SinCosLut_io_x_0_1),
+    .io_x_1_0(SinCosLut_io_x_1_0),
+    .io_x_1_1(SinCosLut_io_x_1_1),
+    .io_x_2_0(SinCosLut_io_x_2_0),
+    .io_x_2_1(SinCosLut_io_x_2_1),
+    .io_x_3_0(SinCosLut_io_x_3_0),
+    .io_x_3_1(SinCosLut_io_x_3_1),
+    .io_x_4_0(SinCosLut_io_x_4_0),
+    .io_x_4_1(SinCosLut_io_x_4_1),
+    .io_x_5_0(SinCosLut_io_x_5_0),
+    .io_x_5_1(SinCosLut_io_x_5_1),
+    .io_x_6_0(SinCosLut_io_x_6_0),
+    .io_x_6_1(SinCosLut_io_x_6_1),
+    .io_x_7_0(SinCosLut_io_x_7_0),
+    .io_x_7_1(SinCosLut_io_x_7_1),
     .io_EN(SinCosLut_io_EN),
     .io_angle_0(SinCosLut_io_angle_0),
+    .io_angle_1(SinCosLut_io_angle_1),
+    .io_angle_2(SinCosLut_io_angle_2),
+    .io_angle_3(SinCosLut_io_angle_3),
+    .io_angle_4(SinCosLut_io_angle_4),
+    .io_angle_5(SinCosLut_io_angle_5),
+    .io_angle_6(SinCosLut_io_angle_6),
+    .io_angle_7(SinCosLut_io_angle_7),
     .io_sinOut_0(SinCosLut_io_sinOut_0),
+    .io_sinOut_1(SinCosLut_io_sinOut_1),
+    .io_sinOut_2(SinCosLut_io_sinOut_2),
+    .io_sinOut_3(SinCosLut_io_sinOut_3),
+    .io_sinOut_4(SinCosLut_io_sinOut_4),
+    .io_sinOut_5(SinCosLut_io_sinOut_5),
+    .io_sinOut_6(SinCosLut_io_sinOut_6),
+    .io_sinOut_7(SinCosLut_io_sinOut_7),
     .io_cosOut_0(SinCosLut_io_cosOut_0),
+    .io_cosOut_1(SinCosLut_io_cosOut_1),
+    .io_cosOut_2(SinCosLut_io_cosOut_2),
+    .io_cosOut_3(SinCosLut_io_cosOut_3),
+    .io_cosOut_4(SinCosLut_io_cosOut_4),
+    .io_cosOut_5(SinCosLut_io_cosOut_5),
+    .io_cosOut_6(SinCosLut_io_cosOut_6),
+    .io_cosOut_7(SinCosLut_io_cosOut_7),
     .io_ENout(SinCosLut_io_ENout),
     .io_xFWD_0_0(SinCosLut_io_xFWD_0_0),
-    .io_xFWD_0_1(SinCosLut_io_xFWD_0_1)
+    .io_xFWD_0_1(SinCosLut_io_xFWD_0_1),
+    .io_xFWD_1_0(SinCosLut_io_xFWD_1_0),
+    .io_xFWD_1_1(SinCosLut_io_xFWD_1_1),
+    .io_xFWD_2_0(SinCosLut_io_xFWD_2_0),
+    .io_xFWD_2_1(SinCosLut_io_xFWD_2_1),
+    .io_xFWD_3_0(SinCosLut_io_xFWD_3_0),
+    .io_xFWD_3_1(SinCosLut_io_xFWD_3_1),
+    .io_xFWD_4_0(SinCosLut_io_xFWD_4_0),
+    .io_xFWD_4_1(SinCosLut_io_xFWD_4_1),
+    .io_xFWD_5_0(SinCosLut_io_xFWD_5_0),
+    .io_xFWD_5_1(SinCosLut_io_xFWD_5_1),
+    .io_xFWD_6_0(SinCosLut_io_xFWD_6_0),
+    .io_xFWD_6_1(SinCosLut_io_xFWD_6_1),
+    .io_xFWD_7_0(SinCosLut_io_xFWD_7_0),
+    .io_xFWD_7_1(SinCosLut_io_xFWD_7_1)
   );
-  FP32RoPEcore FP32RoPEcore ( // @[RoPEModuleFP32v2.scala 50:15]
+  FP32RoPEcore FP32RoPEcore ( // @[RoPEModuleFP32v2.scala 51:15]
     .clock(FP32RoPEcore_clock),
     .reset(FP32RoPEcore_reset),
     .io_EN(FP32RoPEcore_io_EN),
@@ -13391,117 +15512,831 @@ module multiLaneRoPEmoduleV2(
     .io_xhat_1(FP32RoPEcore_io_xhat_1),
     .io_ENout(FP32RoPEcore_io_ENout)
   );
-  assign io_xhat_0_0 = outputReg_0_0; // @[RoPEModuleFP32v2.scala 126:23]
-  assign io_xhat_0_1 = outputReg_0_1; // @[RoPEModuleFP32v2.scala 127:23]
-  assign io_valid = validReg; // @[RoPEModuleFP32v2.scala 129:14]
+  FP32RoPEcore FP32RoPEcore_1 ( // @[RoPEModuleFP32v2.scala 51:15]
+    .clock(FP32RoPEcore_1_clock),
+    .reset(FP32RoPEcore_1_reset),
+    .io_EN(FP32RoPEcore_1_io_EN),
+    .io_x_0(FP32RoPEcore_1_io_x_0),
+    .io_x_1(FP32RoPEcore_1_io_x_1),
+    .io_sin(FP32RoPEcore_1_io_sin),
+    .io_cos(FP32RoPEcore_1_io_cos),
+    .io_xhat_0(FP32RoPEcore_1_io_xhat_0),
+    .io_xhat_1(FP32RoPEcore_1_io_xhat_1),
+    .io_ENout(FP32RoPEcore_1_io_ENout)
+  );
+  FP32RoPEcore FP32RoPEcore_2 ( // @[RoPEModuleFP32v2.scala 51:15]
+    .clock(FP32RoPEcore_2_clock),
+    .reset(FP32RoPEcore_2_reset),
+    .io_EN(FP32RoPEcore_2_io_EN),
+    .io_x_0(FP32RoPEcore_2_io_x_0),
+    .io_x_1(FP32RoPEcore_2_io_x_1),
+    .io_sin(FP32RoPEcore_2_io_sin),
+    .io_cos(FP32RoPEcore_2_io_cos),
+    .io_xhat_0(FP32RoPEcore_2_io_xhat_0),
+    .io_xhat_1(FP32RoPEcore_2_io_xhat_1),
+    .io_ENout(FP32RoPEcore_2_io_ENout)
+  );
+  FP32RoPEcore FP32RoPEcore_3 ( // @[RoPEModuleFP32v2.scala 51:15]
+    .clock(FP32RoPEcore_3_clock),
+    .reset(FP32RoPEcore_3_reset),
+    .io_EN(FP32RoPEcore_3_io_EN),
+    .io_x_0(FP32RoPEcore_3_io_x_0),
+    .io_x_1(FP32RoPEcore_3_io_x_1),
+    .io_sin(FP32RoPEcore_3_io_sin),
+    .io_cos(FP32RoPEcore_3_io_cos),
+    .io_xhat_0(FP32RoPEcore_3_io_xhat_0),
+    .io_xhat_1(FP32RoPEcore_3_io_xhat_1),
+    .io_ENout(FP32RoPEcore_3_io_ENout)
+  );
+  FP32RoPEcore FP32RoPEcore_4 ( // @[RoPEModuleFP32v2.scala 51:15]
+    .clock(FP32RoPEcore_4_clock),
+    .reset(FP32RoPEcore_4_reset),
+    .io_EN(FP32RoPEcore_4_io_EN),
+    .io_x_0(FP32RoPEcore_4_io_x_0),
+    .io_x_1(FP32RoPEcore_4_io_x_1),
+    .io_sin(FP32RoPEcore_4_io_sin),
+    .io_cos(FP32RoPEcore_4_io_cos),
+    .io_xhat_0(FP32RoPEcore_4_io_xhat_0),
+    .io_xhat_1(FP32RoPEcore_4_io_xhat_1),
+    .io_ENout(FP32RoPEcore_4_io_ENout)
+  );
+  FP32RoPEcore FP32RoPEcore_5 ( // @[RoPEModuleFP32v2.scala 51:15]
+    .clock(FP32RoPEcore_5_clock),
+    .reset(FP32RoPEcore_5_reset),
+    .io_EN(FP32RoPEcore_5_io_EN),
+    .io_x_0(FP32RoPEcore_5_io_x_0),
+    .io_x_1(FP32RoPEcore_5_io_x_1),
+    .io_sin(FP32RoPEcore_5_io_sin),
+    .io_cos(FP32RoPEcore_5_io_cos),
+    .io_xhat_0(FP32RoPEcore_5_io_xhat_0),
+    .io_xhat_1(FP32RoPEcore_5_io_xhat_1),
+    .io_ENout(FP32RoPEcore_5_io_ENout)
+  );
+  FP32RoPEcore FP32RoPEcore_6 ( // @[RoPEModuleFP32v2.scala 51:15]
+    .clock(FP32RoPEcore_6_clock),
+    .reset(FP32RoPEcore_6_reset),
+    .io_EN(FP32RoPEcore_6_io_EN),
+    .io_x_0(FP32RoPEcore_6_io_x_0),
+    .io_x_1(FP32RoPEcore_6_io_x_1),
+    .io_sin(FP32RoPEcore_6_io_sin),
+    .io_cos(FP32RoPEcore_6_io_cos),
+    .io_xhat_0(FP32RoPEcore_6_io_xhat_0),
+    .io_xhat_1(FP32RoPEcore_6_io_xhat_1),
+    .io_ENout(FP32RoPEcore_6_io_ENout)
+  );
+  FP32RoPEcore FP32RoPEcore_7 ( // @[RoPEModuleFP32v2.scala 51:15]
+    .clock(FP32RoPEcore_7_clock),
+    .reset(FP32RoPEcore_7_reset),
+    .io_EN(FP32RoPEcore_7_io_EN),
+    .io_x_0(FP32RoPEcore_7_io_x_0),
+    .io_x_1(FP32RoPEcore_7_io_x_1),
+    .io_sin(FP32RoPEcore_7_io_sin),
+    .io_cos(FP32RoPEcore_7_io_cos),
+    .io_xhat_0(FP32RoPEcore_7_io_xhat_0),
+    .io_xhat_1(FP32RoPEcore_7_io_xhat_1),
+    .io_ENout(FP32RoPEcore_7_io_ENout)
+  );
+  assign io_xhat_0_0 = outputReg_0_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_0_1 = outputReg_0_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_xhat_1_0 = outputReg_1_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_1_1 = outputReg_1_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_xhat_2_0 = outputReg_2_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_2_1 = outputReg_2_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_xhat_3_0 = outputReg_3_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_3_1 = outputReg_3_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_xhat_4_0 = outputReg_4_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_4_1 = outputReg_4_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_xhat_5_0 = outputReg_5_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_5_1 = outputReg_5_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_xhat_6_0 = outputReg_6_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_6_1 = outputReg_6_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_xhat_7_0 = outputReg_7_0; // @[RoPEModuleFP32v2.scala 127:23]
+  assign io_xhat_7_1 = outputReg_7_1; // @[RoPEModuleFP32v2.scala 128:23]
+  assign io_valid = validReg; // @[RoPEModuleFP32v2.scala 130:14]
   assign FP32radianCaclulatorV2_clock = clock;
   assign FP32radianCaclulatorV2_reset = reset;
-  assign FP32radianCaclulatorV2_io_x_0 = stage1Reg_0_0; // @[RoPEModuleFP32v2.scala 78:33]
-  assign FP32radianCaclulatorV2_io_x_1 = stage1Reg_0_1; // @[RoPEModuleFP32v2.scala 79:33]
-  assign FP32radianCaclulatorV2_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 77:33]
-  assign FP32radianCaclulatorV2_io_m = stage1Reg_0_2; // @[RoPEModuleFP32v2.scala 80:33]
-  assign FP32radianCaclulatorV2_io_baseIndex = stage1Reg_0_3; // @[RoPEModuleFP32v2.scala 81:33]
-  assign FP32radianCaclulatorV2_io_ResMode = stage1Reg_0_4; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_io_x_0 = stage1Reg_0_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_io_x_1 = stage1Reg_0_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_io_m = stage1Reg_0_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_io_baseIndex = stage1Reg_0_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_io_ResMode = stage1Reg_0_4; // @[RoPEModuleFP32v2.scala 83:33]
+  assign FP32radianCaclulatorV2_1_clock = clock;
+  assign FP32radianCaclulatorV2_1_reset = reset;
+  assign FP32radianCaclulatorV2_1_io_x_0 = stage1Reg_1_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_1_io_x_1 = stage1Reg_1_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_1_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_1_io_m = stage1Reg_1_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_1_io_baseIndex = stage1Reg_1_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_1_io_ResMode = stage1Reg_1_4; // @[RoPEModuleFP32v2.scala 83:33]
+  assign FP32radianCaclulatorV2_2_clock = clock;
+  assign FP32radianCaclulatorV2_2_reset = reset;
+  assign FP32radianCaclulatorV2_2_io_x_0 = stage1Reg_2_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_2_io_x_1 = stage1Reg_2_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_2_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_2_io_m = stage1Reg_2_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_2_io_baseIndex = stage1Reg_2_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_2_io_ResMode = stage1Reg_2_4; // @[RoPEModuleFP32v2.scala 83:33]
+  assign FP32radianCaclulatorV2_3_clock = clock;
+  assign FP32radianCaclulatorV2_3_reset = reset;
+  assign FP32radianCaclulatorV2_3_io_x_0 = stage1Reg_3_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_3_io_x_1 = stage1Reg_3_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_3_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_3_io_m = stage1Reg_3_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_3_io_baseIndex = stage1Reg_3_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_3_io_ResMode = stage1Reg_3_4; // @[RoPEModuleFP32v2.scala 83:33]
+  assign FP32radianCaclulatorV2_4_clock = clock;
+  assign FP32radianCaclulatorV2_4_reset = reset;
+  assign FP32radianCaclulatorV2_4_io_x_0 = stage1Reg_4_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_4_io_x_1 = stage1Reg_4_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_4_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_4_io_m = stage1Reg_4_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_4_io_baseIndex = stage1Reg_4_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_4_io_ResMode = stage1Reg_4_4; // @[RoPEModuleFP32v2.scala 83:33]
+  assign FP32radianCaclulatorV2_5_clock = clock;
+  assign FP32radianCaclulatorV2_5_reset = reset;
+  assign FP32radianCaclulatorV2_5_io_x_0 = stage1Reg_5_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_5_io_x_1 = stage1Reg_5_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_5_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_5_io_m = stage1Reg_5_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_5_io_baseIndex = stage1Reg_5_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_5_io_ResMode = stage1Reg_5_4; // @[RoPEModuleFP32v2.scala 83:33]
+  assign FP32radianCaclulatorV2_6_clock = clock;
+  assign FP32radianCaclulatorV2_6_reset = reset;
+  assign FP32radianCaclulatorV2_6_io_x_0 = stage1Reg_6_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_6_io_x_1 = stage1Reg_6_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_6_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_6_io_m = stage1Reg_6_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_6_io_baseIndex = stage1Reg_6_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_6_io_ResMode = stage1Reg_6_4; // @[RoPEModuleFP32v2.scala 83:33]
+  assign FP32radianCaclulatorV2_7_clock = clock;
+  assign FP32radianCaclulatorV2_7_reset = reset;
+  assign FP32radianCaclulatorV2_7_io_x_0 = stage1Reg_7_0; // @[RoPEModuleFP32v2.scala 79:33]
+  assign FP32radianCaclulatorV2_7_io_x_1 = stage1Reg_7_1; // @[RoPEModuleFP32v2.scala 80:33]
+  assign FP32radianCaclulatorV2_7_io_EN = stage1EN; // @[RoPEModuleFP32v2.scala 78:33]
+  assign FP32radianCaclulatorV2_7_io_m = stage1Reg_7_2; // @[RoPEModuleFP32v2.scala 81:33]
+  assign FP32radianCaclulatorV2_7_io_baseIndex = stage1Reg_7_3; // @[RoPEModuleFP32v2.scala 82:33]
+  assign FP32radianCaclulatorV2_7_io_ResMode = stage1Reg_7_4; // @[RoPEModuleFP32v2.scala 83:33]
   assign SinCosLut_clock = clock;
   assign SinCosLut_reset = reset;
-  assign SinCosLut_io_x_0_0 = stage2Reg_0_0; // @[RoPEModuleFP32v2.scala 96:31]
-  assign SinCosLut_io_x_0_1 = stage2Reg_0_1; // @[RoPEModuleFP32v2.scala 97:31]
-  assign SinCosLut_io_EN = stage2EN; // @[RoPEModuleFP32v2.scala 94:21]
-  assign SinCosLut_io_angle_0 = stage2Reg_0_2; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_0_0 = stage2Reg_0_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_0_1 = stage2Reg_0_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_1_0 = stage2Reg_1_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_1_1 = stage2Reg_1_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_2_0 = stage2Reg_2_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_2_1 = stage2Reg_2_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_3_0 = stage2Reg_3_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_3_1 = stage2Reg_3_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_4_0 = stage2Reg_4_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_4_1 = stage2Reg_4_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_5_0 = stage2Reg_5_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_5_1 = stage2Reg_5_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_6_0 = stage2Reg_6_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_6_1 = stage2Reg_6_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_x_7_0 = stage2Reg_7_0; // @[RoPEModuleFP32v2.scala 97:31]
+  assign SinCosLut_io_x_7_1 = stage2Reg_7_1; // @[RoPEModuleFP32v2.scala 98:31]
+  assign SinCosLut_io_EN = stage2EN; // @[RoPEModuleFP32v2.scala 95:21]
+  assign SinCosLut_io_angle_0 = stage2Reg_0_2; // @[RoPEModuleFP32v2.scala 99:31]
+  assign SinCosLut_io_angle_1 = stage2Reg_1_2; // @[RoPEModuleFP32v2.scala 99:31]
+  assign SinCosLut_io_angle_2 = stage2Reg_2_2; // @[RoPEModuleFP32v2.scala 99:31]
+  assign SinCosLut_io_angle_3 = stage2Reg_3_2; // @[RoPEModuleFP32v2.scala 99:31]
+  assign SinCosLut_io_angle_4 = stage2Reg_4_2; // @[RoPEModuleFP32v2.scala 99:31]
+  assign SinCosLut_io_angle_5 = stage2Reg_5_2; // @[RoPEModuleFP32v2.scala 99:31]
+  assign SinCosLut_io_angle_6 = stage2Reg_6_2; // @[RoPEModuleFP32v2.scala 99:31]
+  assign SinCosLut_io_angle_7 = stage2Reg_7_2; // @[RoPEModuleFP32v2.scala 99:31]
   assign FP32RoPEcore_clock = clock;
   assign FP32RoPEcore_reset = reset;
-  assign FP32RoPEcore_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 112:29]
-  assign FP32RoPEcore_io_x_0 = stage3Reg_0_0; // @[RoPEModuleFP32v2.scala 113:29]
-  assign FP32RoPEcore_io_x_1 = stage3Reg_0_1; // @[RoPEModuleFP32v2.scala 114:29]
-  assign FP32RoPEcore_io_sin = stage3Reg_0_2; // @[RoPEModuleFP32v2.scala 115:29]
-  assign FP32RoPEcore_io_cos = stage3Reg_0_3; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_io_x_0 = stage3Reg_0_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_io_x_1 = stage3Reg_0_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_io_sin = stage3Reg_0_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_io_cos = stage3Reg_0_3; // @[RoPEModuleFP32v2.scala 117:29]
+  assign FP32RoPEcore_1_clock = clock;
+  assign FP32RoPEcore_1_reset = reset;
+  assign FP32RoPEcore_1_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_1_io_x_0 = stage3Reg_1_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_1_io_x_1 = stage3Reg_1_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_1_io_sin = stage3Reg_1_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_1_io_cos = stage3Reg_1_3; // @[RoPEModuleFP32v2.scala 117:29]
+  assign FP32RoPEcore_2_clock = clock;
+  assign FP32RoPEcore_2_reset = reset;
+  assign FP32RoPEcore_2_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_2_io_x_0 = stage3Reg_2_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_2_io_x_1 = stage3Reg_2_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_2_io_sin = stage3Reg_2_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_2_io_cos = stage3Reg_2_3; // @[RoPEModuleFP32v2.scala 117:29]
+  assign FP32RoPEcore_3_clock = clock;
+  assign FP32RoPEcore_3_reset = reset;
+  assign FP32RoPEcore_3_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_3_io_x_0 = stage3Reg_3_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_3_io_x_1 = stage3Reg_3_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_3_io_sin = stage3Reg_3_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_3_io_cos = stage3Reg_3_3; // @[RoPEModuleFP32v2.scala 117:29]
+  assign FP32RoPEcore_4_clock = clock;
+  assign FP32RoPEcore_4_reset = reset;
+  assign FP32RoPEcore_4_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_4_io_x_0 = stage3Reg_4_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_4_io_x_1 = stage3Reg_4_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_4_io_sin = stage3Reg_4_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_4_io_cos = stage3Reg_4_3; // @[RoPEModuleFP32v2.scala 117:29]
+  assign FP32RoPEcore_5_clock = clock;
+  assign FP32RoPEcore_5_reset = reset;
+  assign FP32RoPEcore_5_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_5_io_x_0 = stage3Reg_5_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_5_io_x_1 = stage3Reg_5_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_5_io_sin = stage3Reg_5_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_5_io_cos = stage3Reg_5_3; // @[RoPEModuleFP32v2.scala 117:29]
+  assign FP32RoPEcore_6_clock = clock;
+  assign FP32RoPEcore_6_reset = reset;
+  assign FP32RoPEcore_6_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_6_io_x_0 = stage3Reg_6_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_6_io_x_1 = stage3Reg_6_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_6_io_sin = stage3Reg_6_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_6_io_cos = stage3Reg_6_3; // @[RoPEModuleFP32v2.scala 117:29]
+  assign FP32RoPEcore_7_clock = clock;
+  assign FP32RoPEcore_7_reset = reset;
+  assign FP32RoPEcore_7_io_EN = stage3EN; // @[RoPEModuleFP32v2.scala 113:29]
+  assign FP32RoPEcore_7_io_x_0 = stage3Reg_7_0; // @[RoPEModuleFP32v2.scala 114:29]
+  assign FP32RoPEcore_7_io_x_1 = stage3Reg_7_1; // @[RoPEModuleFP32v2.scala 115:29]
+  assign FP32RoPEcore_7_io_sin = stage3Reg_7_2; // @[RoPEModuleFP32v2.scala 116:29]
+  assign FP32RoPEcore_7_io_cos = stage3Reg_7_3; // @[RoPEModuleFP32v2.scala 117:29]
   always @(posedge clock) begin
-    if (reset) begin // @[RoPEModuleFP32v2.scala 54:28]
-      stage1Reg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 54:28]
-    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 62:17]
-      stage1Reg_0_0 <= io_x_0_0; // @[RoPEModuleFP32v2.scala 64:29]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 54:28]
-      stage1Reg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 54:28]
-    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 62:17]
-      stage1Reg_0_1 <= io_x_0_1; // @[RoPEModuleFP32v2.scala 65:29]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 54:28]
-      stage1Reg_0_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 54:28]
-    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 62:17]
-      stage1Reg_0_2 <= io_m_0; // @[RoPEModuleFP32v2.scala 66:29]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 54:28]
-      stage1Reg_0_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 54:28]
-    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 62:17]
-      stage1Reg_0_3 <= io_baseIndex_0; // @[RoPEModuleFP32v2.scala 67:29]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 54:28]
-      stage1Reg_0_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 54:28]
-    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 62:17]
-      stage1Reg_0_4 <= io_ResMode_0; // @[RoPEModuleFP32v2.scala 68:29]
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_0_0 <= io_x_0_0; // @[RoPEModuleFP32v2.scala 65:29]
     end
     if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
-      stage1EN <= 1'h0; // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_0_1 <= io_x_0_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_0_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_0_2 <= io_m_0; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_0_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_0_3 <= io_baseIndex_0; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_0_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_0_4 <= io_ResMode_0; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_1_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_1_0 <= io_x_1_0; // @[RoPEModuleFP32v2.scala 65:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_1_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_1_1 <= io_x_1_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_1_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_1_2 <= io_m_1; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_1_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_1_3 <= io_baseIndex_1; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_1_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_1_4 <= io_ResMode_1; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_2_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_2_0 <= io_x_2_0; // @[RoPEModuleFP32v2.scala 65:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_2_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_2_1 <= io_x_2_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_2_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_2_2 <= io_m_2; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_2_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_2_3 <= io_baseIndex_2; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_2_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_2_4 <= io_ResMode_2; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_3_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_3_0 <= io_x_3_0; // @[RoPEModuleFP32v2.scala 65:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_3_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_3_1 <= io_x_3_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_3_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_3_2 <= io_m_3; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_3_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_3_3 <= io_baseIndex_3; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_3_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_3_4 <= io_ResMode_3; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_4_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_4_0 <= io_x_4_0; // @[RoPEModuleFP32v2.scala 65:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_4_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_4_1 <= io_x_4_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_4_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_4_2 <= io_m_4; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_4_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_4_3 <= io_baseIndex_4; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_4_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_4_4 <= io_ResMode_4; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_5_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_5_0 <= io_x_5_0; // @[RoPEModuleFP32v2.scala 65:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_5_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_5_1 <= io_x_5_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_5_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_5_2 <= io_m_5; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_5_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_5_3 <= io_baseIndex_5; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_5_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_5_4 <= io_ResMode_5; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_6_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_6_0 <= io_x_6_0; // @[RoPEModuleFP32v2.scala 65:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_6_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_6_1 <= io_x_6_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_6_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_6_2 <= io_m_6; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_6_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_6_3 <= io_baseIndex_6; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_6_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_6_4 <= io_ResMode_6; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_7_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_7_0 <= io_x_7_0; // @[RoPEModuleFP32v2.scala 65:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_7_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_7_1 <= io_x_7_1; // @[RoPEModuleFP32v2.scala 66:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_7_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_7_2 <= io_m_7; // @[RoPEModuleFP32v2.scala 67:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_7_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_7_3 <= io_baseIndex_7; // @[RoPEModuleFP32v2.scala 68:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 55:28]
+      stage1Reg_7_4 <= 32'h0; // @[RoPEModuleFP32v2.scala 55:28]
+    end else if (io_EN) begin // @[RoPEModuleFP32v2.scala 63:17]
+      stage1Reg_7_4 <= io_ResMode_7; // @[RoPEModuleFP32v2.scala 69:29]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 56:28]
+      stage1EN <= 1'h0; // @[RoPEModuleFP32v2.scala 56:28]
     end else begin
       stage1EN <= io_EN;
     end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 56:28]
-      stage2Reg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 56:28]
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
     end else begin
-      stage2Reg_0_0 <= FP32radianCaclulatorV2_io_xFWD_0; // @[RoPEModuleFP32v2.scala 87:25]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 56:28]
-      stage2Reg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 56:28]
-    end else begin
-      stage2Reg_0_1 <= FP32radianCaclulatorV2_io_xFWD_1; // @[RoPEModuleFP32v2.scala 88:25]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 56:28]
-      stage2Reg_0_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 56:28]
-    end else begin
-      stage2Reg_0_2 <= FP32radianCaclulatorV2_io_out; // @[RoPEModuleFP32v2.scala 89:25]
+      stage2Reg_0_0 <= FP32radianCaclulatorV2_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
     end
     if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
-      stage2EN <= 1'h0; // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
     end else begin
-      stage2EN <= FP32radianCaclulatorV2_io_ENout; // @[RoPEModuleFP32v2.scala 91:14]
+      stage2Reg_0_1 <= FP32radianCaclulatorV2_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_0_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_0_2 <= FP32radianCaclulatorV2_io_out; // @[RoPEModuleFP32v2.scala 90:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_1_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_1_0 <= FP32radianCaclulatorV2_1_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_1_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_1_1 <= FP32radianCaclulatorV2_1_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_1_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_1_2 <= FP32radianCaclulatorV2_1_io_out; // @[RoPEModuleFP32v2.scala 90:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_2_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_2_0 <= FP32radianCaclulatorV2_2_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_2_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_2_1 <= FP32radianCaclulatorV2_2_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_2_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_2_2 <= FP32radianCaclulatorV2_2_io_out; // @[RoPEModuleFP32v2.scala 90:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_3_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_3_0 <= FP32radianCaclulatorV2_3_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_3_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_3_1 <= FP32radianCaclulatorV2_3_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_3_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_3_2 <= FP32radianCaclulatorV2_3_io_out; // @[RoPEModuleFP32v2.scala 90:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_4_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_4_0 <= FP32radianCaclulatorV2_4_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_4_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_4_1 <= FP32radianCaclulatorV2_4_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_4_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_4_2 <= FP32radianCaclulatorV2_4_io_out; // @[RoPEModuleFP32v2.scala 90:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_5_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_5_0 <= FP32radianCaclulatorV2_5_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_5_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_5_1 <= FP32radianCaclulatorV2_5_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_5_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_5_2 <= FP32radianCaclulatorV2_5_io_out; // @[RoPEModuleFP32v2.scala 90:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_6_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_6_0 <= FP32radianCaclulatorV2_6_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_6_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_6_1 <= FP32radianCaclulatorV2_6_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_6_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_6_2 <= FP32radianCaclulatorV2_6_io_out; // @[RoPEModuleFP32v2.scala 90:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_7_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_7_0 <= FP32radianCaclulatorV2_7_io_xFWD_0; // @[RoPEModuleFP32v2.scala 88:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_7_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_7_1 <= FP32radianCaclulatorV2_7_io_xFWD_1; // @[RoPEModuleFP32v2.scala 89:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 57:28]
+      stage2Reg_7_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 57:28]
+    end else begin
+      stage2Reg_7_2 <= FP32radianCaclulatorV2_7_io_out; // @[RoPEModuleFP32v2.scala 90:25]
     end
     if (reset) begin // @[RoPEModuleFP32v2.scala 58:28]
-      stage3Reg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 58:28]
+      stage2EN <= 1'h0; // @[RoPEModuleFP32v2.scala 58:28]
     end else begin
-      stage3Reg_0_0 <= SinCosLut_io_xFWD_0_0; // @[RoPEModuleFP32v2.scala 103:25]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 58:28]
-      stage3Reg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 58:28]
-    end else begin
-      stage3Reg_0_1 <= SinCosLut_io_xFWD_0_1; // @[RoPEModuleFP32v2.scala 104:25]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 58:28]
-      stage3Reg_0_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 58:28]
-    end else begin
-      stage3Reg_0_2 <= SinCosLut_io_sinOut_0; // @[RoPEModuleFP32v2.scala 105:25]
-    end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 58:28]
-      stage3Reg_0_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 58:28]
-    end else begin
-      stage3Reg_0_3 <= SinCosLut_io_cosOut_0; // @[RoPEModuleFP32v2.scala 106:25]
+      stage2EN <= FP32radianCaclulatorV2_io_ENout; // @[RoPEModuleFP32v2.scala 92:14]
     end
     if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
-      stage3EN <= 1'h0; // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
     end else begin
-      stage3EN <= SinCosLut_io_ENout; // @[RoPEModuleFP32v2.scala 108:14]
+      stage3Reg_0_0 <= SinCosLut_io_xFWD_0_0; // @[RoPEModuleFP32v2.scala 104:25]
     end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 120:28]
-      outputReg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 120:28]
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
     end else begin
-      outputReg_0_0 <= FP32RoPEcore_io_xhat_0; // @[RoPEModuleFP32v2.scala 124:25]
+      stage3Reg_0_1 <= SinCosLut_io_xFWD_0_1; // @[RoPEModuleFP32v2.scala 105:25]
     end
-    if (reset) begin // @[RoPEModuleFP32v2.scala 120:28]
-      outputReg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 120:28]
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_0_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
     end else begin
-      outputReg_0_1 <= FP32RoPEcore_io_xhat_1; // @[RoPEModuleFP32v2.scala 125:25]
+      stage3Reg_0_2 <= SinCosLut_io_sinOut_0; // @[RoPEModuleFP32v2.scala 106:25]
     end
-    validReg <= FP32RoPEcore_io_ENout; // @[RoPEModuleFP32v2.scala 121:27]
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_0_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_0_3 <= SinCosLut_io_cosOut_0; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_1_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_1_0 <= SinCosLut_io_xFWD_1_0; // @[RoPEModuleFP32v2.scala 104:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_1_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_1_1 <= SinCosLut_io_xFWD_1_1; // @[RoPEModuleFP32v2.scala 105:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_1_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_1_2 <= SinCosLut_io_sinOut_1; // @[RoPEModuleFP32v2.scala 106:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_1_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_1_3 <= SinCosLut_io_cosOut_1; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_2_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_2_0 <= SinCosLut_io_xFWD_2_0; // @[RoPEModuleFP32v2.scala 104:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_2_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_2_1 <= SinCosLut_io_xFWD_2_1; // @[RoPEModuleFP32v2.scala 105:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_2_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_2_2 <= SinCosLut_io_sinOut_2; // @[RoPEModuleFP32v2.scala 106:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_2_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_2_3 <= SinCosLut_io_cosOut_2; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_3_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_3_0 <= SinCosLut_io_xFWD_3_0; // @[RoPEModuleFP32v2.scala 104:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_3_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_3_1 <= SinCosLut_io_xFWD_3_1; // @[RoPEModuleFP32v2.scala 105:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_3_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_3_2 <= SinCosLut_io_sinOut_3; // @[RoPEModuleFP32v2.scala 106:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_3_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_3_3 <= SinCosLut_io_cosOut_3; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_4_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_4_0 <= SinCosLut_io_xFWD_4_0; // @[RoPEModuleFP32v2.scala 104:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_4_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_4_1 <= SinCosLut_io_xFWD_4_1; // @[RoPEModuleFP32v2.scala 105:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_4_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_4_2 <= SinCosLut_io_sinOut_4; // @[RoPEModuleFP32v2.scala 106:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_4_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_4_3 <= SinCosLut_io_cosOut_4; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_5_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_5_0 <= SinCosLut_io_xFWD_5_0; // @[RoPEModuleFP32v2.scala 104:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_5_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_5_1 <= SinCosLut_io_xFWD_5_1; // @[RoPEModuleFP32v2.scala 105:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_5_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_5_2 <= SinCosLut_io_sinOut_5; // @[RoPEModuleFP32v2.scala 106:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_5_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_5_3 <= SinCosLut_io_cosOut_5; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_6_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_6_0 <= SinCosLut_io_xFWD_6_0; // @[RoPEModuleFP32v2.scala 104:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_6_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_6_1 <= SinCosLut_io_xFWD_6_1; // @[RoPEModuleFP32v2.scala 105:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_6_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_6_2 <= SinCosLut_io_sinOut_6; // @[RoPEModuleFP32v2.scala 106:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_6_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_6_3 <= SinCosLut_io_cosOut_6; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_7_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_7_0 <= SinCosLut_io_xFWD_7_0; // @[RoPEModuleFP32v2.scala 104:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_7_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_7_1 <= SinCosLut_io_xFWD_7_1; // @[RoPEModuleFP32v2.scala 105:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_7_2 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_7_2 <= SinCosLut_io_sinOut_7; // @[RoPEModuleFP32v2.scala 106:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 59:28]
+      stage3Reg_7_3 <= 32'h0; // @[RoPEModuleFP32v2.scala 59:28]
+    end else begin
+      stage3Reg_7_3 <= SinCosLut_io_cosOut_7; // @[RoPEModuleFP32v2.scala 107:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 60:28]
+      stage3EN <= 1'h0; // @[RoPEModuleFP32v2.scala 60:28]
+    end else begin
+      stage3EN <= SinCosLut_io_ENout; // @[RoPEModuleFP32v2.scala 109:14]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_0_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_0_0 <= FP32RoPEcore_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_0_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_0_1 <= FP32RoPEcore_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_1_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_1_0 <= FP32RoPEcore_1_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_1_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_1_1 <= FP32RoPEcore_1_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_2_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_2_0 <= FP32RoPEcore_2_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_2_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_2_1 <= FP32RoPEcore_2_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_3_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_3_0 <= FP32RoPEcore_3_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_3_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_3_1 <= FP32RoPEcore_3_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_4_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_4_0 <= FP32RoPEcore_4_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_4_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_4_1 <= FP32RoPEcore_4_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_5_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_5_0 <= FP32RoPEcore_5_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_5_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_5_1 <= FP32RoPEcore_5_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_6_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_6_0 <= FP32RoPEcore_6_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_6_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_6_1 <= FP32RoPEcore_6_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_7_0 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_7_0 <= FP32RoPEcore_7_io_xhat_0; // @[RoPEModuleFP32v2.scala 125:25]
+    end
+    if (reset) begin // @[RoPEModuleFP32v2.scala 121:28]
+      outputReg_7_1 <= 32'h0; // @[RoPEModuleFP32v2.scala 121:28]
+    end else begin
+      outputReg_7_1 <= FP32RoPEcore_7_io_xhat_1; // @[RoPEModuleFP32v2.scala 126:25]
+    end
+    validReg <= FP32RoPEcore_io_ENout; // @[RoPEModuleFP32v2.scala 122:27]
   end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
@@ -13550,31 +16385,227 @@ initial begin
   _RAND_4 = {1{`RANDOM}};
   stage1Reg_0_4 = _RAND_4[31:0];
   _RAND_5 = {1{`RANDOM}};
-  stage1EN = _RAND_5[0:0];
+  stage1Reg_1_0 = _RAND_5[31:0];
   _RAND_6 = {1{`RANDOM}};
-  stage2Reg_0_0 = _RAND_6[31:0];
+  stage1Reg_1_1 = _RAND_6[31:0];
   _RAND_7 = {1{`RANDOM}};
-  stage2Reg_0_1 = _RAND_7[31:0];
+  stage1Reg_1_2 = _RAND_7[31:0];
   _RAND_8 = {1{`RANDOM}};
-  stage2Reg_0_2 = _RAND_8[31:0];
+  stage1Reg_1_3 = _RAND_8[31:0];
   _RAND_9 = {1{`RANDOM}};
-  stage2EN = _RAND_9[0:0];
+  stage1Reg_1_4 = _RAND_9[31:0];
   _RAND_10 = {1{`RANDOM}};
-  stage3Reg_0_0 = _RAND_10[31:0];
+  stage1Reg_2_0 = _RAND_10[31:0];
   _RAND_11 = {1{`RANDOM}};
-  stage3Reg_0_1 = _RAND_11[31:0];
+  stage1Reg_2_1 = _RAND_11[31:0];
   _RAND_12 = {1{`RANDOM}};
-  stage3Reg_0_2 = _RAND_12[31:0];
+  stage1Reg_2_2 = _RAND_12[31:0];
   _RAND_13 = {1{`RANDOM}};
-  stage3Reg_0_3 = _RAND_13[31:0];
+  stage1Reg_2_3 = _RAND_13[31:0];
   _RAND_14 = {1{`RANDOM}};
-  stage3EN = _RAND_14[0:0];
+  stage1Reg_2_4 = _RAND_14[31:0];
   _RAND_15 = {1{`RANDOM}};
-  outputReg_0_0 = _RAND_15[31:0];
+  stage1Reg_3_0 = _RAND_15[31:0];
   _RAND_16 = {1{`RANDOM}};
-  outputReg_0_1 = _RAND_16[31:0];
+  stage1Reg_3_1 = _RAND_16[31:0];
   _RAND_17 = {1{`RANDOM}};
-  validReg = _RAND_17[0:0];
+  stage1Reg_3_2 = _RAND_17[31:0];
+  _RAND_18 = {1{`RANDOM}};
+  stage1Reg_3_3 = _RAND_18[31:0];
+  _RAND_19 = {1{`RANDOM}};
+  stage1Reg_3_4 = _RAND_19[31:0];
+  _RAND_20 = {1{`RANDOM}};
+  stage1Reg_4_0 = _RAND_20[31:0];
+  _RAND_21 = {1{`RANDOM}};
+  stage1Reg_4_1 = _RAND_21[31:0];
+  _RAND_22 = {1{`RANDOM}};
+  stage1Reg_4_2 = _RAND_22[31:0];
+  _RAND_23 = {1{`RANDOM}};
+  stage1Reg_4_3 = _RAND_23[31:0];
+  _RAND_24 = {1{`RANDOM}};
+  stage1Reg_4_4 = _RAND_24[31:0];
+  _RAND_25 = {1{`RANDOM}};
+  stage1Reg_5_0 = _RAND_25[31:0];
+  _RAND_26 = {1{`RANDOM}};
+  stage1Reg_5_1 = _RAND_26[31:0];
+  _RAND_27 = {1{`RANDOM}};
+  stage1Reg_5_2 = _RAND_27[31:0];
+  _RAND_28 = {1{`RANDOM}};
+  stage1Reg_5_3 = _RAND_28[31:0];
+  _RAND_29 = {1{`RANDOM}};
+  stage1Reg_5_4 = _RAND_29[31:0];
+  _RAND_30 = {1{`RANDOM}};
+  stage1Reg_6_0 = _RAND_30[31:0];
+  _RAND_31 = {1{`RANDOM}};
+  stage1Reg_6_1 = _RAND_31[31:0];
+  _RAND_32 = {1{`RANDOM}};
+  stage1Reg_6_2 = _RAND_32[31:0];
+  _RAND_33 = {1{`RANDOM}};
+  stage1Reg_6_3 = _RAND_33[31:0];
+  _RAND_34 = {1{`RANDOM}};
+  stage1Reg_6_4 = _RAND_34[31:0];
+  _RAND_35 = {1{`RANDOM}};
+  stage1Reg_7_0 = _RAND_35[31:0];
+  _RAND_36 = {1{`RANDOM}};
+  stage1Reg_7_1 = _RAND_36[31:0];
+  _RAND_37 = {1{`RANDOM}};
+  stage1Reg_7_2 = _RAND_37[31:0];
+  _RAND_38 = {1{`RANDOM}};
+  stage1Reg_7_3 = _RAND_38[31:0];
+  _RAND_39 = {1{`RANDOM}};
+  stage1Reg_7_4 = _RAND_39[31:0];
+  _RAND_40 = {1{`RANDOM}};
+  stage1EN = _RAND_40[0:0];
+  _RAND_41 = {1{`RANDOM}};
+  stage2Reg_0_0 = _RAND_41[31:0];
+  _RAND_42 = {1{`RANDOM}};
+  stage2Reg_0_1 = _RAND_42[31:0];
+  _RAND_43 = {1{`RANDOM}};
+  stage2Reg_0_2 = _RAND_43[31:0];
+  _RAND_44 = {1{`RANDOM}};
+  stage2Reg_1_0 = _RAND_44[31:0];
+  _RAND_45 = {1{`RANDOM}};
+  stage2Reg_1_1 = _RAND_45[31:0];
+  _RAND_46 = {1{`RANDOM}};
+  stage2Reg_1_2 = _RAND_46[31:0];
+  _RAND_47 = {1{`RANDOM}};
+  stage2Reg_2_0 = _RAND_47[31:0];
+  _RAND_48 = {1{`RANDOM}};
+  stage2Reg_2_1 = _RAND_48[31:0];
+  _RAND_49 = {1{`RANDOM}};
+  stage2Reg_2_2 = _RAND_49[31:0];
+  _RAND_50 = {1{`RANDOM}};
+  stage2Reg_3_0 = _RAND_50[31:0];
+  _RAND_51 = {1{`RANDOM}};
+  stage2Reg_3_1 = _RAND_51[31:0];
+  _RAND_52 = {1{`RANDOM}};
+  stage2Reg_3_2 = _RAND_52[31:0];
+  _RAND_53 = {1{`RANDOM}};
+  stage2Reg_4_0 = _RAND_53[31:0];
+  _RAND_54 = {1{`RANDOM}};
+  stage2Reg_4_1 = _RAND_54[31:0];
+  _RAND_55 = {1{`RANDOM}};
+  stage2Reg_4_2 = _RAND_55[31:0];
+  _RAND_56 = {1{`RANDOM}};
+  stage2Reg_5_0 = _RAND_56[31:0];
+  _RAND_57 = {1{`RANDOM}};
+  stage2Reg_5_1 = _RAND_57[31:0];
+  _RAND_58 = {1{`RANDOM}};
+  stage2Reg_5_2 = _RAND_58[31:0];
+  _RAND_59 = {1{`RANDOM}};
+  stage2Reg_6_0 = _RAND_59[31:0];
+  _RAND_60 = {1{`RANDOM}};
+  stage2Reg_6_1 = _RAND_60[31:0];
+  _RAND_61 = {1{`RANDOM}};
+  stage2Reg_6_2 = _RAND_61[31:0];
+  _RAND_62 = {1{`RANDOM}};
+  stage2Reg_7_0 = _RAND_62[31:0];
+  _RAND_63 = {1{`RANDOM}};
+  stage2Reg_7_1 = _RAND_63[31:0];
+  _RAND_64 = {1{`RANDOM}};
+  stage2Reg_7_2 = _RAND_64[31:0];
+  _RAND_65 = {1{`RANDOM}};
+  stage2EN = _RAND_65[0:0];
+  _RAND_66 = {1{`RANDOM}};
+  stage3Reg_0_0 = _RAND_66[31:0];
+  _RAND_67 = {1{`RANDOM}};
+  stage3Reg_0_1 = _RAND_67[31:0];
+  _RAND_68 = {1{`RANDOM}};
+  stage3Reg_0_2 = _RAND_68[31:0];
+  _RAND_69 = {1{`RANDOM}};
+  stage3Reg_0_3 = _RAND_69[31:0];
+  _RAND_70 = {1{`RANDOM}};
+  stage3Reg_1_0 = _RAND_70[31:0];
+  _RAND_71 = {1{`RANDOM}};
+  stage3Reg_1_1 = _RAND_71[31:0];
+  _RAND_72 = {1{`RANDOM}};
+  stage3Reg_1_2 = _RAND_72[31:0];
+  _RAND_73 = {1{`RANDOM}};
+  stage3Reg_1_3 = _RAND_73[31:0];
+  _RAND_74 = {1{`RANDOM}};
+  stage3Reg_2_0 = _RAND_74[31:0];
+  _RAND_75 = {1{`RANDOM}};
+  stage3Reg_2_1 = _RAND_75[31:0];
+  _RAND_76 = {1{`RANDOM}};
+  stage3Reg_2_2 = _RAND_76[31:0];
+  _RAND_77 = {1{`RANDOM}};
+  stage3Reg_2_3 = _RAND_77[31:0];
+  _RAND_78 = {1{`RANDOM}};
+  stage3Reg_3_0 = _RAND_78[31:0];
+  _RAND_79 = {1{`RANDOM}};
+  stage3Reg_3_1 = _RAND_79[31:0];
+  _RAND_80 = {1{`RANDOM}};
+  stage3Reg_3_2 = _RAND_80[31:0];
+  _RAND_81 = {1{`RANDOM}};
+  stage3Reg_3_3 = _RAND_81[31:0];
+  _RAND_82 = {1{`RANDOM}};
+  stage3Reg_4_0 = _RAND_82[31:0];
+  _RAND_83 = {1{`RANDOM}};
+  stage3Reg_4_1 = _RAND_83[31:0];
+  _RAND_84 = {1{`RANDOM}};
+  stage3Reg_4_2 = _RAND_84[31:0];
+  _RAND_85 = {1{`RANDOM}};
+  stage3Reg_4_3 = _RAND_85[31:0];
+  _RAND_86 = {1{`RANDOM}};
+  stage3Reg_5_0 = _RAND_86[31:0];
+  _RAND_87 = {1{`RANDOM}};
+  stage3Reg_5_1 = _RAND_87[31:0];
+  _RAND_88 = {1{`RANDOM}};
+  stage3Reg_5_2 = _RAND_88[31:0];
+  _RAND_89 = {1{`RANDOM}};
+  stage3Reg_5_3 = _RAND_89[31:0];
+  _RAND_90 = {1{`RANDOM}};
+  stage3Reg_6_0 = _RAND_90[31:0];
+  _RAND_91 = {1{`RANDOM}};
+  stage3Reg_6_1 = _RAND_91[31:0];
+  _RAND_92 = {1{`RANDOM}};
+  stage3Reg_6_2 = _RAND_92[31:0];
+  _RAND_93 = {1{`RANDOM}};
+  stage3Reg_6_3 = _RAND_93[31:0];
+  _RAND_94 = {1{`RANDOM}};
+  stage3Reg_7_0 = _RAND_94[31:0];
+  _RAND_95 = {1{`RANDOM}};
+  stage3Reg_7_1 = _RAND_95[31:0];
+  _RAND_96 = {1{`RANDOM}};
+  stage3Reg_7_2 = _RAND_96[31:0];
+  _RAND_97 = {1{`RANDOM}};
+  stage3Reg_7_3 = _RAND_97[31:0];
+  _RAND_98 = {1{`RANDOM}};
+  stage3EN = _RAND_98[0:0];
+  _RAND_99 = {1{`RANDOM}};
+  outputReg_0_0 = _RAND_99[31:0];
+  _RAND_100 = {1{`RANDOM}};
+  outputReg_0_1 = _RAND_100[31:0];
+  _RAND_101 = {1{`RANDOM}};
+  outputReg_1_0 = _RAND_101[31:0];
+  _RAND_102 = {1{`RANDOM}};
+  outputReg_1_1 = _RAND_102[31:0];
+  _RAND_103 = {1{`RANDOM}};
+  outputReg_2_0 = _RAND_103[31:0];
+  _RAND_104 = {1{`RANDOM}};
+  outputReg_2_1 = _RAND_104[31:0];
+  _RAND_105 = {1{`RANDOM}};
+  outputReg_3_0 = _RAND_105[31:0];
+  _RAND_106 = {1{`RANDOM}};
+  outputReg_3_1 = _RAND_106[31:0];
+  _RAND_107 = {1{`RANDOM}};
+  outputReg_4_0 = _RAND_107[31:0];
+  _RAND_108 = {1{`RANDOM}};
+  outputReg_4_1 = _RAND_108[31:0];
+  _RAND_109 = {1{`RANDOM}};
+  outputReg_5_0 = _RAND_109[31:0];
+  _RAND_110 = {1{`RANDOM}};
+  outputReg_5_1 = _RAND_110[31:0];
+  _RAND_111 = {1{`RANDOM}};
+  outputReg_6_0 = _RAND_111[31:0];
+  _RAND_112 = {1{`RANDOM}};
+  outputReg_6_1 = _RAND_112[31:0];
+  _RAND_113 = {1{`RANDOM}};
+  outputReg_7_0 = _RAND_113[31:0];
+  _RAND_114 = {1{`RANDOM}};
+  outputReg_7_1 = _RAND_114[31:0];
+  _RAND_115 = {1{`RANDOM}};
+  validReg = _RAND_115[0:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial
