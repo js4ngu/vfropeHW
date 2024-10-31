@@ -193,7 +193,7 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extends Mod
     RadCacl.io.x(1)         := stage1Reg(1)
     RadCacl.io.m            := stage1Reg(2)
     RadCacl.io.baseIndex    := stage1Reg(3)
-    RadCacl.io.TwoDivD        := stage1Reg(4)
+    RadCacl.io.TwoDivD      := stage1Reg(4)
 
     // stage2 입력
     stage2Reg(0) := RadCacl.io.xFWD(0)
@@ -228,25 +228,6 @@ class FP32RoPEmodule(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extends Mod
     io.xhat(0) := outputReg(0)
     io.xhat(1) := outputReg(1)
     io.valid   := validReg
-    /*
-    // 디버그 출력 (파이프라인 단계별 출력)
-    printf(s"--------RadCacl (Stage 1 Output)---------\n")
-    printf(s"[EN] x0, x1, Rad             : [%b] %d, %d, %d\n", RadCacl.io.ENout, RadCacl.io.xFWD(0), RadCacl.io.xFWD(1), RadCacl.io.out)
-    
-    printf(s"-------SinCosLut (Stage 2 Output)--------\n")
-    printf(s"[EN] x0, x1, Sin, Cos        : [%b] %d, %d, %d, %d\n", SinCosLut.io.ENout, SinCosLut.io.xFWD(0), SinCosLut.io.xFWD(1), SinCosLut.io.sinOut, SinCosLut.io.cosOut)
-    
-    printf(s"--------RoPEcore (Stage 3 Output)--------\n")
-    printf(s"[EN] x0, x1, xhat0, xhat1    : [%b] %d, %d, %d, %d\n", RoPEcore.io.ENout, RoPEcore.io.x(0), RoPEcore.io.x(1), RoPEcore.io.xhat(0), RoPEcore.io.xhat(1))
-    
-    printf(s"--------Final Output--------\n")
-    printf(s"[Valid] xhat0, xhat1         : [%b] %d, %d\n", io.valid, io.xhat(0), io.xhat(1))
-    printf(s"#############################\n")
-
-    // Additional debug output
-    printf(s"Debug: stage1EN = %b, stage2EN = %b, stage3EN = %b\n", stage1EN, stage2EN, stage3EN)
-    printf(s"Debug: RoPEcore.io.ENout = %b, validReg = %b\n", RoPEcore.io.ENout, validReg)
-    */
 }
 
 class FP32smallRoPEmodule(Index : Int, LutSize : Int, LutHalfSizeHEX : Int, doublePi : Int, OneAndHalfPi : Int, Pi : Int, halfPi : Int) extends Module {
