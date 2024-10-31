@@ -16,7 +16,8 @@ class FP32radianCaclulatorV2(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) ext
     
     // 파이프라인 레지스터
     val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), 
-                                    (io.ResMode * (io.m * (io.baseIndex + Index.U))).apply(LutSize-1, 0).asUInt))
+                                    (io.ResMode * (io.m * (io.baseIndex + Index.U)).apply(LutSize-1, 0)).apply(LutSize-1, 0).asUInt))
+
     val enReg     = RegInit(VecInit(Seq.fill(2)(false.B)))
 
     // EN 신호 전파
