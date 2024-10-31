@@ -82,17 +82,14 @@ multiLaneRoPEV2:
 
 
 # 베릴로그 변환
-verilogFP32RoPEsingle:
-	sbt "runMain vfrope.FP32RoPEsingleTop"
-verilogFP32smallRoPEsingle:
-	sbt "runMain vfrope.FP32smallRoPEsingleTop"
-	
+veliog2lane:
+	sbt "runMain vfrope.FP32RoPE2LaneV2Top"
 veliog4lane:
-	sbt "runMain vfrope.FP32RoPE4LaneTop"
+	sbt "runMain vfrope.FP32RoPE4LaneV2Top"
 veliog8lane:
-	sbt "runMain vfrope.FP32RoPE8LaneTop"
+	sbt "runMain vfrope.FP32RoPE8LaneV2Top"
 veliog16lane:
-	sbt "runMain vfrope.FP32RoPE16LaneTop"
+	sbt "runMain vfrope.FP32RoPE16LaneV2Top"
 
 # 파이썬
 pyRoPEcore:
