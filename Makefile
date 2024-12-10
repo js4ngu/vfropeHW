@@ -17,6 +17,8 @@ dualPortSinCosLUT:
 	sbt "testOnly vfrope.dualPortSinCosLUTest -- -DwriteVcd=1"
 multiPortSinCosLUT:
 	sbt "testOnly vfrope.multiPortSinCosModuleTest -- -DwriteVcd=1"
+multiPortSinCosLUTV2:
+	sbt "testOnly vfrope.multiPortSinCosModuleTestV2 -- -DwriteVcd=1"
 
 
 #실수연산 관련
@@ -76,20 +78,18 @@ FP32smallRoPE:
 FP32smallRoPE2:
 	sbt "testOnly vfrope.FP32smallRoPEmoduleTest2 -- -DwriteVcd=1"
 multiLaneRoPE:
-	sbt "testOnly vfrope.multiLaneRoPEmoduleTest -- -DwriteVcd=1"
-multiLaneRoPEV2:
 	sbt "testOnly vfrope.multiLaneRoPEmoduleTestV2 -- -DwriteVcd=1"
 
 
 # 베릴로그 변환
 veliog2lane:
-	sbt "runMain vfrope.FP32RoPE2LaneV2Top"
+	sbt "runMain vfrope.FP32RoPE2LaneWoROPEcoreTop"
 veliog4lane:
-	sbt "runMain vfrope.FP32RoPE4LaneV2Top"
+	sbt "runMain vfrope.FP32RoPE4LaneWoROPEcoreTop"
 veliog8lane:
-	sbt "runMain vfrope.FP32RoPE8LaneV2Top"
+	sbt "runMain vfrope.FP32RoPE8LaneWoROPEcoreTop"
 veliog16lane:
-	sbt "runMain vfrope.FP32RoPE16LaneV2Top"
+	sbt "runMain vfrope.FP32RoPE16LaneWoROPEcoreTop"
 
 # 파이썬
 pyRoPEcore:

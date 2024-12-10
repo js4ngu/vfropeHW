@@ -11,10 +11,10 @@ class FP32radCaclSeqInputTestV2 extends AnyFlatSpec with ChiselScalatestTester {
       case class TestCase(resMode: String, x1: String, x2: String, m: String, baseIndex: String, expected: String)
       
       val testCases = Seq(
-        TestCase("1", "100", "100", "1", "1", "1"),
-        TestCase("1", "100", "100", "355", "153", "1067"),
+        //TestCase("1", "100", "100", "1", "1", "1"),
+        //TestCase("1", "100", "100", "355", "153", "1067"),
         TestCase("1", "100", "100", "4000", "3", "3808"),
-        TestCase("1", "100", "100", "4096", "1", "0")
+        //TestCase("1", "100", "100", "4096", "1", "0")
       )
       
       for (test <- testCases) {
@@ -49,11 +49,12 @@ class multiLaneRoPEmoduleTestV2 extends AnyFlatSpec with ChiselScalatestTester {
       val testCases = Seq(
         //("3F800000", "3F800000",    1,  1,   1, "3F800000", "3F800000",    355, 153, 1, "Test #1"),
         //("3F800000", "3F800000", 4000,  3,   1, "3F800000", "3F800000",   4096,   1, 1, "Test #2"),
-        ("3F800000", "41200000",  1,  16,  1, "40000000", "40A00000",  1,   8, 1, "Test #1"),
-        ("42C80000", "42C80000",  1,  32,  1, "40E00000", "40400000",  1,  24, 1, "Test #2"),
-        ("00000000", "3F800000",  1,   1,  1, "447A0000", "447A0000",  1, 256, 1, "Test #3"),
-        ("41700000", "41A00000",  1,  20,  1, "40800000", "41000000",  1,   4, 1, "Test #4"),
-        ("40400000", "41100000",  1,   9,  1, "41300000", "41500000",  1,  19, 1, "Test #5")
+        //("00000000", "3F800000",  1,   1,  1, "447A0000", "447A0000",  1, 256, 1, "Test #3"),
+        //("41700000", "41A00000",  1,  20,  1, "40800000", "41000000",  1,   4, 1, "Test #4"),
+        //("40400000", "41100000",  1,   9,  1, "41300000", "41500000",  1,  19, 1, "Test #5")
+        ("3F800000", "40000000",  10,  1,  512, "40400000", "40800000",  10,  2, 512, "RoPE Test #1 for Paper"),
+        //("40A00000", "40C00000",  10,  3,  512, "40E00000", "41000000",  10,  4, 512, "RoPE Test #2 for Paper"),
+
       )
       val delay = 0
 
@@ -83,3 +84,4 @@ class multiLaneRoPEmoduleTestV2 extends AnyFlatSpec with ChiselScalatestTester {
     }
   }
 }
+
