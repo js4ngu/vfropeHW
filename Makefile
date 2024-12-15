@@ -42,6 +42,10 @@ FP32Truncate:
 	sbt "testOnly vfrope.FP32TruncateTest"
 FPdivINT:
 	sbt "testOnly vfrope.FP32DivPOW2INTTest"
+FMAtest:
+	sbt "testOnly vfrope.FMATest"
+repeaterTest:
+	sbt "testOnly vfrope.SerialDataRepeaterTest -- -DwriteVcd=1"
 
 #RoPE모듈관련
 RoPEModule_Int:

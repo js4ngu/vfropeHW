@@ -263,3 +263,4 @@ class FP32toINT32 extends Module {
   // Assign the result to the output
   io.int32 := result
 }
+

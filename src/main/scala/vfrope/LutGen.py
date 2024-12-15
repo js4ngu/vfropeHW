@@ -10,6 +10,7 @@ BITS = 12
 N = 2**BITS
 UNIT_PER_LINE = 10
 BANK_SIZE = 256
+
 # 맨 마지막꺼 누락될 가능성 높음 주의 요망
 def float_to_hex(f):
     return f'"h{struct.unpack("<I", struct.pack("<f", f))[0]:08x}"'
