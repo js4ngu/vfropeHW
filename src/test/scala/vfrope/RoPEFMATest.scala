@@ -11,25 +11,31 @@ class RoPEFMATest extends AnyFlatSpec with ChiselScalatestTester {
     test(new fmaROPE).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
       // Multiple test cases for pipeline testing
       val testCases = Seq(
-        // x1,        x2,        sin,       cos,       expected_x0, expected_x1
-        ("3f800000", "40000000", "3e4ccccd", "3f4ccccd", "00000000", "41000000"), // Case 1: First input
-        //("40000000", "40400000", "3e4ccccd", "3f4ccccd", "00000000", "41100000"), // Case 2: Second input
-        //("40400000", "40800000", "3e4ccccd", "3f4ccccd", "00000000", "41200000")  // Case 3: Third input
+        // x1,        x2,        sin,       cos
+        ("3f800000", "40000000", "3e4ccccd", "3f4ccccd"),  // Case 1: 1.0, 2.0
+        ("40000000", "40400000", "3e4ccccd", "3f4ccccd"),  // Case 2: 2.0, 3.0
+        ("40400000", "40800000", "3e4ccccd", "3f4ccccd"),  // Case 3: 3.0, 4.0
+        ("40800000", "40a00000", "3e4ccccd", "3f4ccccd")   // Case 4: 4.0, 5.0
       )
 
-      println("\nStarting Pipeline Test...")
+      println("\nStarting Pipeline Test with 2-cycle intervals...")
       println("=====================================================================================")
 
-      // Input all test cases in consecutive cycles
-      for (((x1, x2, sin, cos, expected_x0, expected_x1), i) <- testCases.zipWithIndex) {
-        // Print current test case
+      // Track outputs and cycles
+      var outputCount = 0
+      var cycleCount = 0
+      val outputs = scala.collection.mutable.ArrayBuffer[(Float, Float)]()
+
+      // Process all test cases
+      for ((x1, x2, sin, cos) <- testCases) {
+        // Print current input
         val xIn0 = Float.intBitsToFloat(BigInt(x1, 16).toInt)
         val xIn1 = Float.intBitsToFloat(BigInt(x2, 16).toInt)
         val sinIn = Float.intBitsToFloat(BigInt(sin, 16).toInt)
         val cosIn = Float.intBitsToFloat(BigInt(cos, 16).toInt)
         
-        println(s"\nTest Case ${i + 1}:")
-        println(f"Inputs -> xIn(0): $xIn0%.6f, xIn(1): $xIn1%.6f, sinIn: $sinIn%.6f, cosIn: $cosIn%.6f")
+        println(s"\nCycle $cycleCount")
+        println(f"Sending input -> xIn(0): $xIn0%.6f, xIn(1): $xIn1%.6f, sinIn: $sinIn%.6f, cosIn: $cosIn%.6f")
 
         // Apply inputs
         dut.io.ENin.poke(true.B)
@@ -37,37 +43,51 @@ class RoPEFMATest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.xIn(1).poke(BigInt(x2, 16).U)
         dut.io.sinIn.poke(BigInt(sin, 16).U)
         dut.io.cosIn.poke(BigInt(cos, 16).U)
-
-        // Step one clock cycle
+        
+        // Step one clock
         dut.clock.step(1)
+        cycleCount += 1
+        
+        // Deassert ENin and wait one more clock
+        dut.io.ENin.poke(false.B)
+        dut.io.xIn(0).poke(0.U)
+        dut.io.xIn(1).poke(0.U)
+        dut.io.sinIn.poke(0.U)
+        dut.io.cosIn.poke(0.U)
+        dut.clock.step(7)
+        cycleCount += 7
 
-        // Check if any outputs are valid
+        // Check for any valid outputs
         if (dut.io.ENout.peek().litToBoolean) {
           val xOut0 = Float.intBitsToFloat(dut.io.xOut(0).peek().litValue.toInt)
           val xOut1 = Float.intBitsToFloat(dut.io.xOut(1).peek().litValue.toInt)
-          println(f"Got output -> xOut(0): $xOut0%.6f, xOut(1): $xOut1%.6f")
+          outputs.append((xOut0, xOut1))
+          outputCount += 1
+          println(f"Got output ${outputCount} -> xOut(0): $xOut0%.6f, xOut(1): $xOut1%.6f")
         }
       }
 
       // Continue stepping until we get all outputs
-      var remaining_outputs = testCases.length
-      var cycles = 0
-      val max_cycles = 20  // Maximum cycles to wait
-
-      while (remaining_outputs > 0 && cycles < max_cycles) {
-        dut.io.ENin.poke(false.B)
+      val maxAdditionalCycles = 20
+      var additionalCycles = 0
+      while (outputCount < testCases.length && additionalCycles < maxAdditionalCycles) {
         dut.clock.step(1)
-        cycles += 1
+        cycleCount += 1
+        additionalCycles += 1
 
         if (dut.io.ENout.peek().litToBoolean) {
           val xOut0 = Float.intBitsToFloat(dut.io.xOut(0).peek().litValue.toInt)
           val xOut1 = Float.intBitsToFloat(dut.io.xOut(1).peek().litValue.toInt)
-          println(f"Got output -> xOut(0): $xOut0%.6f, xOut(1): $xOut1%.6f")
-          remaining_outputs -= 1
+          outputs.append((xOut0, xOut1))
+          outputCount += 1
+          println(f"\nGot output ${outputCount} -> xOut(0): $xOut0%.6f, xOut(1): $xOut1%.6f")
         }
       }
 
-      println("\nTest completed after " + cycles + " additional cycles")
+      println("\nTest Summary:")
+      println(s"Total inputs processed: ${testCases.length}")
+      println(s"Total outputs received: ${outputs.length}")
+      println(s"Total cycles taken: $cycleCount")
       println("=====================================================================================")
     }
   }
