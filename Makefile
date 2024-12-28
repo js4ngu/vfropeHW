@@ -85,6 +85,13 @@ multiLaneRoPE:
 	sbt "testOnly vfrope.multiLaneRoPEmoduleTestV2 -- -DwriteVcd=1"
 
 
+
+
+#FMA
+RoPEFMA:
+	sbt "testOnly vfrope.RoPEFMATest -- -DwriteVcd=1"
+
+
 # 베릴로그 변환
 veliog2lane:
 	sbt "runMain vfrope.FP32RoPE2LaneWoROPEcoreTop"
@@ -98,8 +105,6 @@ veliog16lane:
 # 파이썬
 pyRoPEcore:
 	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPEcore.py
-pyRoPE:
-	python /home/jongsang/vfropeHW/src/test/scala/vfrope/RoPE.py
 
 clean:
 	git clean -fd

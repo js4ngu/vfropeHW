@@ -37,6 +37,13 @@ def RoPE(x1, x2, sin_theta, cos_theta):
     x2_prime = x2_cos + x1_sin
     
     # Print intermediate results
+    print("\nInput")
+    print(f"x1: {x1} (hex: {float_to_hex(x1)})")
+    print(f"x2: {x2} (hex: {float_to_hex(x2)})")
+    print(f"sin: {sin_theta} (hex: {float_to_hex(sin_theta)})")
+    print(f"cos: {cos_theta} (hex: {float_to_hex(cos_theta)})")
+
+
     print("\nIntermediate Results:")
     print(f"x1*sin: {x1_sin} (hex: {float_to_hex(x1_sin)})")
     print(f"x2*sin: {x2_sin} (hex: {float_to_hex(x2_sin)})")
@@ -52,7 +59,7 @@ def RoPE(x1, x2, sin_theta, cos_theta):
 
 def main():
     testcase = [
-        [1,10,1,0],
+        [1,2,0.2,0.8],
     ]
 
     for test in testcase:

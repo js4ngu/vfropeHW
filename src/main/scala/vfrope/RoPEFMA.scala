@@ -2,99 +2,103 @@ package vfrope
 import chisel3._
 import chisel3.util._
 import hardfloat._
-/*
-class multiLaneRoPEmoduleFMA(N: Int, Index: Int, LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAndHalfPi: Int, Pi: Int, halfPi: Int) extends Module {
-    val io = IO(new Bundle {
-        val x           = Input(Vec(N, Vec(2, UInt(32.W))))
-        val EN          = Input(Bool())
-        val m           = Input(Vec(N, UInt(32.W)))
-        val baseIndex   = Input(Vec(N, UInt(32.W)))
-        val ResMode     = Input(Vec(N, UInt(32.W)))
-        val xhat        = Output(Vec(N, Vec(2, UInt(32.W))))
-        val valid       = Output(UInt(32.W))
-    })
 
-    // 필요한 모듈 선언
-    val RadCalc = Array.fill(N) {
-        Module(new FP32radianCaclulatorV2(LutSize, LutHalfSizeHEX, Index))
-    }
-    val SinCosLut = Module(new multiPortSinCosModuleV2(N, LutSize, LutHalfSizeHEX, doublePi, OneAndHalfPi, Pi, halfPi))
-    val RoPEcore = Array.fill(N) {
-        Module(new FMA())
-    }
+class fmaROPE extends Module {
+  val io = IO(new Bundle {
+    val ENin  = Input(Bool())
+    val ENout = Output(Bool())
+    val xIn   = Input(Vec(2, UInt(32.W)))
+    val sinIn = Input(UInt(32.W))
+    val cosIn = Input(UInt(32.W))
+    val xOut  = Output(Vec(2, UInt(32.W)))
+  })
 
-    // 파이프라인 레지스터와 EN 신호
-    val stage1Reg = RegInit(VecInit(Seq.fill(N)(VecInit(Seq.fill(6)(0.U(32.W))))))
-    val stage1EN  = RegInit(false.B)
-    val stage2Reg = RegInit(VecInit(Seq.fill(N)(VecInit(Seq.fill(4)(0.U(32.W))))))
-    val stage2EN  = RegInit(false.B)
-    val stage3Reg = RegInit(VecInit(Seq.fill(N)(VecInit(Seq.fill(5)(0.U(32.W))))))
-    val stage3EN  = RegInit(false.B)
+  // Two FMA instances
+  val fmaUnits = Seq.fill(2)(Module(new FMA))
 
-    // stage1 입력
-    when(io.EN) {
-        for(i <- 0 until N) {
-            stage1Reg(i)(0) := io.x(i)(0)
-            stage1Reg(i)(1) := io.x(i)(1)
-            stage1Reg(i)(2) := io.m(i)
-            stage1Reg(i)(3) := io.baseIndex(i)
-            stage1Reg(i)(4) := io.ResMode(i)
-        }
-        stage1EN := true.B
-    }.otherwise {
-        stage1EN := false.B
-    }
+  // State definitions
+  object State extends ChiselEnum {
+    val sIdle, sStage1, sStage2 = Value
+  }
+  import State._
+  val state = RegInit(State.sIdle)
 
-    // stage1
-    for(i <- 0 until N) {
-        RadCalc(i).io.EN        := stage1EN
-        RadCalc(i).io.x(0)      := stage1Reg(i)(0)
-        RadCalc(i).io.x(1)      := stage1Reg(i)(1)
-        RadCalc(i).io.m         := stage1Reg(i)(2)
-        RadCalc(i).io.baseIndex := stage1Reg(i)(3)
-        RadCalc(i).io.ResMode   := stage1Reg(i)(4)
+  // Pipeline registers
+  val xInReg = Reg(Vec(2, UInt(32.W)))
+  val sinReg = Reg(UInt(32.W))
+  val cosReg = Reg(UInt(32.W))
+  val stage1Results = Reg(Vec(2, UInt(32.W)))  // x0cos, x1cos 저장
+  val outputReg = Reg(Vec(2, UInt(32.W)))
+
+  // Default values
+  fmaUnits.foreach { fma =>
+    fma.io.op := 0.U
+    fma.io.a := 0.U
+    fma.io.b := 0.U
+    fma.io.c := 0.U
+    fma.io.validin := false.B
+  }
+
+  io.ENout := false.B
+  io.xOut := outputReg
+
+  // State machine
+  switch(state) {
+    is(State.sIdle) {
+      when(io.ENin) {
+        xInReg := io.xIn
+        sinReg := io.sinIn
+        cosReg := io.cosIn
+        state := State.sStage1
+      }
     }
 
-    // stage2 입력
-    for(i <- 0 until N) {
-        stage2Reg(i)(0) := RadCalc(i).io.xFWD(0)
-        stage2Reg(i)(1) := RadCalc(i).io.xFWD(1)
-        stage2Reg(i)(2) := RadCalc(i).io.out
-    }
-    stage2EN := RadCalc(0).io.ENout
+    is(State.sStage1) {
+      // Configure FMAs for cos multiplication
+      // FMA0: x0*cos
+      fmaUnits(0).io.op := 0.U
+      fmaUnits(0).io.a := xInReg(0)
+      fmaUnits(0).io.b := cosReg
+      fmaUnits(0).io.c := 0.U
+      fmaUnits(0).io.validin := true.B
 
-    // stage2
-    SinCosLut.io.EN := stage2EN
-    for(i <- 0 until N) {
-        SinCosLut.io.x(i)(0)  := stage2Reg(i)(0)
-        SinCosLut.io.x(i)(1)  := stage2Reg(i)(1)
-        SinCosLut.io.angle(i) := stage2Reg(i)(2)
-    }
+      // FMA1: x1*cos
+      fmaUnits(1).io.op := 0.U
+      fmaUnits(1).io.a := xInReg(1)
+      fmaUnits(1).io.b := cosReg
+      fmaUnits(1).io.c := 0.U
+      fmaUnits(1).io.validin := true.B
 
-    // stage3 입력
-    for(i <- 0 until N) {
-        stage3Reg(i)(0) := SinCosLut.io.xFWD(i)(0) //Xa
-        stage3Reg(i)(1) := SinCosLut.io.xFWD(i)(1) //Xb
-        stage3Reg(i)(2) := SinCosLut.io.sinOut(i)  //Sin
-        stage3Reg(i)(3) := SinCosLut.io.cosOut(i)  //Cos
-    }
-    stage3EN := SinCosLut.io.ENout
-
-    // stage3
-    for(i <- 0 until N) {
-        //여기에 FMA를 인스턴시해서 구현해줘요
+      when(fmaUnits(0).io.validout && fmaUnits(1).io.validout) {
+        stage1Results(0) := fmaUnits(0).io.out
+        stage1Results(1) := fmaUnits(1).io.out
+        state := State.sStage2
+      }
     }
 
-    // 출력
-    val outputReg = RegInit(VecInit(Seq.fill(N)(VecInit(Seq.fill(2)(0.U(32.W))))))
-    val validReg = RegNext(RoPEcore(0).io.ENout)
+    is(State.sStage2) {
+      // x0' = x0cos - x1sin
+      fmaUnits(0).io.op := 2.U  // subtract
+      fmaUnits(0).io.a := xInReg(1)
+      fmaUnits(0).io.b := sinReg
+      fmaUnits(0).io.c := stage1Results(0)
+      fmaUnits(0).io.validin := true.B
 
-    for(i <- 0 until N) {
-        outputReg(i)(0) := RoPEcore(i).io.xhat(0)
-        outputReg(i)(1) := RoPEcore(i).io.xhat(1)
-        io.xhat(i)(0)   := outputReg(i)(0)
-        io.xhat(i)(1)   := outputReg(i)(1)
+      // x1' = x1cos + x0sin
+      fmaUnits(1).io.op := 0.U  // add
+      fmaUnits(1).io.a := xInReg(0)
+      fmaUnits(1).io.b := sinReg
+      fmaUnits(1).io.c := stage1Results(1)
+      fmaUnits(1).io.validin := true.B
+
+      when(fmaUnits(0).io.validout && fmaUnits(1).io.validout) {
+        outputReg(0) := fmaUnits(0).io.out
+        outputReg(1) := fmaUnits(1).io.out
+        io.ENout := true.B
+        state := State.sIdle
+      }
     }
-    io.valid := validReg
+  }
 }
-*/
+
+
