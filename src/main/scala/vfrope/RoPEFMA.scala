@@ -18,7 +18,7 @@ class fmaROPE extends Module {
 
   // State definitions
   object State extends ChiselEnum {
-    val sIdle, sStage1, sStage2 = Value
+    val sIdle, sStage1, sStage2, sWaitResult1, sWaitResult2 = Value  // Added one more wait state
   }
   import State._
   val state = RegInit(State.sIdle)
@@ -27,10 +27,11 @@ class fmaROPE extends Module {
   val xInReg = Reg(Vec(2, UInt(32.W)))
   val sinReg = Reg(UInt(32.W))
   val cosReg = Reg(UInt(32.W))
-  val stage1Results = Reg(Vec(2, UInt(32.W)))  // x0cos, x1cos 저장
+  val stage1Results = Reg(Vec(2, UInt(32.W)))
   val outputReg = Reg(Vec(2, UInt(32.W)))
+  val validReg = RegInit(false.B)
 
-  // Default values
+  // Default values for FMA units
   fmaUnits.foreach { fma =>
     fma.io.op := 0.U
     fma.io.a := 0.U
@@ -39,12 +40,14 @@ class fmaROPE extends Module {
     fma.io.validin := false.B
   }
 
-  io.ENout := false.B
+  // Connect output signals
+  io.ENout := validReg
   io.xOut := outputReg
 
   // State machine
   switch(state) {
     is(State.sIdle) {
+      validReg := false.B
       when(io.ENin) {
         xInReg := io.xIn
         sinReg := io.sinIn
@@ -54,7 +57,6 @@ class fmaROPE extends Module {
     }
 
     is(State.sStage1) {
-      // Configure FMAs for cos multiplication
       // FMA0: x0*cos
       fmaUnits(0).io.op := 0.U
       fmaUnits(0).io.a := xInReg(0)
@@ -92,13 +94,33 @@ class fmaROPE extends Module {
       fmaUnits(1).io.validin := true.B
 
       when(fmaUnits(0).io.validout && fmaUnits(1).io.validout) {
-        outputReg(0) := fmaUnits(0).io.out
-        outputReg(1) := fmaUnits(1).io.out
-        io.ENout := true.B
-        state := State.sIdle
+        state := State.sWaitResult1  // Go to first wait state
       }
+    }
+
+    is(State.sWaitResult1) {
+      // Keep FMA configuration for one more clock
+      fmaUnits(0).io.op := 2.U
+      fmaUnits(0).io.a := xInReg(1)
+      fmaUnits(0).io.b := sinReg
+      fmaUnits(0).io.c := stage1Results(0)
+      fmaUnits(0).io.validin := true.B
+
+      fmaUnits(1).io.op := 0.U
+      fmaUnits(1).io.a := xInReg(0)
+      fmaUnits(1).io.b := sinReg
+      fmaUnits(1).io.c := stage1Results(1)
+      fmaUnits(1).io.validin := true.B
+      
+      state := State.sWaitResult2
+    }
+
+    is(State.sWaitResult2) {
+      // Now capture the results
+      outputReg(0) := fmaUnits(0).io.out
+      outputReg(1) := fmaUnits(1).io.out
+      validReg := true.B
+      state := State.sIdle
     }
   }
 }
-
-

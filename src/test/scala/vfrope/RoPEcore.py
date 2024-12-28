@@ -60,6 +60,8 @@ def RoPE(x1, x2, sin_theta, cos_theta):
 def main():
     testcase = [
         [1,2,0.2,0.8],
+        [2,3,0.2,0.8],
+        [3,4,0.2,0.8],
     ]
 
     for test in testcase:
