@@ -59,11 +59,10 @@ def RoPE(x1, x2, sin_theta, cos_theta):
 
 def main():
     testcase = [
-        [1,2,0.2,0.8],
-        [2,3,0.2,0.8],
-        [3,4,0.2,0.8],
-        [4,5,0.2,0.8],
-
+        [1,2, 1, 0],
+        [3,4, 0,-1],
+        [5,6,-1, 0],
+        [7,8, 0, 1],
     ]
 
     for test in testcase:
@@ -72,31 +71,3 @@ def main():
         RoPE(x1, x2, sin, cos)
 
 main()
-
-'''
-NEW CASE
-
-Final Results:
-x1*cos - x2*sin: 0 (hex: 0x0)
-x2*cos + x1*sin: 2 (hex: 0x40000000)
-
-Final Results:
-x1*cos - x2*sin: 0 (hex: 0x0)
-x2*cos + x1*sin: 8 (hex: 0x41000000)
-
-Final Results:
-x1*cos - x2*sin: -248.74200000000002 (hex: 0xc378bdf4)
-x2*cos + x1*sin: 253.062 (hex: 0x437d0fdf)
-
-Final Results:
-x1*cos - x2*sin: 2574.0619 (hex: 0x4520e0fe)
-x2*cos + x1*sin: 518.1012999999999 (hex: 0x4401867c)
-
-Final Results:
-x1*cos - x2*sin: -2574.0619 (hex: 0xc520e0fe)
-x2*cos + x1*sin: -518.1012999999999 (hex: 0xc401867c)
-
-Final Results:
-x1*cos - x2*sin: -1921.9759 (hex: 0xc4f03f3b)
-x2*cos + x1*sin: -1788.9193 (hex: 0xc4df9d6b)
-'''
