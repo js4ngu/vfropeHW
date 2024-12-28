@@ -90,6 +90,8 @@ multiLaneRoPE:
 #FMA
 RoPEFMA:
 	sbt "testOnly vfrope.RoPEFMATest -- -DwriteVcd=1"
+multiLaneFMARoPE:
+	sbt "testOnly vfrope.multiLaneFMARoPETest -- -DwriteVcd=1"
 
 
 # 베릴로그 변환
