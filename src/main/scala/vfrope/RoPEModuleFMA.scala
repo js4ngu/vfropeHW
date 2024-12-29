@@ -15,7 +15,7 @@ class multiLaneFMARoPE(N: Int, Index: Int, LutSize: Int, LutHalfSizeHEX: Int, do
 
     // 필요한 모듈 선언
     val RadCalc = Array.fill(N) {
-        Module(new FP32radianCaclulatorV2(LutSize, LutHalfSizeHEX, Index))
+        Module(new FP32radianCaclulatorV3(LutSize, LutHalfSizeHEX, Index))
     }
     val SinCosLut = Module(new multiPortSinCosModuleV2(N, LutSize, LutHalfSizeHEX, doublePi, OneAndHalfPi, Pi, halfPi))
     val RoPEcore = Array.fill(N) {
