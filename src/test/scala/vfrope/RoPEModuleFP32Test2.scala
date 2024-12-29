@@ -40,6 +40,35 @@ class FP32radCaclSeqInputTestV2 extends AnyFlatSpec with ChiselScalatestTester {
   }
 }
 
+class FP32radCaclSeqInputTestV3 extends AnyFlatSpec with ChiselScalatestTester {
+  "FP32angleCaclulatorTest" should "Seq Input : Test throughput" in {
+    test(new FP32radianCaclulatorV3(LutSize = 12, LutHalfSizeHEX = 0x45000000, Index = 0))
+    .withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      case class TestCase(resMode: String, x1: String, x2: String, m: String, baseIndex: String, expected: String)
+      
+      val testCases = Seq(
+        TestCase("2147483649", "100", "100", "4000", "3", "3808"), //2147483648 (MSB)
+      )
+      
+      for (test <- testCases) {
+        dut.io.ResMode.poke(BigInt(test.resMode).U)  // 10진수로 파싱하도록 수정
+        dut.io.x(0).poke(BigInt(test.x1).U)
+        dut.io.x(1).poke(BigInt(test.x2).U)
+        dut.io.m.poke(BigInt(test.m).U)
+        dut.io.baseIndex.poke(BigInt(test.baseIndex).U)
+        dut.io.EN.poke(true.B)
+        
+        dut.clock.step()
+        dut.io.EN.poke(false.B)
+        dut.clock.step()  // Wait for pipeline
+        
+      }
+      dut.clock.step(10)  // Wait for pipeline~
+    }
+  }
+}
+
+
 class multiLaneRoPEmoduleTestV2 extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "multiLaneRoPEmodule"
   it should "calculate angles correctly" in {

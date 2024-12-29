@@ -31,6 +31,41 @@ class FP32radianCaclulatorV2(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) ext
     io.ENout   := enReg(0)
 }
 
+class FP32radianCaclulatorV3(LutSize: Int, LutHalfSizeHEX: Int, Index : Int) extends Module {
+    val io = IO(new Bundle {
+        val x           = Input(Vec(2, UInt(32.W)))
+        val EN          = Input(Bool())
+        val m           = Input(UInt(32.W))
+        val baseIndex   = Input(UInt(32.W))
+        val ResMode     = Input(UInt(32.W))
+        val out         = Output(UInt(32.W))
+        val ENout       = Output(Bool())
+        val xFWD        = Output(Vec(2, UInt(32.W)))
+    })
+    
+    // ResMode의 하위 5비트만 시프트 값으로 사용
+    val shiftAmount = io.ResMode(30, 0)
+    
+    val stage1Reg = RegNext(VecInit(io.x(0), io.x(1), 
+        Mux(io.ResMode(31),
+            // ResMode[31] == 1 인 경우 (나눗셈)
+            (io.m * (io.baseIndex + Index.U) >> shiftAmount)(LutSize-1, 0).asUInt,
+            // ResMode[31] == 0 인 경우 (곱셈)
+            (io.ResMode * (io.m * (io.baseIndex + Index.U)))(LutSize-1, 0).asUInt
+        )
+    ))
+
+    val enReg = RegInit(VecInit(Seq.fill(2)(false.B)))
+
+    enReg(0) := io.EN
+    enReg(1) := enReg(0)
+    
+    io.xFWD(0) := Mux(enReg(0), stage1Reg(0), 0.U)
+    io.xFWD(1) := Mux(enReg(0), stage1Reg(1), 0.U)
+    io.out     := Mux(enReg(0), stage1Reg(2), 0.U)
+    io.ENout   := enReg(0)
+}
+
 class multiLaneRoPEmoduleV2(N: Int, Index: Int, LutSize: Int, LutHalfSizeHEX: Int, doublePi: Int, OneAndHalfPi: Int, Pi: Int, halfPi: Int) extends Module {
     val io = IO(new Bundle {
         val x           = Input(Vec(N, Vec(2, UInt(32.W))))

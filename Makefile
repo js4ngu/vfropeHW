@@ -66,6 +66,8 @@ FP32angleSeq:
 	sbt "testOnly vfrope.FP32radCaclSeqInputTest -- -DwriteVcd=1"
 FP32radianV2:
 	sbt "testOnly vfrope.FP32radCaclSeqInputTestV2 -- -DwriteVcd=1"
+FP32radianV3:
+	sbt "testOnly vfrope.FP32radCaclSeqInputTestV3 -- -DwriteVcd=1"
 
 FP32core:
 	sbt "testOnly vfrope.FP32RoPEcoreTest"
